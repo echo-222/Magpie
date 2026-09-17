@@ -60,14 +60,6 @@
   </div>
 </div>
 
-<h2>Material Library <span id="lib_count" class="muted"></span></h2>
-<div class="row">
-  <input type="text" id="q" placeholder="search library (Human Thought + AI understanding): 纸张质感 / 克制 / brutalist …">
-  <button id="search" style="flex:none">Search</button>
-  <button id="clear" style="flex:none">All</button>
-</div>
-<div id="library" class="cards" style="margin-top:10px"></div>
-
 <h2>What are you making?</h2>
 <textarea id="task" placeholder="我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。"></textarea>
 <div class="row" style="align-items:center">
@@ -77,13 +69,22 @@
 </div>
 
 <h2>Pack</h2>
-<div id="pack"><span class="muted">no pack yet</span></div>
-<div id="export_box" style="display:none">
+<div id="export_box" style="display:none; margin-bottom:8px">
   <button class="primary" id="copy">Copy for Agent</button>
   <button id="copy_json">Copy JSON</button>
   <span id="copy_msg" class="muted"></span>
-  <pre id="export"></pre>
 </div>
+<div id="pack"><span class="muted">no pack yet — type a task above and build one (≈ 10–40 s with DeepSeek, 1–2.5 min with local Qwen)</span></div>
+<pre id="export" style="display:none"></pre>
+
+<h2>Material Library <span id="lib_count" class="muted"></span></h2>
+<div class="row">
+  <input type="text" id="q" placeholder="search library (Human Thought + AI understanding): 纸张质感 / 克制 / brutalist …">
+  <button id="search" style="flex:none">Search</button>
+  <button id="clear" style="flex:none">All</button>
+  <button id="toggle_lib" style="flex:none">Show all</button>
+</div>
+<div id="library" class="cards" style="margin-top:10px"></div>
 
 <div id="status">ready</div>
 
@@ -102,7 +103,7 @@ const esc = (s) => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<
 // ---------------------------------------------------------------- health
 async function loadHealth() {
   const h = await api('/health');
-  $('health').textContent = `provider=${h.provider} chat=${h.chat_model} vision=${h.vision_model} embed=${h.embed_model} · ${h.materials} materials · data=${h.data_dir}`;
+  $('health').textContent = `chat=${h.chat_provider}/${h.chat_model} · vision=${h.vision_model} · embed=${h.embed_model} · ${h.materials} materials · data=${h.data_dir}`;
 }
 
 // ---------------------------------------------------------------- import
@@ -145,14 +146,19 @@ function aiLine(m) {
   const parts = [...(m.analysis.style || []).slice(0, 3), ...(m.analysis.keywords || []).slice(0, 4)];
   return [...new Set(parts)].slice(0, 6).join(' / ');
 }
+const LIB_PREVIEW = 8; let libExpanded = false;
 async function loadLibrary() {
   const res = await api('/materials');
   materials = {}; res.items.forEach(m => materials[m.id] = m);
-  $('lib_count').textContent = `(${res.total})`;
-  $('library').innerHTML = res.items.map(m => materialCard(m)).join('') || '<span class="muted">empty — import something</span>';
+  const shown = libExpanded ? res.items : res.items.slice(0, LIB_PREVIEW);
+  $('lib_count').textContent = libExpanded || res.total <= LIB_PREVIEW ? `(${res.total})` : `(showing ${shown.length} of ${res.total})`;
+  $('toggle_lib').style.display = res.total > LIB_PREVIEW ? '' : 'none';
+  $('toggle_lib').textContent = libExpanded ? 'Collapse' : `Show all (${res.total})`;
+  $('library').innerHTML = shown.map(m => materialCard(m)).join('') || '<span class="muted">empty — import something</span>';
   const busy = res.items.some(m => ['pending', 'analyzing'].includes(m.processing.status));
   if (busy) startPolling(); else stopPolling();
 }
+$('toggle_lib').onclick = () => { libExpanded = !libExpanded; $('q').value = ''; loadLibrary(); };
 function startPolling() { if (!pollTimer) pollTimer = setInterval(loadLibrary, 3000); }
 function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
 $('search').onclick = async () => {
@@ -160,6 +166,7 @@ $('search').onclick = async () => {
   stopPolling(); status('searching…');
   const res = await api('/search?q=' + encodeURIComponent(q));
   res.hits.forEach(h => materials[h.material_id] = h.material);
+  $('lib_count').textContent = `(${res.hits.length} hits for “${q}”)`;
   $('library').innerHTML = res.hits.map(h => materialCard(h.material, h)).join('') || '<span class="muted">no hits</span>';
   status(`search "${q}": ${res.hits.length} hits`);
 };
@@ -176,7 +183,7 @@ window.editThought = async (id) => {
 // ---------------------------------------------------------------- pack
 $('build').onclick = async () => {
   const task = $('task').value.trim(); if (!task) return;
-  $('build').disabled = true; status('understanding task → retrieving → recomposing … (local models: 20–90s)');
+  $('build').disabled = true; status('understanding task → retrieving → recomposing … (DeepSeek ≈ 10–40 s, local Qwen ≈ 1–2.5 min)');
   try {
     const res = await api('/packs', { method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({ task }) });
     setPack(res); await loadPacks(); status(`pack ${pack.id} built`);
@@ -191,7 +198,7 @@ $('packs').onchange = async () => { const id = $('packs').value; if (!id) return
 
 function setPack(res) {
   pack = res.pack; Object.assign(materials, res.materials || {});
-  renderPack(); $('export_box').style.display = 'block'; $('export').textContent = ''; $('copy_msg').textContent = '';
+  renderPack(); $('export_box').style.display = 'block'; $('export').style.display = 'none'; $('export').textContent = ''; $('copy_msg').textContent = '';
 }
 function memberHtml(g, m) {
   const mat = materials[m.material_id]; if (!mat) return '';
@@ -255,14 +262,14 @@ const post = (body) => ({ method: 'POST', headers: {'content-type': 'application
 
 $('copy').onclick = async () => {
   const md = await api(`/packs/${pack.id}/export?format=markdown`);
-  $('export').textContent = md;
-  try { await navigator.clipboard.writeText(md); $('copy_msg').textContent = 'copied Markdown to clipboard — paste into ChatGPT / Claude / Cursor'; }
-  catch { $('copy_msg').textContent = 'clipboard blocked; copy from the box below'; }
+  $('export').textContent = md; $('export').style.display = 'block';
+  try { await navigator.clipboard.writeText(md); $('copy_msg').textContent = 'copied Markdown to clipboard — paste into ChatGPT / Claude / Cursor (preview below the pack)'; }
+  catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
 };
 $('copy_json').onclick = async () => {
   const js = await api(`/packs/${pack.id}/export?format=json`);
-  const txt = JSON.stringify(js, null, 2); $('export').textContent = txt;
-  try { await navigator.clipboard.writeText(txt); $('copy_msg').textContent = 'copied JSON'; } catch { $('copy_msg').textContent = 'clipboard blocked; copy from the box below'; }
+  const txt = JSON.stringify(js, null, 2); $('export').textContent = txt; $('export').style.display = 'block';
+  try { await navigator.clipboard.writeText(txt); $('copy_msg').textContent = 'copied JSON (preview below the pack)'; } catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
 };
 
 loadHealth(); loadLibrary(); loadPacks();

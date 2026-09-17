@@ -69,6 +69,42 @@ Return ONLY a JSON object with the single key "reasons" mapping every candidate 
 {{"reasons": {{"{ex1}": "...", "{ex2}": "..."}}}}"""
 
 
+def plan_schema_problems(plan: dict, valid_ids: set[str]) -> list[str]:
+    """Structural check of a recomposition reply before it is turned into a MaterialPack.
+    Returns an empty list when the plan can be used (pydantic does the field-level coercion)."""
+    problems: list[str] = []
+    if not isinstance(plan, dict):
+        return ["reply is not a JSON object"]
+    groups = plan.get("groups")
+    if not isinstance(groups, list) or not groups:
+        return ["missing or empty 'groups' array"]
+    n_members = n_valid = 0
+    for g in groups:
+        if not isinstance(g, dict):
+            problems.append("a group is not an object")
+            continue
+        if not str(g.get("name") or "").strip():
+            problems.append("a group has no 'name'")
+        members = g.get("members")
+        if not isinstance(members, list):
+            problems.append(f"group {g.get('name')!r} has no 'members' array")
+            continue
+        for mem in members:
+            n_members += 1
+            if isinstance(mem, dict) and str(mem.get("material_id", "")).strip() in valid_ids:
+                n_valid += 1
+                if not str(mem.get("reason") or "").strip():
+                    problems.append(f"{mem.get('material_id')} has no 'reason'")
+            else:
+                problems.append(f"unknown material_id {mem.get('material_id') if isinstance(mem, dict) else mem!r}")
+    if n_valid == 0:
+        problems.append("no member uses a valid material_id")
+    # tolerate a few stray ids / missing reasons as long as most of the plan is usable
+    if n_valid and len(problems) <= max(1, n_members // 4):
+        return []
+    return problems
+
+
 def describe_candidate(m: Material, hit: Hit | None = None) -> str:
     """Compact candidate card. Kept short on purpose: local 7-8B models lose the schema when
     the prompt approaches their context window (Ollama defaults to 4096 tokens)."""
@@ -147,9 +183,13 @@ class Recomposer:
             candidates=[Candidate(material_id=h.material_id, score=round(h.score, 4), via=h.via) for h in hits],
             excluded=excluded,
             generation={
+                "chat_provider": getattr(self.llm, "chat_provider", None),
                 "chat_model": self.llm.chat_model,
+                "chat_model_used": getattr(self.llm, "last_chat_model", None) or self.llm.chat_model,
                 "embed_model": self.llm.embed_model,
                 "fallback": fallback,
+                "plan_attempts": plan.get("_attempts", 0),
+                "task_understood": task.purpose is not None,
                 "timing_s": {"task": round(t1 - t0, 1), "retrieve": round(t2 - t1, 1), "recompose": round(t3 - t2, 1)},
                 "queries": [task.raw_request] + task.search_queries,
             },
@@ -172,13 +212,26 @@ class Recomposer:
             ex1=hits[0].material_id,
             ex2=hits[-1].material_id,
         )
-        try:
-            plan = self.llm.chat_json(RECOMPOSE_SYSTEM, user, purpose="recompose", temperature=0.1, max_tokens=2000)
-            if any(g.get("members") for g in plan.get("groups", []) if isinstance(g, dict)):
+        valid_ids = {h.material_id for h in hits}
+        prompt = user
+        for attempt in range(2):
+            try:
+                plan = self.llm.chat_json(RECOMPOSE_SYSTEM, prompt, purpose="recompose", temperature=0.1, max_tokens=2000)
+            except Exception as e:  # noqa: BLE001
+                log.warning("recomposition call failed (%s); using retrieval fallback", e)
+                break
+            problems = plan_schema_problems(plan, valid_ids)
+            if not problems:
+                plan["_attempts"] = attempt + 1
                 return plan, False
-            log.warning("recomposition returned no members; using retrieval fallback")
-        except Exception as e:  # noqa: BLE001
-            log.warning("recomposition failed (%s); using retrieval fallback", e)
+            log.warning("recomposition reply off-schema (attempt %d): %s", attempt + 1, "; ".join(problems))
+            # minimal repair: same prompt + what was wrong; still validated by the same code path
+            prompt = (
+                user
+                + "\n\nYour previous answer was rejected: "
+                + "; ".join(problems)
+                + f".\nAnswer again with EXACTLY the keys human_direction / groups / excluded and only these material_id values: {sorted(valid_ids)}"
+            )
         # plumbing fallback: keep the loop alive even when the model misbehaves (never used for validation runs)
         return {
             "human_direction": task.purpose,

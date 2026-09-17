@@ -13,11 +13,14 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import logging
 import math
 import re
 from typing import Protocol
 
-from .config import Settings, get_settings
+from .config import Endpoint, Settings, get_settings
+
+log = logging.getLogger(__name__)
 
 JSON_RE = re.compile(r"\{.*\}", re.DOTALL)
 THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
@@ -25,9 +28,11 @@ THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 class LLM(Protocol):
     provider: str
+    chat_provider: str
     chat_model: str
     vision_model: str
     embed_model: str
+    last_chat_model: str | None
 
     def chat_json(
         self,
@@ -66,26 +71,37 @@ def extract_json(text: str) -> dict:
 
 
 class OpenAICompatLLM:
+    """One adapter, three roles (chat / vision / embed), each with its own endpoint.
+
+    Chat may run remotely (DeepSeek) with the local model as a one-shot fallback on
+    transport/API errors; vision and embeddings stay wherever MAGPIE_LLM_* / MAGPIE_EMBED_*
+    point (local Ollama by default). Images are only ever sent to the vision endpoint.
+    """
+
     provider = "openai-compatible"
 
     def __init__(self, settings: Settings):
         from openai import OpenAI  # imported lazily so tests never need network deps
 
         self.settings = settings
-        self.chat_model = settings.chat_model
-        self.vision_model = settings.vision_model
-        self.embed_model = settings.embed_model
-        # max_retries=0: a slow local model must not turn one timeout into three.
-        self.client = OpenAI(base_url=settings.llm_base_url, api_key=settings.llm_api_key, timeout=settings.llm_timeout_s, max_retries=0)
-        if settings.embed_base_url or settings.embed_api_key:
-            self.embed_client = OpenAI(
-                base_url=settings.embed_base_url or settings.llm_base_url,
-                api_key=settings.embed_api_key or settings.llm_api_key,
-                timeout=settings.llm_timeout_s,
-                max_retries=1,
-            )
-        else:
-            self.embed_client = self.client
+        self.chat_ep = settings.chat_endpoint()
+        self.chat_fallback_ep = settings.chat_fallback_endpoint()
+        self.vision_ep = settings.vision_endpoint()
+        self.embed_ep = settings.embed_endpoint()
+        self.chat_model = self.chat_ep.model
+        self.chat_provider = self.chat_ep.name
+        self.vision_model = self.vision_ep.model
+        self.embed_model = self.embed_ep.model
+        self.last_chat_model: str | None = None  # which model actually answered the last chat call
+        self._clients: dict[tuple[str, str], OpenAI] = {}
+        self._OpenAI = OpenAI
+
+    def _client(self, ep: Endpoint):
+        key = (ep.base_url, ep.api_key)
+        if key not in self._clients:
+            # max_retries=0: a slow local model must not turn one timeout into three.
+            self._clients[key] = self._OpenAI(base_url=ep.base_url, api_key=ep.api_key, timeout=self.settings.llm_timeout_s, max_retries=0)
+        return self._clients[key]
 
     # Qwen3 thinks by default; that is slow and useless for JSON extraction.
     @staticmethod
@@ -93,6 +109,37 @@ class OpenAICompatLLM:
         if "qwen3" in model.lower() and "/no_think" not in system:
             return system + "\n/no_think"
         return system
+
+    def _chat_once(self, ep: Endpoint, messages: list[dict], *, temperature: float, max_tokens: int | None, json_mode: bool) -> str:
+        kwargs: dict = dict(model=ep.model, messages=messages, temperature=temperature)
+        if max_tokens:
+            kwargs["max_tokens"] = max_tokens + ep.reasoning_budget
+        if json_mode:
+            kwargs["response_format"] = {"type": "json_object"}
+        if ep.extra_body:
+            kwargs["extra_body"] = ep.extra_body
+        resp = self._client(ep).chat.completions.create(**kwargs)
+        return resp.choices[0].message.content or ""
+
+    def _chat_json_on(self, ep: Endpoint, system: str, content, *, temperature: float, max_tokens: int | None, purpose: str) -> dict:
+        """JSON mode first; on an unparsable reply retry once with a nudge and without JSON mode.
+        Transport/API errors propagate so the caller can decide about a fallback endpoint."""
+        import openai
+
+        messages = [{"role": "system", "content": self._system_for(ep.model, system)}, {"role": "user", "content": content}]
+        last_err: Exception | None = None
+        for attempt in range(2):
+            try:
+                text = self._chat_once(ep, messages, temperature=temperature, max_tokens=max_tokens, json_mode=attempt == 0)
+                result = extract_json(text)
+                self.last_chat_model = ep.model
+                return result
+            except openai.APIError:
+                raise
+            except Exception as e:  # noqa: BLE001 - parse problem: nudge once
+                last_err = e
+                messages = messages + [{"role": "user", "content": "Return ONLY a valid JSON object, nothing else."}]
+        raise RuntimeError(f"LLM reply not parsable ({ep.name}/{ep.model}, purpose={purpose}): {last_err}") from last_err
 
     def chat_json(
         self,
@@ -104,43 +151,38 @@ class OpenAICompatLLM:
         temperature: float = 0.2,
         max_tokens: int | None = None,
     ) -> dict:
-        model = self.vision_model if images else self.chat_model
-        content: list[dict] | str
-        if images:
-            content = [{"type": "text", "text": user}]
+        import openai
+
+        if images:  # vision stays on its own endpoint; images never go to the chat provider
+            content: list[dict] = [{"type": "text", "text": user}]
             for img in images:
                 b64 = base64.b64encode(img).decode("ascii")
                 content.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}})
-        else:
-            content = user
-        messages = [
-            {"role": "system", "content": self._system_for(model, system)},
-            {"role": "user", "content": content},
-        ]
-        last_err: Exception | None = None
-        for attempt in range(2):
-            kwargs = dict(model=model, messages=messages, temperature=temperature)
-            if max_tokens:
-                kwargs["max_tokens"] = max_tokens
-            if attempt == 0:
-                kwargs["response_format"] = {"type": "json_object"}
             try:
-                resp = self.client.chat.completions.create(**kwargs)
-                text = resp.choices[0].message.content or ""
-                return extract_json(text)
-            except Exception as e:  # noqa: BLE001 - retry once without json mode / with nudge
-                last_err = e
-                messages = messages + [{"role": "user", "content": "Return ONLY a valid JSON object, nothing else."}]
-        raise RuntimeError(f"LLM call failed ({model}, purpose={purpose}): {last_err}") from last_err
+                return self._chat_json_on(self.vision_ep, system, content, temperature=temperature, max_tokens=max_tokens, purpose=purpose)
+            except openai.APIError as e:
+                raise RuntimeError(f"vision call failed ({self.vision_ep.model}, purpose={purpose}): {e}") from e
+
+        try:
+            return self._chat_json_on(self.chat_ep, system, user, temperature=temperature, max_tokens=max_tokens, purpose=purpose)
+        except openai.APIError as e:
+            if self.chat_fallback_ep is None:
+                raise RuntimeError(f"chat call failed ({self.chat_ep.name}/{self.chat_ep.model}, purpose={purpose}): {e}") from e
+            log.warning("chat provider %s failed (%s: %s); falling back to local %s", self.chat_ep.name, type(e).__name__, str(e)[:160], self.chat_fallback_ep.model)
+            try:
+                return self._chat_json_on(self.chat_fallback_ep, system, user, temperature=temperature, max_tokens=max_tokens, purpose=purpose)
+            except openai.APIError as e2:
+                raise RuntimeError(f"chat call failed on {self.chat_ep.name} and local fallback (purpose={purpose}): {e2}") from e2
 
     def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             return []
         out: list[list[float]] = []
+        client = self._client(self.embed_ep)
         # Ollama handles batches fine; keep batches small anyway for long texts.
         for i in range(0, len(texts), 16):
             batch = [t if t.strip() else " " for t in texts[i : i + 16]]
-            resp = self.embed_client.embeddings.create(model=self.embed_model, input=batch)
+            resp = client.embeddings.create(model=self.embed_ep.model, input=batch)
             data = sorted(resp.data, key=lambda d: d.index)
             out.extend([d.embedding for d in data])
         return out
@@ -156,9 +198,11 @@ class FakeLLM:
     """
 
     provider = "fake"
+    chat_provider = "fake"
     chat_model = "fake-chat"
     vision_model = "fake-vision"
     embed_model = "fake-embed-256"
+    last_chat_model = "fake-chat"
     DIM = 256
 
     def embed(self, texts: list[str]) -> list[list[float]]:

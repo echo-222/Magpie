@@ -78,6 +78,7 @@ def health(request: Request):
     return {
         "version": __version__,
         "provider": st.llm.provider,
+        "chat_provider": getattr(st.llm, "chat_provider", st.llm.provider),
         "chat_model": st.llm.chat_model,
         "vision_model": st.llm.vision_model,
         "embed_model": st.llm.embed_model,

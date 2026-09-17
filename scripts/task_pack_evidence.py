@@ -44,8 +44,10 @@ def slug(s: str, n: int) -> str:
 
 
 def summarize(pack, db) -> str:
-    lines = [f"### {pack.name}", "", f"- pack: `{pack.id}` · candidates {len(pack.candidates)} · members {len(pack.member_ids())} · human edits {len(pack.human_edits)} · fallback {pack.generation.get('fallback')}",
-             f"- timing (s): {pack.generation.get('timing_s')}", f"- models: {pack.generation.get('chat_model')} / {pack.generation.get('embed_model')}",
+    g = pack.generation
+    lines = [f"### {pack.name}", "", f"- pack: `{pack.id}` · candidates {len(pack.candidates)} · members {len(pack.member_ids())} · human edits {len(pack.human_edits)} · fallback {g.get('fallback')} · plan attempts {g.get('plan_attempts', '?')}",
+             f"- timing (s): {g.get('timing_s')}", f"- models: chat {g.get('chat_model_used') or g.get('chat_model')} ({g.get('chat_provider', '?')}) / embed {g.get('embed_model')}",
+             f"- task brief: purpose={pack.task.purpose!r}; desired={pack.task.desired_qualities}; avoid={pack.task.avoid}; ref_types={pack.task.needed_reference_types}",
              f"- search queries: {pack.task.search_queries}", ""]
     via = {c.material_id: c.via for c in pack.candidates}
     for g in pack.groups:
@@ -71,6 +73,7 @@ def main() -> None:
     ap.add_argument("tasks", nargs="*")
     ap.add_argument("--pack", action="append", default=[], help="export an existing pack id instead of building")
     ap.add_argument("--start", type=int, default=1, help="numbering offset for output files")
+    ap.add_argument("--out", default=str(OUT), help="output directory (default docs/phase1_evidence)")
     args = ap.parse_args()
 
     s = get_settings()
@@ -79,10 +82,15 @@ def main() -> None:
     db = Database(s.db_path)
     llm = get_llm(s)
     rc = Recomposer(db=db, retriever=Retriever(db=db, llm=llm), llm=llm)
-    OUT.mkdir(parents=True, exist_ok=True)
-    summary = OUT / "SUMMARY.md"
+    out_dir = Path(args.out)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    summary = out_dir / "SUMMARY.md"
     if not summary.exists():
-        summary.write_text("# Phase 1 evidence: real Task -> Material Pack runs\n\nLibrary: %d materials. Models: %s / %s / %s.\n\n" % (db.count_materials(), s.chat_model, s.vision_model, s.embed_model), encoding="utf-8")
+        summary.write_text(
+            "# Phase 1 evidence: real Task -> Material Pack runs\n\nLibrary: %d materials. Chat: %s (%s). Vision: %s. Embed: %s.\n\n"
+            % (db.count_materials(), llm.chat_model, getattr(llm, "chat_provider", "?"), s.vision_model, s.embed_model),
+            encoding="utf-8",
+        )
 
     packs = []
     for pid in args.pack:
@@ -98,7 +106,7 @@ def main() -> None:
         packs.append(p)
 
     for i, p in enumerate(packs, args.start):
-        base = OUT / slug(p.task.raw_request, i)
+        base = out_dir / slug(p.task.raw_request, i)
         base.with_suffix(".md").write_text(pack_to_markdown(p, db), encoding="utf-8")
         base.with_suffix(".json").write_text(json.dumps(pack_to_json(p, db), ensure_ascii=False, indent=2), encoding="utf-8")
         with summary.open("a", encoding="utf-8") as f:

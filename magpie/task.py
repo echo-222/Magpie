@@ -7,8 +7,12 @@ because a library holds materials, not tasks.
 
 from __future__ import annotations
 
+import logging
+
 from .llm import LLM
 from .models import Task
+
+log = logging.getLogger(__name__)
 
 TASK_SYSTEM = (
     "You turn a creator's task description into a small structured brief that is used to retrieve and "
@@ -33,7 +37,11 @@ Return ONLY JSON, written in the task's own language:
 
 def understand_task(llm: LLM, raw_request: str) -> Task:
     raw = raw_request.strip()
-    data = llm.chat_json(TASK_SYSTEM, TASK_USER.format(task=raw), purpose="task")
+    try:
+        data = llm.chat_json(TASK_SYSTEM, TASK_USER.format(task=raw), purpose="task")
+    except Exception as e:  # noqa: BLE001 - keep the loop alive: retrieval can still run on the raw text
+        log.warning("task understanding failed (%s); using the raw request only", e)
+        return Task(raw_request=raw, search_queries=[raw[:80]])
     task = Task(
         raw_request=raw,
         purpose=_s(data.get("purpose")),

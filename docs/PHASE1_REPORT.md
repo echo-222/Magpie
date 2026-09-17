@@ -202,6 +202,23 @@ CRUD API, dev UI. All done with libraries; none of it took design attention.
   glue, not a framework.
 - No custom OCR, ASR, video, embedding, job queue, agent framework, or browser plumbing.
 
+## 9b. Follow-up patch (same day, after the human's first try)
+
+Scope kept to two things; no Phase 2 work.
+
+1. **Dev UI order**: Import → *What are you making?* → Pack (with `Copy for Agent` / `Copy JSON`
+   at the top of the pack) → Material Library (search + "Show all (n) / Collapse", 8 cards by
+   default). Opening the page now leads straight into Task → Pack → Edit → Copy.
+2. **DeepSeek for the reasoning half** through the existing adapter: `MAGPIE_CHAT_PROVIDER=deepseek`
+   routes task understanding, recomposition, roles/reasons and alternatives to `deepseek-v4-pro`;
+   vision, OCR, embeddings and SQLite stay local and images never leave the machine. The local
+   Qwen model remains one `.env` line away and is used once as a fallback when the remote call
+   fails. Replies still pass the same structural check → pydantic → MaterialPack path; an
+   off-schema reply is repaired with one retry, then the retrieval-only fallback applies.
+   Result on the three tasks: ≈ 20 s per pack instead of 1–2.5 min, tighter briefs, task-shaped
+   groups, reasons that build on the Human Thought, no material mis-descriptions. Details:
+   `docs/phase1_evidence/COMPARISON_qwen_vs_deepseek.md`.
+
 ## 10. Recommended Phase 2 (not started — awaiting human review)
 
 1. **Real validation with the owner's materials and thoughts** (replace the demo library;

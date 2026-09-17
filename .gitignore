@@ -17,3 +17,6 @@ data/
 .DS_Store
 .idea/
 .vscode/
+
+# stray session files from local tools
+*.ses

@@ -97,9 +97,19 @@ def cmd_search(args):
 
 
 def cmd_doctor(args):
+    from .config import mask_key
+
     s = get_settings()
-    print(f"provider   : {s.llm_provider}  base_url={s.llm_base_url}")
-    print(f"chat model : {s.chat_model}\nvision     : {s.vision_model}\nembed      : {s.embed_model}")
+    print(f"provider   : {s.llm_provider}  local endpoint={s.llm_base_url}")
+    try:
+        chat = s.chat_endpoint()
+        fb = s.chat_fallback_endpoint()
+        print(f"chat       : {chat.name} {chat.model} @ {chat.host}  key={mask_key(chat.api_key) if chat.name != 'local' else '-'}"
+              + (f"  (thinking={s.deepseek_thinking})" if chat.name == "deepseek" and s.deepseek_thinking else "")
+              + (f"  fallback -> local {fb.model}" if fb else ""))
+    except RuntimeError as e:
+        print(f"chat       : CONFIG ERROR {e}")
+    print(f"vision     : {s.vision_endpoint().model} @ {s.vision_endpoint().host}\nembed      : {s.embed_endpoint().model} @ {s.embed_endpoint().host}")
     print(f"data dir   : {s.data_dir.resolve()}")
     try:
         from rapidocr_onnxruntime import RapidOCR  # noqa: F401
@@ -118,10 +128,11 @@ def cmd_doctor(args):
         t = time.time()
         try:
             out = llm.chat_json("Reply with JSON.", 'Return {"ok": true}', purpose="doctor")
-            print(f"chat call  : ok {out} ({time.time() - t:.1f}s)")
+            print(f"chat call  : ok {out} via {getattr(llm, 'last_chat_model', '?')} ({time.time() - t:.1f}s)")
         except Exception as e:  # noqa: BLE001
             print(f"chat call  : FAILED {e}")
-        _ollama_context_check(s)
+        if s.chat_provider == "local":
+            _ollama_context_check(s)
     db = Database(s.db_path)
     print(f"materials  : {db.count_materials()}  embeddings: {db.embedding_stats()}")
 
