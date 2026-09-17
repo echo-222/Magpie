@@ -33,8 +33,8 @@ VISION_USER = """Analyse this image and return ONLY JSON:
 {
   "summary": "1-2 sentences, Chinese: what this is and how it looks as design material",
   "subjects": ["main visible subjects, 1-5 short nouns"],
-  "style": ["3-6 visual/style keywords: e.g. 粗糙纸张质感, 网格排版, 极简, 高对比, brutalist, letterpress"],
-  "keywords": ["4-8 retrieval keywords covering medium, era/genre, material, technique, use-case"],
+  "style": ["3-6 visual-language keywords a designer would search for: material/texture, typography, composition, colour language, e.g. 粗糙纸张质感, 竖排宋体, 大面积留白, 几何构成, 低饱和灰调, brutalist, letterpress"],
+  "keywords": ["4-8 retrieval keywords covering medium, era/genre, material, technique, possible design use"],
   "mood": ["1-4 mood words, e.g. 克制, 温暖, 冷峻"],
   "visible_text": "any clearly legible text in the image, verbatim, or empty string"
 }"""
