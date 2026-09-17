@@ -78,6 +78,9 @@ class Settings:
 
     llm_timeout_s: float = field(default_factory=lambda: float(_env("MAGPIE_LLM_TIMEOUT", "180")))
 
+    # CORS for the dev-stage capture layer (browser extension / local pages): comma-separated origins or "*"
+    cors_origins: str = field(default_factory=lambda: _env("MAGPIE_CORS_ORIGINS", "*"))
+
     # ------------------------------------------------------------------ endpoints per role
     def local_chat_endpoint(self) -> Endpoint:
         return Endpoint("local", self.llm_base_url, self.llm_api_key, self.chat_model)

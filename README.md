@@ -68,10 +68,15 @@ Vision (`MAGPIE_VISION_MODEL`) and embeddings (`MAGPIE_EMBED_MODEL`) always use 
 
 ## Capture contract (for the browser-extension track)
 
-`POST /materials` — `multipart/form-data` with `file` (image) **or** `content` (text), plus
-`thought`, `page_url`, `resource_url`, `page_title`, `captured_at`; or `application/json`
-with a `CapturePayload` body (`magpie/models.py`). Analysis runs in the background;
-poll `GET /materials/{id}` until `processing.status == "ready"`.
+Full, verified contract with real request/response samples, curl and extension `fetch`
+examples, error table and CORS notes: [`docs/CAPTURE_API_CONTRACT.md`](docs/CAPTURE_API_CONTRACT.md).
+
+In one line: `POST http://127.0.0.1:8765/materials` — `multipart/form-data` with `file` (image)
+**or** `content` (text), plus `thought`, `page_url`, `resource_url`, `page_title`, `captured_at`;
+or `application/json` with a `CapturePayload` body (`magpie/models.py`). Save returns `201`
+immediately; analysis runs in the background — poll `GET /materials/{id}` until
+`processing.status` is `ready` (or `failed`). CORS is open for local development
+(`MAGPIE_CORS_ORIGINS`, default `*`).
 
 ## Layout
 

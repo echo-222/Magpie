@@ -13,8 +13,9 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from . import __version__
 from . import pack as pack_ops
@@ -58,6 +59,11 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Magpie MVP", version=__version__, lifespan=lifespan)
+
+# Dev-stage CORS so a browser extension / local web page can call the Core directly.
+# MAGPIE_CORS_ORIGINS: comma-separated origins, default "*" (no credentials are used anywhere).
+_cors = [o.strip() for o in (get_settings().cors_origins or "*").split(",") if o.strip()]
+app.add_middleware(CORSMiddleware, allow_origins=_cors, allow_methods=["*"], allow_headers=["*"], allow_credentials=False)
 
 
 def state(request: Request) -> AppState:
@@ -112,21 +118,30 @@ async def create_material(
     Analysis runs in the background unless `sync=true`.
     """
     st = state(request)
-    if request.headers.get("content-type", "").startswith("application/json"):
-        body = await request.json()
-        payload = CapturePayload.model_validate(body)
-        sync = bool(body.get("sync", False))
-        data, filename = None, None
-    else:
-        data = await file.read() if file is not None else None
-        filename = file.filename if file is not None else None
-        mod = modality or ("image" if data else "text")
-        payload = CapturePayload(
-            modality=mod,  # type: ignore[arg-type]
-            content=content,
-            source=Source(page_url=page_url or None, resource_url=resource_url or None, page_title=page_title or None, captured_at=captured_at or None),
-            human=Human(thought=(thought or "").strip() or None),
-        )
+    try:
+        if request.headers.get("content-type", "").startswith("application/json"):
+            try:
+                body = await request.json()
+            except ValueError as e:
+                raise HTTPException(422, [{"loc": ["body"], "msg": f"invalid JSON: {e}", "type": "json_invalid"}]) from e
+            if not isinstance(body, dict):
+                raise HTTPException(422, [{"loc": ["body"], "msg": "body must be a JSON object (CapturePayload)", "type": "type_error"}])
+            payload = CapturePayload.model_validate(body)
+            sync = bool(body.get("sync", False))
+            data, filename = None, None
+        else:
+            data = await file.read() if file is not None else None
+            filename = file.filename if file is not None else None
+            mod = modality or ("image" if data else "text")
+            payload = CapturePayload(
+                modality=mod,  # type: ignore[arg-type]
+                content=content,
+                source=Source(page_url=page_url or None, resource_url=resource_url or None, page_title=page_title or None, captured_at=captured_at or None),
+                human=Human(thought=(thought or "").strip() or None),
+            )
+    except ValidationError as e:
+        # same shape FastAPI uses for request validation errors
+        raise HTTPException(422, [{"loc": list(err["loc"]), "msg": err["msg"], "type": err["type"]} for err in e.errors()]) from e
 
     try:
         if payload.modality == "image":

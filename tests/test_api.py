@@ -60,3 +60,39 @@ def test_index_and_health(client):
     assert "MAGPIE MVP" in client.get("/").text
     h = client.get("/health").json()
     assert h["provider"] == "fake" and h["materials"] == 0
+
+
+# ------------------------------------------------------------------ capture error contract
+
+
+def test_capture_errors_are_explicit(client, sample_image):
+    r = client.post("/materials", data={"modality": "image", "thought": "x"})
+    assert r.status_code == 400 and r.json()["detail"] == "image material needs a file"
+
+    r = client.post("/materials", json={"modality": "text", "content": "   "})
+    assert r.status_code == 400 and r.json()["detail"] == "text material needs content"
+
+    r = client.post("/materials", data={"modality": "video", "content": "x"})
+    assert r.status_code == 422 and r.json()["detail"][0]["loc"] == ["modality"]
+
+    r = client.post("/materials", json={"content": "hello"})
+    assert r.status_code == 422 and r.json()["detail"][0]["loc"] == ["modality"]
+
+    r = client.post("/materials", content=b'"just a string"', headers={"content-type": "application/json"})
+    assert r.status_code == 422 and "JSON object" in r.json()["detail"][0]["msg"]
+
+    r = client.post("/materials", data={"modality": "image"}, files={"file": ("notes.txt", b"not an image", "text/plain")})
+    assert r.status_code == 400 and "not a decodable image" in r.json()["detail"]
+
+    assert client.get("/materials/mat_nope").status_code == 404
+    assert client.get("/materials").json()["total"] == 0  # nothing half-saved
+
+
+def test_cors_allows_extension_origins(client):
+    origin = "chrome-extension://abcdefghijklmnopabcdefghijklmnop"
+    r = client.options("/materials", headers={"Origin": origin, "Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"})
+    assert r.status_code == 200
+    assert r.headers["access-control-allow-origin"] == "*"
+    assert "POST" in r.headers["access-control-allow-methods"]
+    r = client.get("/health", headers={"Origin": origin})
+    assert r.headers["access-control-allow-origin"] == "*"

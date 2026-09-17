@@ -7,10 +7,13 @@ analyse in the background while the CLI runs both synchronously.
 from __future__ import annotations
 
 import hashlib
+import io
 import logging
 import mimetypes
 from dataclasses import dataclass
 from pathlib import Path
+
+from PIL import Image
 
 from .analysis import image as img_an
 from .analysis import text as txt_an
@@ -40,13 +43,21 @@ class Ingestor:
     # ------------------------------------------------------------------ create
     def create_image(self, data: bytes, filename: str | None, payload: CapturePayload) -> tuple[Material, bool]:
         """Store the original file and the Material row. Returns (material, created)."""
+        if not data:
+            raise ValueError("image material needs a file")
+        try:  # fail at save time, not minutes later in background analysis
+            with Image.open(io.BytesIO(data)) as probe:
+                probe.verify()
+                fmt = (probe.format or "").lower()
+        except Exception as e:  # noqa: BLE001
+            raise ValueError(f"file is not a decodable image ({filename or 'upload'}); send JPEG/PNG/WebP/GIF bytes") from e
         sha = hashlib.sha256(data).hexdigest()
         existing = self.db.find_by_sha256(sha)
         if existing:
             return existing, False
-        ext = (Path(filename).suffix.lower() if filename else "") or ".jpg"
+        ext = (Path(filename).suffix.lower() if filename else "") or ""
         if ext not in IMAGE_EXT:
-            ext = ".jpg"
+            ext = {"jpeg": ".jpg", "png": ".png", "webp": ".webp", "gif": ".gif", "bmp": ".bmp", "tiff": ".tif"}.get(fmt, ".jpg")
         m = Material(modality="image", source=payload.source, human=payload.human)
         rel = f"{m.id}{ext}"
         self.settings.ensure_dirs()
