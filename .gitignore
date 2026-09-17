@@ -1,0 +1,19 @@
+# python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# secrets / local config
+.env
+
+# runtime data (SQLite db, stored originals, thumbnails)
+data/
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
