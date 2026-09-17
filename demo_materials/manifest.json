@@ -1,0 +1,395 @@
+{
+  "items": [
+    {
+      "key": "washi_fiber_closeup",
+      "modality": "image",
+      "commons_title": "File:Washi close-up from ukiyo-e print.jpeg",
+      "thought": "喜欢这种纸纤维的颗粒感，墨线压在上面有一点渗，不是数码那种干净的边。",
+      "file": "images/washi_fiber_closeup.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Washi_close-up_from_ukiyo-e_print.jpeg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Washi_close-up_from_ukiyo-e_print.jpeg",
+        "page_title": "和纸纤维特写（浮世绘印刷）",
+        "license": "CC BY-SA 3.0"
+      },
+      "attribution": "User:Ragesoss"
+    },
+    {
+      "key": "shiroishi_washi_letter",
+      "modality": "image",
+      "commons_title": "File:Shiroishi washi letter paper.jpg",
+      "thought": "这张纸本身就是内容。白但不是屏幕的白，有云一样的纹理。首页背景想要这种白。",
+      "file": "images/shiroishi_washi_letter.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Shiroishi_washi_letter_paper.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Shiroishi_washi_letter_paper.jpg",
+        "page_title": "白石和纸信纸",
+        "license": "CC BY-SA 3.0"
+      },
+      "attribution": "Mizu basyo"
+    },
+    {
+      "key": "letterpress_lead_type",
+      "modality": "image",
+      "commons_title": "File:Letterpress typefaces.jpg",
+      "thought": "铅字盒子和手写标签，工具本身的秩序感。做作品集页面时想用这种“工坊”气质。",
+      "file": "images/letterpress_lead_type.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Letterpress_typefaces.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Letterpress_typefaces.jpg",
+        "page_title": "活字铅字盒",
+        "license": "CC BY 2.0"
+      },
+      "attribution": "Kyle Van Horn"
+    },
+    {
+      "key": "lissitzky_red_wedge",
+      "modality": "image",
+      "commons_title": "File:Beat the Whites with the Red Wedge.jpg",
+      "thought": "一个红三角、一个白圆、几行字，力量全靠几何和留白。海报级的克制。",
+      "file": "images/lissitzky_red_wedge.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Beat_the_Whites_with_the_Red_Wedge.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Beat_the_Whites_with_the_Red_Wedge.jpg",
+        "page_title": "El Lissitzky《红楔子打白军》1919",
+        "license": "Public domain"
+      },
+      "attribution": "El Lissitzky"
+    },
+    {
+      "key": "hammershoi_interior_mirror",
+      "modality": "image",
+      "commons_title": "File:Vilhelm Hammershøi - Interior with a mirror (ca.1907).jpg",
+      "thought": "灰调、几乎没有饱和度、家具很少，但一点都不冷。“安静”的参考标准。",
+      "file": "images/hammershoi_interior_mirror.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_(ca.1907).jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_%28ca.1907%29.jpg",
+        "page_title": "Hammershøi《有镜子的室内》约1907",
+        "license": "Public domain"
+      },
+      "attribution": "Vilhelm Hammershøi"
+    },
+    {
+      "key": "ru_ware_celadon",
+      "modality": "image",
+      "commons_title": "File:Ru Ware Celadon, Northern Song (38093962915).jpg",
+      "thought": "汝窑这种天青色：介于蓝绿灰之间，说不清是什么色。想拿它当主色，代替科技蓝。",
+      "file": "images/ru_ware_celadon.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Ru_Ware_Celadon,_Northern_Song_(38093962915).jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ru_Ware_Celadon%2C_Northern_Song_%2838093962915%29.jpg",
+        "page_title": "北宋汝窑青瓷",
+        "license": "CC0"
+      },
+      "attribution": "Gary Todd"
+    },
+    {
+      "key": "barbican_concrete",
+      "modality": "image",
+      "commons_title": "File:Barbican Concrete finish (8085917893).jpg",
+      "thought": "剁斧混凝土的表面，粗糙但是有意为之。想找网页里对应的“粗糙的精致”。",
+      "file": "images/barbican_concrete.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Barbican_Concrete_finish_(8085917893).jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Barbican_Concrete_finish_%288085917893%29.jpg",
+        "page_title": "Barbican 剁斧混凝土表面",
+        "license": "CC BY-SA 2.0"
+      },
+      "attribution": "Images George Rex from London, England"
+    },
+    {
+      "key": "kelmscott_chaucer",
+      "modality": "image",
+      "commons_title": "File:Kelmscott Chaucer.jpg",
+      "thought": "满版的装饰边框和黑体字，密到透不过气，但每一寸都是手工。反极简的极致，做对比参考。",
+      "file": "images/kelmscott_chaucer.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Kelmscott_Chaucer.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Kelmscott_Chaucer.jpg",
+        "page_title": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+        "license": "CC BY-SA 3.0"
+      },
+      "attribution": "Cullen328"
+    },
+    {
+      "key": "ma_yuan_water_album",
+      "modality": "image",
+      "commons_title": "File:Ma Yuan - Water Album - Ten Thousand Riplets on the Yangzi.jpg",
+      "thought": "马远画水只用线，一种水一种笔法。重复的线条也能有情绪，想到做背景纹理。",
+      "file": "images/ma_yuan_water_album.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Ma_Yuan_-_Water_Album_-_Ten_Thousand_Riplets_on_the_Yangzi.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Ma_Yuan_-_Water_Album_-_Ten_Thousand_Riplets_on_the_Yangzi.jpg",
+        "page_title": "马远《水图·长江万顷》",
+        "license": "Public domain"
+      },
+      "attribution": "Ma Yuan"
+    },
+    {
+      "key": "raku_black_tea_bowl",
+      "modality": "image",
+      "commons_title": "File:Black Raku tea bowl by Dōnyū III Titled Kanzan.jpg",
+      "thought": "黑乐茶碗，不对称、不光滑，捧在手里的那种物质感。产品该给人这种手感。",
+      "file": "images/raku_black_tea_bowl.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Black_Raku_tea_bowl_by_D%C5%8Dny%C5%AB_III_Titled_Kanzan.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Black_Raku_tea_bowl_by_D%C5%8Dny%C5%AB_III_Titled_Kanzan.jpg",
+        "page_title": "黑乐茶碗（道入，江户）",
+        "license": "CC BY 4.0"
+      },
+      "attribution": "Dōnyū"
+    },
+    {
+      "key": "braun_sk4",
+      "modality": "image",
+      "commons_title": "File:Braun SK 4.1.jpg",
+      "thought": "白色金属+木侧板+透明盖，Rams 的“白雪公主的棺材”。工业但温和，颜色只用材料本身的颜色。",
+      "file": "images/braun_sk4.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Braun_SK_4.1.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Braun_SK_4.1.jpg",
+        "page_title": "Braun SK 4（Dieter Rams / Hans Gugelot）",
+        "license": "CC BY-SA 2.0"
+      },
+      "attribution": "With Associates"
+    },
+    {
+      "key": "rusted_shutter",
+      "modality": "image",
+      "commons_title": "File:Ref 1 - rusted shutter (Dimitrios Savva via Poly Haven).webp",
+      "thought": "锈掉的蓝色卷帘门，丑得很真实。想要一点这种不完美的、被时间用过的表面。",
+      "file": "images/rusted_shutter.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Ref_1_-_rusted_shutter_(Dimitrios_Savva_via_Poly_Haven).webp",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ref_1_-_rusted_shutter_%28Dimitrios_Savva_via_Poly_Haven%29.webp",
+        "page_title": "生锈的蓝色卷帘门（Poly Haven 扫描）",
+        "license": "CC0"
+      },
+      "attribution": "Dimitrios Savva"
+    },
+    {
+      "key": "suzhou_moon_gate",
+      "modality": "image",
+      "commons_title": "File:Suzhou 2006 09-57.jpg",
+      "thought": "白墙、月洞门、漏窗，中国式的“框景”。首页可以这样：用一个洞让人往里看。",
+      "file": "images/suzhou_moon_gate.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Suzhou_2006_09-57.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Suzhou_2006_09-57.jpg",
+        "page_title": "苏州拙政园月洞门与漏窗",
+        "license": "CC BY-SA 4.0"
+      },
+      "attribution": "G41rn8"
+    },
+    {
+      "key": "tang_stele_rubbing",
+      "modality": "image",
+      "commons_title": "File:Li Shiji bei.jpg",
+      "thought": "碑拓：黑底白字，字口的边缘有石头的毛糙。这是中文排版最“物质”的样子。",
+      "file": "images/tang_stele_rubbing.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Li_Shiji_bei.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Li_Shiji_bei.jpg",
+        "page_title": "唐《李世勣碑》拓本",
+        "license": "CC BY-SA 4.0"
+      },
+      "attribution": "ReijiYamashina777"
+    },
+    {
+      "key": "ando_church_of_light",
+      "modality": "image",
+      "commons_title": "File:Church of Light.JPG",
+      "thought": "只有混凝土和一道光。什么都没有，反而成了最强的东西。首屏想有这种“一个动作”的感觉。",
+      "file": "images/ando_church_of_light.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Church_of_Light.JPG",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Church_of_Light.JPG",
+        "page_title": "安藤忠雄 光之教会",
+        "license": "CC BY-SA 2.5"
+      },
+      "attribution": "The original uploader was Bujatt at English Wikipedia."
+    },
+    {
+      "key": "song_yijing_print",
+      "modality": "image",
+      "commons_title": "File:I Ching Song Dynasty print.jpg",
+      "thought": "宋版书：竖排、字距松、朱印压在上面。宋体字的来源，中文网站想要这种气质而不是微软雅黑。",
+      "file": "images/song_yijing_print.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:I_Ching_Song_Dynasty_print.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/3/35/I_Ching_Song_Dynasty_print.jpg",
+        "page_title": "宋版《周易》书页",
+        "license": "Public domain"
+      },
+      "attribution": "Song era print artist"
+    },
+    {
+      "key": "synthwave_render",
+      "modality": "image",
+      "commons_title": "File:Synthwave cyberspace sunset (low res).jpg",
+      "thought": "反例。蓝紫渐变、霓虹网格、发光——这就是所有 AI 产品页的默认脸。以后凡是像这个的都删。",
+      "file": "images/synthwave_render.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Synthwave_cyberspace_sunset_(low_res).jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Synthwave_cyberspace_sunset_%28low_res%29.jpg",
+        "page_title": "Synthwave 霓虹网格日落（3D 渲染）",
+        "license": "CC BY-SA 3.0"
+      },
+      "attribution": "G. Casqueiro"
+    },
+    {
+      "key": "kintsugi_bowl",
+      "modality": "image",
+      "commons_title": "File:Bowl, 19th century (CH 18345219).jpg",
+      "thought": "金缮：裂痕不藏，用金线描出来。产品里的“错误状态”能不能这样做？",
+      "file": "images/kintsugi_bowl.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Bowl,_19th_century_(CH_18345219).jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Bowl%2C_19th_century_%28CH_18345219%29.jpg",
+        "page_title": "金缮修补的瓷碗（19 世纪）",
+        "license": "Public domain"
+      },
+      "attribution": "Unknown artistUnknown artist"
+    },
+    {
+      "key": "sand_ripples",
+      "modality": "image",
+      "commons_title": "File:Ripples on Mesquite Flat Sand Dunes.jpg",
+      "thought": "风留下的纹理，重复但不机械。想用作背景，代替那种噪点渐变。",
+      "file": "images/sand_ripples.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+        "page_title": "沙丘风纹（Death Valley）",
+        "license": "Public domain"
+      },
+      "attribution": "National Park Service"
+    },
+    {
+      "key": "nuremberg_chronicle_page",
+      "modality": "image",
+      "commons_title": "File:Nuremberg Chronicle Pirated Page.jpg",
+      "thought": "1493 年的排版：双栏、木刻插图嵌在字里、字块和图的比例特别舒服。老的版面知识比现代模板可靠。",
+      "file": "images/nuremberg_chronicle_page.jpg",
+      "source": {
+        "page_url": "https://commons.wikimedia.org/wiki/File:Nuremberg_Chronicle_Pirated_Page.jpg",
+        "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Nuremberg_Chronicle_Pirated_Page.jpg",
+        "page_title": "《纽伦堡编年史》1497 年版书页",
+        "license": "Public domain"
+      },
+      "attribution": "Johann Schönsperger (c. 1455-before 1521)"
+    },
+    {
+      "key": "morris_useful_or_beautiful",
+      "modality": "text",
+      "content": "Have nothing in your houses that you do not know to be useful, or believe to be beautiful.",
+      "thought": "这句可以直接当首页文案的态度：实用或美，二者之外都不要。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/William_Morris",
+        "page_title": "William Morris, “The Beauty of Life” (1880)",
+        "license": "quotation"
+      }
+    },
+    {
+      "key": "rams_less_but_better",
+      "modality": "text",
+      "content": "Good design is as little design as possible. Less, but better – because it concentrates on the essential aspects, and the products are not burdened with non-essentials. Back to purity, back to simplicity.",
+      "thought": "“少，但更好”——不是省事，是把不重要的拿掉。做首页时每加一个元素都用这句问一遍。",
+      "source": {
+        "page_url": "https://www.vitsoe.com/us/about/good-design",
+        "page_title": "Dieter Rams: ten principles for good design (Vitsœ)",
+        "license": "quotation"
+      }
+    },
+    {
+      "key": "wabi_sabi_definition",
+      "modality": "text",
+      "content": "In traditional Japanese aesthetics, wabi-sabi is a world view centered on the acceptance of transience and imperfection. The aesthetic is sometimes described as one of appreciating beauty that is \"imperfect, impermanent, and incomplete\" in nature.",
+      "thought": "不完美、不恒久、不完整——这三个词可以直接当一组设计原则，尤其用来对抗那种过于光滑的 AI 感。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/Wabi-sabi",
+        "page_title": "Wabi-sabi - Wikipedia",
+        "license": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "key": "changwuzhi_ning_pu_wu_qiao",
+      "modality": "text",
+      "content": "宁古无时，宁朴无巧，宁俭无俗。",
+      "thought": "明代人的“反潮流”宣言。宁朴无巧——首页的动效和渐变都该按这句删。",
+      "source": {
+        "page_url": "https://zh.wikisource.org/wiki/長物志",
+        "page_title": "文震亨《长物志》",
+        "license": "public domain"
+      }
+    },
+    {
+      "key": "brutalism_definition",
+      "modality": "text",
+      "content": "Brutalist buildings are characterised by minimalist constructions that showcase the bare building materials and structural elements over decorative design. The style commonly makes use of exposed, unpainted concrete or brick, angular geometric shapes and a predominantly monochrome colour palette.",
+      "thought": "“展示材料本身而不是装饰”——网页里的对应物是什么？也许是不遮掩的排版结构和真实的照片，而不是插画。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/Brutalist_architecture",
+        "page_title": "Brutalist architecture - Wikipedia",
+        "license": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "key": "corporate_memphis",
+      "modality": "text",
+      "content": "Corporate Memphis (also known as Alegria, big tech art, or flat art) is a term used, often disparagingly, to describe a flat, geometric art style widely used in illustrations of tech companies in the late 2010s and early 2020s. It is characterised by simplified human figures with disproportionate limbs and bright, often pastel, colours.",
+      "thought": "反例。所有 SaaS 长得一样的原因。避开这个，也避开它的 AI 版本：蓝紫渐变 + 玻璃拟态 + 发光边框。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/Corporate_Memphis",
+        "page_title": "Corporate Memphis - Wikipedia",
+        "license": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "key": "liubai_definition",
+      "modality": "text",
+      "content": "留白是中国艺术作品创作中常用的一种手法，指书画艺术创作中为使整个作品画面、章法更为协调精美而有意留下相应的空白，留有想象的空间。",
+      "thought": "留白不是“空”，是让人有地方停。首页首屏想做成这样：一句话，一张材质图，其他都不放。",
+      "source": {
+        "page_url": "https://zh.wikipedia.org/wiki/留白",
+        "page_title": "留白 - 维基百科",
+        "license": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "key": "swiss_style_definition",
+      "modality": "text",
+      "content": "The International Typographic Style, also known as the Swiss Style, emphasises cleanliness, readability, and objectivity. Hallmarks of the style are asymmetric layouts, use of a grid, sans-serif typefaces like Akzidenz-Grotesk, and flush left, ragged right text.",
+      "thought": "网格 + 左对齐 + 无衬线，这套骨架永远不出错，但只用它会太冷。要和纸张、材质配着用。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/International_Typographic_Style",
+        "page_title": "International Typographic Style - Wikipedia",
+        "license": "CC BY-SA 4.0"
+      }
+    },
+    {
+      "key": "saint_exupery_nothing_to_remove",
+      "modality": "text",
+      "content": "It seems that perfection is attained not when there is nothing more to add, but when there is nothing more to remove.",
+      "thought": "文案的方向：不要说“强大”“革命性”，说我们拿掉了什么。",
+      "source": {
+        "page_url": "https://en.wikipedia.org/wiki/Wind,_Sand_and_Stars",
+        "page_title": "Antoine de Saint-Exupéry, Terre des hommes (1939)",
+        "license": "quotation"
+      }
+    },
+    {
+      "key": "yuanye_wan_zi_tian_kai",
+      "modality": "text",
+      "content": "虽由人作，宛自天开。",
+      "thought": "“虽由人作，宛自天开”——AI 产品最难的是这个：明明是机器做的，看起来却不像机器味。",
+      "source": {
+        "page_url": "https://zh.wikisource.org/wiki/園冶",
+        "page_title": "计成《园冶·园说》",
+        "license": "public domain"
+      }
+    }
+  ],
+  "_notes": "Demo library for Phase 1. Images come from Wikimedia Commons (license per item, attribution kept); texts are short quotations / CC BY-SA encyclopedia excerpts with their source page. Human Thoughts were written first-person by the implementing agent as a stand-in for the product owner and should be replaced/edited by a real user for serious validation."
+}

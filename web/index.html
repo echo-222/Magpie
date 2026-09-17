@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>MAGPIE MVP — dev UI</title>
+<style>
+  body { font: 14px/1.45 -apple-system, system-ui, sans-serif; margin: 0; padding: 16px 24px 80px; max-width: 1100px; color: #222; }
+  h1 { font-size: 18px; letter-spacing: .12em; margin: 0 0 4px; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: #666; border-top: 1px solid #ddd; padding-top: 14px; margin: 26px 0 10px; }
+  small, .muted { color: #777; }
+  textarea, input[type=text] { width: 100%; box-sizing: border-box; font: inherit; padding: 6px 8px; border: 1px solid #bbb; }
+  textarea { min-height: 56px; }
+  button { font: inherit; padding: 4px 10px; border: 1px solid #888; background: #f6f6f6; cursor: pointer; }
+  button.primary { background: #222; color: #fff; border-color: #222; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 10px; align-items: flex-start; }
+  .row > * { flex: 1; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .card { border: 1px solid #ddd; padding: 8px; background: #fff; }
+  .card img { width: 100%; height: 130px; object-fit: cover; background: #eee; display: block; }
+  .card .txt { height: 130px; overflow: hidden; background: #f4f1ea; padding: 6px; font-size: 12px; white-space: pre-wrap; }
+  .card .label { font-weight: 600; margin: 6px 0 2px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .human { color: #7a3e00; }
+  .ai { color: #245; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border: 1px solid #ccc; vertical-align: middle; margin-right: 2px; }
+  .badge { font-size: 11px; padding: 1px 6px; border: 1px solid #ccc; border-radius: 8px; color: #555; }
+  .badge.ready { border-color: #6a6; color: #285; } .badge.failed { border-color: #c66; color: #a33; } .badge.pending, .badge.analyzing { border-color: #cb8; color: #a80; }
+  .group { border: 1px solid #ccc; margin: 10px 0; padding: 8px 10px; }
+  .group h3 { margin: 0 0 6px; font-size: 14px; }
+  .member { display: flex; gap: 10px; padding: 6px 0; border-top: 1px dashed #e2e2e2; }
+  .member img, .member .txt { width: 84px; height: 64px; object-fit: cover; flex: none; font-size: 10px; }
+  .member .body { flex: 1; }
+  .member .ops { flex: none; display: flex; flex-direction: column; gap: 4px; }
+  .member .ops button, .member .ops select { font-size: 12px; padding: 2px 6px; }
+  pre { background: #f7f7f7; border: 1px solid #ddd; padding: 10px; white-space: pre-wrap; font-size: 12px; max-height: 480px; overflow: auto; }
+  #status { position: fixed; bottom: 0; left: 0; right: 0; background: #222; color: #eee; padding: 6px 24px; font-size: 12px; }
+  .hit-score { font-size: 11px; color: #888; }
+  .alts { background: #fbf8ef; border: 1px dashed #c9b; padding: 8px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<h1>MAGPIE MVP</h1>
+<div class="muted" id="health">…</div>
+
+<h2>Import Material</h2>
+<div class="row">
+  <div>
+    <div><input type="file" id="file" accept="image/*"> <small>image, or paste text below</small></div>
+    <textarea id="content" placeholder="Text material (paste a paragraph you saved)"></textarea>
+    <div class="row">
+      <input type="text" id="page_url" placeholder="source page URL (optional)">
+      <input type="text" id="page_title" placeholder="page title (optional)">
+    </div>
+  </div>
+  <div>
+    <div class="human">Human Thought — why did this catch you?</div>
+    <textarea id="thought" placeholder="喜欢这里粗糙的纸张质感"></textarea>
+    <button class="primary" id="add">Add</button>
+    <span id="add_msg" class="muted"></span>
+  </div>
+</div>
+
+<h2>What are you making?</h2>
+<textarea id="task" placeholder="我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。"></textarea>
+<div class="row" style="align-items:center">
+  <button class="primary" id="build" style="flex:none">Build Material Pack</button>
+  <span class="muted" style="flex:none">or load:</span>
+  <select id="packs"></select>
+</div>
+
+<h2>Pack</h2>
+<div id="export_box" style="display:none; margin-bottom:8px">
+  <button class="primary" id="copy">Copy for Agent</button>
+  <button id="copy_json">Copy JSON</button>
+  <span id="copy_msg" class="muted"></span>
+</div>
+<div id="pack"><span class="muted">no pack yet — type a task above and build one (≈ 10–40 s with DeepSeek, 1–2.5 min with local Qwen)</span></div>
+<pre id="export" style="display:none"></pre>
+
+<h2>Material Library <span id="lib_count" class="muted"></span></h2>
+<div class="row">
+  <input type="text" id="q" placeholder="search library (Human Thought + AI understanding): 纸张质感 / 克制 / brutalist …">
+  <button id="search" style="flex:none">Search</button>
+  <button id="clear" style="flex:none">All</button>
+  <button id="toggle_lib" style="flex:none">Show all</button>
+</div>
+<div id="library" class="cards" style="margin-top:10px"></div>
+
+<div id="status">ready</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const status = (t) => { $('status').textContent = t; };
+let materials = {}; let pack = null; let pollTimer = null;
+
+async function api(path, opts = {}) {
+  const r = await fetch(path, opts);
+  if (!r.ok) { const t = await r.text(); throw new Error(r.status + ' ' + t.slice(0, 300)); }
+  return r.headers.get('content-type')?.includes('json') ? r.json() : r.text();
+}
+const esc = (s) => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// ---------------------------------------------------------------- health
+async function loadHealth() {
+  const h = await api('/health');
+  $('health').textContent = `chat=${h.chat_provider}/${h.chat_model} · vision=${h.vision_model} · embed=${h.embed_model} · ${h.materials} materials · data=${h.data_dir}`;
+}
+
+// ---------------------------------------------------------------- import
+$('add').onclick = async () => {
+  const fd = new FormData();
+  const f = $('file').files[0];
+  if (f) { fd.append('file', f); fd.append('modality', 'image'); }
+  else if ($('content').value.trim()) { fd.append('modality', 'text'); fd.append('content', $('content').value); }
+  else { $('add_msg').textContent = 'pick an image or paste text first'; return; }
+  fd.append('thought', $('thought').value);
+  fd.append('page_url', $('page_url').value); fd.append('page_title', $('page_title').value);
+  $('add').disabled = true; $('add_msg').textContent = 'saving…';
+  try {
+    const res = await api('/materials', { method: 'POST', body: fd });
+    $('add_msg').textContent = res.created ? `saved ${res.material.id}, analyzing in background…` : `already in library (${res.material.id})`;
+    $('file').value = ''; $('content').value = ''; $('thought').value = '';
+    await loadLibrary(); startPolling();
+  } catch (e) { $('add_msg').textContent = 'error: ' + e.message; }
+  $('add').disabled = false;
+};
+
+// ---------------------------------------------------------------- library
+function materialCard(m, hit) {
+  const thumb = m.modality === 'image'
+    ? `<img src="/materials/${m.id}/thumb" loading="lazy">`
+    : `<div class="txt">${esc((m.original.content || '').slice(0, 260))}</div>`;
+  const sw = (m.analysis.colors || []).slice(0, 5).map(c => `<span class="swatch" title="${c.name || ''} ${(c.ratio*100).toFixed(0)}%" style="background:${c.hex}"></span>`).join('');
+  const hitLine = hit ? `<div class="hit-score">score ${hit.score.toFixed(3)} · via ${hit.via}</div>` : '';
+  const label = m.original.filename || m.source.page_title || m.id;
+  return `<div class="card" data-id="${m.id}">
+    ${thumb}
+    <div class="label" title="${esc(label)}">${esc(label)} <span class="badge ${m.processing.status}">${m.processing.status}</span></div>
+    ${hitLine}
+    <div class="human" title="click to edit" onclick="editThought('${m.id}')">Human: ${esc(m.human.thought || '—')}</div>
+    <div class="ai">AI: ${esc(aiLine(m) || (m.processing.status === 'ready' ? '—' : '…'))}</div>
+    <div>${sw} <small class="muted">${m.source.page_url ? `<a href="${esc(m.source.page_url)}" target="_blank">source</a>` : ''} ${m.processing.error ? esc(m.processing.error.slice(0,80)) : ''}</small></div>
+  </div>`;
+}
+function aiLine(m) {
+  const parts = [...(m.analysis.style || []).slice(0, 3), ...(m.analysis.keywords || []).slice(0, 4)];
+  return [...new Set(parts)].slice(0, 6).join(' / ');
+}
+const LIB_PREVIEW = 8; let libExpanded = false;
+async function loadLibrary() {
+  const res = await api('/materials');
+  materials = {}; res.items.forEach(m => materials[m.id] = m);
+  const shown = libExpanded ? res.items : res.items.slice(0, LIB_PREVIEW);
+  $('lib_count').textContent = libExpanded || res.total <= LIB_PREVIEW ? `(${res.total})` : `(showing ${shown.length} of ${res.total})`;
+  $('toggle_lib').style.display = res.total > LIB_PREVIEW ? '' : 'none';
+  $('toggle_lib').textContent = libExpanded ? 'Collapse' : `Show all (${res.total})`;
+  $('library').innerHTML = shown.map(m => materialCard(m)).join('') || '<span class="muted">empty — import something</span>';
+  const busy = res.items.some(m => ['pending', 'analyzing'].includes(m.processing.status));
+  if (busy) startPolling(); else stopPolling();
+}
+$('toggle_lib').onclick = () => { libExpanded = !libExpanded; $('q').value = ''; loadLibrary(); };
+function startPolling() { if (!pollTimer) pollTimer = setInterval(loadLibrary, 3000); }
+function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
+$('search').onclick = async () => {
+  const q = $('q').value.trim(); if (!q) return loadLibrary();
+  stopPolling(); status('searching…');
+  const res = await api('/search?q=' + encodeURIComponent(q));
+  res.hits.forEach(h => materials[h.material_id] = h.material);
+  $('lib_count').textContent = `(${res.hits.length} hits for “${q}”)`;
+  $('library').innerHTML = res.hits.map(h => materialCard(h.material, h)).join('') || '<span class="muted">no hits</span>';
+  status(`search "${q}": ${res.hits.length} hits`);
+};
+$('q').onkeydown = (e) => { if (e.key === 'Enter') $('search').click(); };
+$('clear').onclick = () => { $('q').value = ''; loadLibrary(); };
+window.editThought = async (id) => {
+  const cur = materials[id]?.human?.thought || '';
+  const t = prompt('Human Thought (why did this matter to you?)', cur);
+  if (t === null) return;
+  await api(`/materials/${id}/thought`, { method: 'PATCH', headers: {'content-type': 'application/json'}, body: JSON.stringify({ thought: t }) });
+  loadLibrary();
+};
+
+// ---------------------------------------------------------------- pack
+$('build').onclick = async () => {
+  const task = $('task').value.trim(); if (!task) return;
+  $('build').disabled = true; status('understanding task → retrieving → recomposing … (DeepSeek ≈ 10–40 s, local Qwen ≈ 1–2.5 min)');
+  try {
+    const res = await api('/packs', { method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({ task }) });
+    setPack(res); await loadPacks(); status(`pack ${pack.id} built`);
+  } catch (e) { status('error: ' + e.message); }
+  $('build').disabled = false;
+};
+async function loadPacks() {
+  const res = await api('/packs');
+  $('packs').innerHTML = '<option value="">— packs —</option>' + res.items.map(p => `<option value="${p.id}" ${pack && pack.id === p.id ? 'selected' : ''}>${esc(p.name.slice(0, 60))} (${p.members})</option>`).join('');
+}
+$('packs').onchange = async () => { const id = $('packs').value; if (!id) return; setPack(await api('/packs/' + id)); };
+
+function setPack(res) {
+  pack = res.pack; Object.assign(materials, res.materials || {});
+  renderPack(); $('export_box').style.display = 'block'; $('export').style.display = 'none'; $('export').textContent = ''; $('copy_msg').textContent = '';
+}
+function memberHtml(g, m) {
+  const mat = materials[m.material_id]; if (!mat) return '';
+  const thumb = mat.modality === 'image' ? `<img src="/materials/${mat.id}/thumb">` : `<div class="txt">${esc((mat.original.content || '').slice(0, 120))}</div>`;
+  const groups = pack.groups.map(x => `<option ${x.name === g.name ? 'disabled' : ''}>${esc(x.name)}</option>`).join('');
+  return `<div class="member" data-id="${mat.id}">
+    ${thumb}
+    <div class="body">
+      <div><b>${esc(mat.original.filename || mat.source.page_title || mat.id)}</b> <small class="muted">${mat.id} · ${m.role || ''} ${m.added_by === 'human' ? '· added by you' : ''}</small></div>
+      <div class="human">Human: ${esc(mat.human.thought || '—')}</div>
+      <div>Reason: ${esc(m.reason || '')}</div>
+      ${m.note ? `<div class="muted">Note: ${esc(m.note)}</div>` : ''}
+    </div>
+    <div class="ops">
+      <button onclick="removeMember('${mat.id}')">Remove</button>
+      <select onchange="moveMember('${mat.id}', this.value)"><option value="">Move to…</option>${groups}<option value="__new__">+ new group</option></select>
+      <button onclick="alternatives('${mat.id}', '${esc(g.name)}')">Alternatives</button>
+      <button onclick="noteMember('${mat.id}')">Note</button>
+    </div>
+  </div>`;
+}
+function renderPack() {
+  const t = pack.task;
+  const dir = [t.purpose && `目的: ${t.purpose}`, t.desired_qualities?.length && `想要: ${t.desired_qualities.join('、')}`, t.avoid?.length && `避免: ${t.avoid.join('、')}`, t.constraints?.length && `约束: ${t.constraints.join('、')}`].filter(Boolean);
+  const groups = pack.groups.map(g => `<div class="group" data-group="${esc(g.name)}">
+      <h3>${esc(g.name)} <small class="muted">${esc(g.purpose || '')}</small></h3>
+      ${g.members.map(m => memberHtml(g, m)).join('') || '<small class="muted">empty</small>'}
+      <div id="alts-${cssId(g.name)}"></div>
+    </div>`).join('');
+  $('pack').innerHTML = `<div><b>${esc(pack.name)}</b> <small class="muted">${pack.id} · ${pack.human_edits.length} human edits · candidates ${pack.candidates.length}</small></div>
+    <div class="muted">${dir.map(esc).join(' · ')}</div>${groups}`;
+}
+const cssId = (s) => s.replace(/[^a-z0-9]/gi, '_');
+window.removeMember = async (id) => { setPack(await api(`/packs/${pack.id}/remove`, post({ material_id: id }))); };
+window.moveMember = async (id, to) => {
+  if (!to) return;
+  if (to === '__new__') { to = prompt('New group name'); if (!to) return renderPack(); }
+  setPack(await api(`/packs/${pack.id}/move`, post({ material_id: id, to_group: to })));
+};
+window.noteMember = async (id) => {
+  const cur = pack.groups.flatMap(g => g.members).find(m => m.material_id === id)?.note || '';
+  const n = prompt('Task-specific note for this material', cur); if (n === null) return;
+  setPack(await api(`/packs/${pack.id}/note`, post({ material_id: id, note: n })));
+};
+window.alternatives = async (id, group) => {
+  status('finding alternatives…');
+  const res = await api(`/packs/${pack.id}/alternatives`, post({ material_id: id, group }));
+  Object.assign(materials, res.materials || {});
+  const box = $('alts-' + cssId(group));
+  box.innerHTML = `<div class="alts"><b>More like ${esc(id)} for “${esc(group)}”</b> ${res.suggestions.map(s => {
+    const mat = materials[s.material_id];
+    return `<div class="member"><div>${mat.modality === 'image' ? `<img src="/materials/${mat.id}/thumb">` : `<div class="txt">${esc((mat.original.content||'').slice(0,100))}</div>`}</div>
+      <div class="body"><b>${esc(mat.original.filename || mat.source.page_title || mat.id)}</b> <span class="hit-score">${s.score.toFixed(3)}</span>
+      <div class="human">Human: ${esc(mat.human.thought || '—')}</div><div>Reason: ${esc(s.reason || '')}</div></div>
+      <div class="ops"><button onclick="addMember('${mat.id}', '${esc(group)}', ${JSON.stringify(s.reason || '')})">Add</button></div></div>`;
+  }).join('') || '<small class="muted">nothing else useful</small>'}</div>`;
+  status(`${res.suggestions.length} alternatives`);
+};
+window.addMember = async (id, group, reason) => { setPack(await api(`/packs/${pack.id}/add`, post({ material_id: id, group, reason }))); };
+const post = (body) => ({ method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(body) });
+
+$('copy').onclick = async () => {
+  const md = await api(`/packs/${pack.id}/export?format=markdown`);
+  $('export').textContent = md; $('export').style.display = 'block';
+  try { await navigator.clipboard.writeText(md); $('copy_msg').textContent = 'copied Markdown to clipboard — paste into ChatGPT / Claude / Cursor (preview below the pack)'; }
+  catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
+};
+$('copy_json').onclick = async () => {
+  const js = await api(`/packs/${pack.id}/export?format=json`);
+  const txt = JSON.stringify(js, null, 2); $('export').textContent = txt; $('export').style.display = 'block';
+  try { await navigator.clipboard.writeText(txt); $('copy_msg').textContent = 'copied JSON (preview below the pack)'; } catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
+};
+
+loadHealth(); loadLibrary(); loadPacks();
+</script>
+</body>
+</html>

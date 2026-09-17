@@ -1,0 +1,41 @@
+[project]
+name = "magpie"
+version = "0.1.0"
+description = "Magpie MVP core: material memory -> task-aware recomposition -> agent context"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = [
+  # web + API contract
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "python-multipart>=0.0.9",
+  "pydantic>=2.7",
+  # config
+  "python-dotenv>=1.0",
+  # model provider adapter (OpenAI-compatible: OpenAI / Ollama / DeepSeek / Qwen / ...)
+  "openai>=1.40",
+  # image metadata + dominant colours
+  "Pillow>=10.3",
+  # cosine similarity over a small embedding matrix
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# OCR engine (Apache-2.0, bundles small PP-OCR onnx models, cross-platform)
+ocr = ["rapidocr-onnxruntime>=1.3"]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+
+[project.scripts]
+magpie = "magpie.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["magpie"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

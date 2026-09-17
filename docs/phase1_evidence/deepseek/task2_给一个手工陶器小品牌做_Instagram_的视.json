@@ -1,0 +1,975 @@
+{
+  "magpie_pack": {
+    "id": "pack_08777b60d4",
+    "name": "为手工陶器小品牌制定 Instagram 的视觉方向和文案语气，传达安静、有手感、接受不完美的品牌气质。",
+    "created_at": "2026-09-17T10:52:30+00:00",
+    "updated_at": "2026-09-17T10:52:30+00:00",
+    "task": {
+      "raw_request": "给一个手工陶器小品牌做 Instagram 的视觉方向和文案语气：安静、有手感、接受不完美，不要网红滤镜和营销腔。",
+      "purpose": "为手工陶器小品牌制定 Instagram 的视觉方向和文案语气，传达安静、有手感、接受不完美的品牌气质。",
+      "desired_qualities": [
+        "安静",
+        "有手感",
+        "接受不完美",
+        "自然",
+        "真诚",
+        "非商业化"
+      ],
+      "avoid": [
+        "网红滤镜",
+        "营销腔"
+      ],
+      "constraints": [
+        "平台：Instagram",
+        "品牌类型：手工陶器小品牌"
+      ],
+      "needed_reference_types": [
+        "材质/质感",
+        "色彩",
+        "排版/字体",
+        "氛围",
+        "文案语气",
+        "反例"
+      ],
+      "search_queries": [
+        "手工陶器 自然光 质感",
+        "wabi-sabi ceramics muted tones",
+        "minimal Instagram layout earthy",
+        "handwritten typography organic",
+        "anti-marketing brand voice sincere",
+        "避免网红滤镜 营销腔 反例"
+      ],
+      "language": "zh"
+    },
+    "human_direction": "为手工陶器小品牌打造 Instagram 视觉与文案：追求安静、有手感、接受不完美的气质。视觉上使用低饱和、自然材质与柔和光影，避免网红滤镜和过度修饰；文案上采用克制、真诚、去营销化的语气，强调减法与质朴。",
+    "groups": [
+      {
+        "name": "材质与质感",
+        "purpose": "建立产品与品牌的手工触感，传递不完美之美",
+        "members": [
+          {
+            "role": "核心质感参考",
+            "reason": "黑乐茶碗的不对称与釉面斑点直接体现手工陶器的物质感，符合品牌接受不完美的理念，可用于产品特写或背景纹理。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_9a4d3762fc",
+              "modality": "image",
+              "label": "黑乐茶碗（道入，江户）",
+              "human_thought": "黑乐茶碗，不对称、不光滑，捧在手里的那种物质感。产品该给人这种手感。",
+              "summary": "一个深色釉面的陶瓷碗，表面有斑点和不规则的釉色变化。",
+              "style": [
+                "陶瓷质感",
+                "自然纹理",
+                "简约风格",
+                "深色系",
+                "手工质感"
+              ],
+              "keywords": [
+                "陶瓷",
+                "釉面",
+                "斑点",
+                "深色",
+                "手工",
+                "简约",
+                "自然"
+              ],
+              "mood": [
+                "沉稳",
+                "自然"
+              ],
+              "colors": [
+                {
+                  "hex": "#757274",
+                  "ratio": 0.231,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#3a3532",
+                  "ratio": 0.197,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#6a686a",
+                  "ratio": 0.174,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cecdce",
+                  "ratio": 0.163,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#e3e3e5",
+                  "ratio": 0.144,
+                  "name": "white"
+                },
+                {
+                  "hex": "#959395",
+                  "ratio": 0.091,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Black_Raku_tea_bowl_by_D%C5%8Dny%C5%AB_III_Titled_Kanzan.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Black_Raku_tea_bowl_by_D%C5%8Dny%C5%AB_III_Titled_Kanzan.jpg",
+                "page_title": "黑乐茶碗（道入，江户）",
+                "captured_at": "2026-09-17T07:12:46+00:00",
+                "license": "CC BY 4.0"
+              },
+              "file_endpoint": "/materials/mat_9a4d3762fc/file"
+            }
+          },
+          {
+            "role": "粗糙质感参考",
+            "reason": "剁斧混凝土表面粗糙但有意为之，对应品牌追求的“粗糙的精致”，可用于页面背景或细节展示，强化手工感。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_9f18d90439",
+              "modality": "image",
+              "label": "Barbican 剁斧混凝土表面",
+              "human_thought": "剁斧混凝土的表面，粗糙但是有意为之。想找网页里对应的“粗糙的精致”。",
+              "summary": "这张图片展示了一块碎石地面，表面粗糙不平，有明显的石块和碎屑分布。",
+              "style": [
+                "粗糙质感",
+                "自然纹理",
+                "自然风格",
+                "工业风格",
+                "自然材料"
+              ],
+              "keywords": [
+                "碎石",
+                "地面",
+                "自然纹理",
+                "工业风格",
+                "自然材料",
+                "粗糙质感",
+                "户外场景"
+              ],
+              "mood": [
+                "自然",
+                "质朴"
+              ],
+              "colors": [
+                {
+                  "hex": "#8f877c",
+                  "ratio": 0.271,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#676059",
+                  "ratio": 0.188,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#9e978d",
+                  "ratio": 0.152,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b8aea0",
+                  "ratio": 0.146,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#aba192",
+                  "ratio": 0.129,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#ccc4b5",
+                  "ratio": 0.114,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Barbican_Concrete_finish_(8085917893).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Barbican_Concrete_finish_%288085917893%29.jpg",
+                "page_title": "Barbican 剁斧混凝土表面",
+                "captured_at": "2026-09-17T07:12:31+00:00",
+                "license": "CC BY-SA 2.0"
+              },
+              "file_endpoint": "/materials/mat_9f18d90439/file"
+            }
+          },
+          {
+            "role": "纸纤维质感参考",
+            "reason": "和纸纤维的颗粒感与墨线渗化效果，体现自然材质与手工痕迹，适合用于包装、标签或品牌视觉元素。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_c35b3ff8c7",
+              "modality": "image",
+              "label": "和纸纤维特写（浮世绘印刷）",
+              "human_thought": "喜欢这种纸纤维的颗粒感，墨线压在上面有一点渗，不是数码那种干净的边。",
+              "summary": "这张图片展示了一个黑色边框的灰色和白色渐变背景，设计简洁，具有现代感。",
+              "style": [
+                "现代",
+                "简洁",
+                "渐变",
+                "对比",
+                "几何",
+                "极简"
+              ],
+              "keywords": [
+                "现代设计",
+                "渐变背景",
+                "极简风格",
+                "黑色边框",
+                "灰色渐变",
+                "白色渐变",
+                "现代感",
+                "简洁设计"
+              ],
+              "mood": [
+                "现代",
+                "冷静",
+                "简洁"
+              ],
+              "colors": [
+                {
+                  "hex": "#6c6965",
+                  "ratio": 0.217,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cecbc9",
+                  "ratio": 0.184,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#797672",
+                  "ratio": 0.183,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#3a3835",
+                  "ratio": 0.154,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#dad6d4",
+                  "ratio": 0.132,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#a7a4a0",
+                  "ratio": 0.13,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Washi_close-up_from_ukiyo-e_print.jpeg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Washi_close-up_from_ukiyo-e_print.jpeg",
+                "page_title": "和纸纤维特写（浮世绘印刷）",
+                "captured_at": "2026-09-17T07:11:59+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_c35b3ff8c7/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "色彩方向",
+        "purpose": "确定低饱和、自然、安静的色调",
+        "members": [
+          {
+            "role": "主色参考",
+            "reason": "汝窑天青色介于蓝绿灰之间，低饱和且含蓄，可替代科技蓝，作为品牌主色，传达宁静与雅致。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_ad89b604d5",
+              "modality": "image",
+              "label": "北宋汝窑青瓷",
+              "human_thought": "汝窑这种天青色：介于蓝绿灰之间，说不清是什么色。想拿它当主色，代替科技蓝。",
+              "summary": "一个青釉刻花碗，碗内有波浪形的刻花图案。",
+              "style": [
+                "传统",
+                "简洁",
+                "细腻",
+                "青瓷",
+                "刻花"
+              ],
+              "keywords": [
+                "青釉",
+                "刻花碗",
+                "传统瓷器",
+                "波浪纹",
+                "青瓷艺术",
+                "中式设计",
+                "手工雕刻"
+              ],
+              "mood": [
+                "古典",
+                "优雅",
+                "宁静"
+              ],
+              "colors": [
+                {
+                  "hex": "#746766",
+                  "ratio": 0.279,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#615754",
+                  "ratio": 0.189,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4c4442",
+                  "ratio": 0.172,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#6e6160",
+                  "ratio": 0.143,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b2b4ab",
+                  "ratio": 0.137,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#858377",
+                  "ratio": 0.079,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Ru_Ware_Celadon,_Northern_Song_(38093962915).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ru_Ware_Celadon%2C_Northern_Song_%2838093962915%29.jpg",
+                "page_title": "北宋汝窑青瓷",
+                "captured_at": "2026-09-17T07:12:27+00:00",
+                "license": "CC0"
+              },
+              "file_endpoint": "/materials/mat_ad89b604d5/file"
+            }
+          },
+          {
+            "role": "氛围色参考",
+            "reason": "Hammershøi 画作的灰调与低饱和暖灰，营造安静而不冷的氛围，适合作为整体色调基调。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_21890e87ef",
+              "modality": "image",
+              "label": "Hammershøi《有镜子的室内》约1907",
+              "human_thought": "灰调、几乎没有饱和度、家具很少，但一点都不冷。“安静”的参考标准。",
+              "summary": "这幅画描绘了一个宁静的室内场景，光线柔和，色调冷淡，营造出一种静谧的氛围。",
+              "style": [
+                "静谧",
+                "冷色调",
+                "几何构图",
+                "室内设计",
+                "古典风格"
+              ],
+              "keywords": [
+                "室内设计",
+                "静谧",
+                "冷色调",
+                "古典",
+                "几何构图",
+                "室内场景",
+                "柔和光线"
+              ],
+              "mood": [
+                "静谧",
+                "冷峻"
+              ],
+              "colors": [
+                {
+                  "hex": "#5d5c4c",
+                  "ratio": 0.207,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#31322e",
+                  "ratio": 0.193,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#41433b",
+                  "ratio": 0.171,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4c4b40",
+                  "ratio": 0.167,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#77735e",
+                  "ratio": 0.144,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#9b957b",
+                  "ratio": 0.118,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "dark",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_(ca.1907).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_%28ca.1907%29.jpg",
+                "page_title": "Hammershøi《有镜子的室内》约1907",
+                "captured_at": "2026-09-17T07:12:22+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_21890e87ef/file"
+            }
+          },
+          {
+            "role": "辅助色参考",
+            "reason": "沙丘风纹的温暖中性色与自然纹理，可用于背景或过渡，增加温暖感，避免冷峻。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_95347fdd45",
+              "modality": "image",
+              "label": "沙丘风纹（Death Valley）",
+              "human_thought": "风留下的纹理，重复但不机械。想用作背景，代替那种噪点渐变。",
+              "summary": "沙丘纹理的自然景观，展示了沙漠的宁静与壮丽。",
+              "style": [
+                "自然纹理",
+                "水平线条",
+                "开阔视野",
+                "温暖色调",
+                "自然构图"
+              ],
+              "keywords": [
+                "沙漠",
+                "沙丘",
+                "自然景观",
+                "水平线条",
+                "开阔视野",
+                "温暖色调",
+                "自然构图"
+              ],
+              "mood": [
+                "宁静",
+                "壮丽",
+                "开阔"
+              ],
+              "colors": [
+                {
+                  "hex": "#b2864f",
+                  "ratio": 0.252,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#a77d4e",
+                  "ratio": 0.206,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#9d7a53",
+                  "ratio": 0.178,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a48c72",
+                  "ratio": 0.163,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#866743",
+                  "ratio": 0.152,
+                  "name": "brown"
+                },
+                {
+                  "hex": "#ba9566",
+                  "ratio": 0.049,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+                "page_title": "沙丘风纹（Death Valley）",
+                "captured_at": "2026-09-17T07:13:24+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_95347fdd45/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "排版与字体",
+        "purpose": "体现工坊气质与手工秩序",
+        "members": [
+          {
+            "role": "排版结构参考",
+            "reason": "活字铅字盒的标签与有序排列，传递工坊的实用与秩序感，可用于产品信息排版或标签设计。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_f654caf068",
+              "modality": "image",
+              "label": "活字铅字盒",
+              "human_thought": "铅字盒子和手写标签，工具本身的秩序感。做作品集页面时想用这种“工坊”气质。",
+              "summary": "一排整齐的纸箱和盒子，上面贴有标签，展示出一种有序的存储和分类方式。",
+              "style": [
+                "工业风",
+                "实用主义",
+                "有序",
+                "标签化",
+                "复古"
+              ],
+              "keywords": [
+                "纸箱",
+                "标签",
+                "存储",
+                "分类",
+                "工业风",
+                "复古",
+                "实用主义"
+              ],
+              "mood": [
+                "冷静",
+                "实用"
+              ],
+              "colors": [
+                {
+                  "hex": "#1b1711",
+                  "ratio": 0.245,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a38f71",
+                  "ratio": 0.209,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a5bac0",
+                  "ratio": 0.202,
+                  "name": "muted teal"
+                },
+                {
+                  "hex": "#73593e",
+                  "ratio": 0.157,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#33383c",
+                  "ratio": 0.115,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#d1c49e",
+                  "ratio": 0.072,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": "BALLOON EXTKABLO\n36SEMISCRIPT\nBoOKMAa\nCAPS\n+Lc/a-f)\n24KABELLT1TAL\n(BAUFR)\nL.C\n1OCLOISTEK BLACK\nCTKBITONAL\n24 PERICLES\n36L1BRA\nKodak\nAmSTERAm)\nPAP专E",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Letterpress_typefaces.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Letterpress_typefaces.jpg",
+                "page_title": "活字铅字盒",
+                "captured_at": "2026-09-17T07:12:09+00:00",
+                "license": "CC BY 2.0"
+              },
+              "file_endpoint": "/materials/mat_f654caf068/file"
+            }
+          },
+          {
+            "role": "反例参考",
+            "reason": "Kelmscott Chaucer 的满版装饰与复杂图案，与品牌追求的简约克制相反，作为避免过度装饰的警示。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_d65a7826e7",
+              "modality": "image",
+              "label": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+              "human_thought": "满版的装饰边框和黑体字，密到透不过气，但每一寸都是手工。反极简的极致，做对比参考。",
+              "summary": "这是一本装饰华丽的古籍，页面上布满了复杂的花卉图案和精细的插图，文字采用复古字体，整体设计风格典雅而精致。",
+              "style": [
+                "复古风格",
+                "精细插图",
+                "花卉装饰",
+                "复杂图案",
+                "优雅设计"
+              ],
+              "keywords": [
+                "古籍",
+                "复古设计",
+                "花卉装饰",
+                "复杂图案",
+                "精致插图",
+                "优雅",
+                "复古字体"
+              ],
+              "mood": [
+                "优雅",
+                "精致",
+                "古典"
+              ],
+              "colors": [
+                {
+                  "hex": "#736251",
+                  "ratio": 0.205,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#9d8971",
+                  "ratio": 0.192,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#84725e",
+                  "ratio": 0.165,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#433629",
+                  "ratio": 0.163,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#bda688",
+                  "ratio": 0.162,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e2c9a4",
+                  "ratio": 0.113,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "hrror\nroffrr\nH\nCA\nThe\n189\nTh\nPr\nre\nca\nfig\nde\nkaoul\nDath intheRam bishalfecoursyronne,\nChatslepenalthenyghtwithopeneye,\nHnd smalefowelesmaken melodye,\nSoprikethhemnatureinhircorages;\nChanne longen folktogoonon pilgrimages,\nHnd palmercefortosekenstraungestrondes,\nCofernehalwes,kowtheinsondry londes;\nHndspecially，fromeveryshiresende\nOfEngelond,toCaunterburythey wende,\nmpmtro\nhathembathholpenwhanthattheywere\nseeke\nfILthat in that sesononaday,\nInSouthwerkattheCabardas\nlay,\nHTHprillewithhisshouressoote\ncorage,\nvithfuldevout\nAroghtcorMarchhathpercedtotheroote,\nHndbathedevery veyneingwichlicour,\nHtnyghtwerecomeinto thathostelrye\nwhichvertuengendredistheflour;\netnyneandtwenty ina compaignye,\nhanZephiruocekwithhisswetebreeth\nOfsondryfolk,byaventurefall\nnopiredhathineveryholt and beeth\nInfelweshipeandpilgrimewereheyalt,\nChattoward Caunterbury woldenryde.",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Kelmscott_Chaucer.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Kelmscott_Chaucer.jpg",
+                "page_title": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+                "captured_at": "2026-09-17T07:12:36+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_d65a7826e7/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "氛围与构图",
+        "purpose": "营造安静、留白、有力量的视觉氛围",
+        "members": [
+          {
+            "role": "首屏构图参考",
+            "reason": "光之教会的极简与单一光束，体现“一个动作”的力量，可用于首屏或关键视觉，传达安静与专注。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_03f7255166",
+              "modality": "image",
+              "label": "安藤忠雄 光之教会",
+              "human_thought": "只有混凝土和一道光。什么都没有，反而成了最强的东西。首屏想有这种“一个动作”的感觉。",
+              "summary": "一个简约的教堂内部，光线从天窗投射下来，形成十字形光束。",
+              "style": [
+                "极简主义",
+                "光影效果",
+                "几何构成",
+                "冷色调",
+                "现代主义"
+              ],
+              "keywords": [
+                "教堂",
+                "极简",
+                "十字光束",
+                "混凝土",
+                "现代",
+                "光影",
+                "几何",
+                "宗教"
+              ],
+              "mood": [
+                "宁静",
+                "庄严",
+                "神圣"
+              ],
+              "colors": [
+                {
+                  "hex": "#535659",
+                  "ratio": 0.27,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#212428",
+                  "ratio": 0.192,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#676a6d",
+                  "ratio": 0.164,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#73777b",
+                  "ratio": 0.135,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#8f949d",
+                  "ratio": 0.123,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#d1d4da",
+                  "ratio": 0.116,
+                  "name": "muted blue"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Church_of_Light.JPG",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Church_of_Light.JPG",
+                "page_title": "安藤忠雄 光之教会",
+                "captured_at": "2026-09-17T07:13:10+00:00",
+                "license": "CC BY-SA 2.5"
+              },
+              "file_endpoint": "/materials/mat_03f7255166/file"
+            }
+          },
+          {
+            "role": "产品呈现参考",
+            "reason": "Braun SK 4 的材质本色与简洁设计，工业但温和，适合展示陶器产品本身，避免多余装饰。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_70f4f410f0",
+              "modality": "image",
+              "label": "Braun SK 4（Dieter Rams / Hans Gugelot）",
+              "human_thought": "白色金属+木侧板+透明盖，Rams 的“白雪公主的棺材”。工业但温和，颜色只用材料本身的颜色。",
+              "summary": "这是一个复古风格的留声机，设计简洁，带有木质边框和透明的保护盖。",
+              "style": [
+                "简约",
+                "复古",
+                "木质质感",
+                "透明设计",
+                "经典",
+                "功能性"
+              ],
+              "keywords": [
+                "留声机",
+                "复古",
+                "木质",
+                "透明",
+                "经典设计",
+                "音乐设备",
+                "家庭装饰"
+              ],
+              "mood": [
+                "经典",
+                "怀旧",
+                "优雅"
+              ],
+              "colors": [
+                {
+                  "hex": "#827469",
+                  "ratio": 0.25,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#5f5550",
+                  "ratio": 0.202,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#493d38",
+                  "ratio": 0.174,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#8f7e71",
+                  "ratio": 0.174,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#b6a69d",
+                  "ratio": 0.1,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#74655b",
+                  "ratio": 0.1,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "BxRun",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Braun_SK_4.1.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Braun_SK_4.1.jpg",
+                "page_title": "Braun SK 4（Dieter Rams / Hans Gugelot）",
+                "captured_at": "2026-09-17T07:12:51+00:00",
+                "license": "CC BY-SA 2.0"
+              },
+              "file_endpoint": "/materials/mat_70f4f410f0/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "文案语气",
+        "purpose": "确立克制、真诚、去营销化的表达方式",
+        "members": [
+          {
+            "role": "核心文案原则",
+            "reason": "“宁朴无巧”直接指导文案与视觉的删减，避免浮华，符合品牌反潮流态度。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_f75ad4747d",
+              "modality": "text",
+              "label": "文震亨《长物志》",
+              "human_thought": "明代人的“反潮流”宣言。宁朴无巧——首页的动效和渐变都该按这句删。",
+              "summary": "强调以古朴质朴为美，摒弃浮华与俗气，追求简约克制的审美原则。",
+              "style": [
+                "克制",
+                "质朴",
+                "宣言"
+              ],
+              "keywords": [
+                "极简主义",
+                "质朴",
+                "克制",
+                "无饰",
+                "自然",
+                "素雅",
+                "传统美学",
+                "谦逊"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "宁古无时，宁朴无巧，宁俭无俗。",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://zh.wikisource.org/wiki/長物志",
+                "resource_url": null,
+                "page_title": "文震亨《长物志》",
+                "captured_at": "2026-09-17T07:14:53+00:00",
+                "license": "public domain"
+              },
+              "file_endpoint": null
+            }
+          },
+          {
+            "role": "文案句式参考",
+            "reason": "强调“拿掉什么”而非“添加什么”，用于产品描述或品牌故事，传递极简与真诚。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_d73bf11615",
+              "modality": "text",
+              "label": "Antoine de Saint-Exupéry, Terre des hommes (1939)",
+              "human_thought": "文案的方向：不要说“强大”“革命性”，说我们拿掉了什么。",
+              "summary": "Perfection in design is achieved through minimalism, emphasizing removal over addition.",
+              "style": [
+                "philosophical",
+                "reflective",
+                "concise"
+              ],
+              "keywords": [
+                "minimalism",
+                "simplicity",
+                "design principles",
+                "reduction",
+                "aesthetic balance",
+                "clarity",
+                "efficiency"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "It seems that perfection is attained not when there is nothing more to add, but when there is nothing more to remove.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/Wind,_Sand_and_Stars",
+                "resource_url": null,
+                "page_title": "Antoine de Saint-Exupéry, Terre des hommes (1939)",
+                "captured_at": "2026-09-17T07:17:03+00:00",
+                "license": "quotation"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      }
+    ],
+    "removed_by_human": [],
+    "human_edits": []
+  }
+}

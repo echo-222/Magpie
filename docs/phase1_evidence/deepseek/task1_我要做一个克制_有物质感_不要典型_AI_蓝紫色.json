@@ -1,0 +1,849 @@
+{
+  "magpie_pack": {
+    "id": "pack_f497b62077",
+    "name": "设计一个克制、有物质感、避免典型AI蓝紫色调的网站首页。",
+    "created_at": "2026-09-17T10:52:09+00:00",
+    "updated_at": "2026-09-17T10:52:09+00:00",
+    "task": {
+      "raw_request": "我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。",
+      "purpose": "设计一个克制、有物质感、避免典型AI蓝紫色调的网站首页。",
+      "desired_qualities": [
+        "克制",
+        "物质感",
+        "非典型AI蓝紫色",
+        "质感",
+        "简洁",
+        "高级"
+      ],
+      "avoid": [
+        "典型AI蓝紫色"
+      ],
+      "constraints": [],
+      "needed_reference_types": [
+        "材质/质感",
+        "色彩",
+        "排版/字体",
+        "氛围",
+        "版式结构"
+      ],
+      "search_queries": [
+        "克制设计 网站首页 质感",
+        "material texture web design restrained",
+        "非蓝紫 配色 高级感 网站",
+        "minimal typography layout website",
+        "subtle color palette earthy tones web",
+        "反例 AI蓝紫 网站设计"
+      ],
+      "language": "zh"
+    },
+    "human_direction": "设计一个克制、有物质感、避免典型AI蓝紫色调的网站首页。追求自然材质、真实纹理与留白，强调实用与美学的统一，避免霓虹渐变、玻璃拟态、发光边框等AI常见视觉元素。",
+    "groups": [
+      {
+        "name": "材质与质感",
+        "purpose": "提供真实、有触感的材质参考，用于首页背景或局部纹理，营造物质感。",
+        "members": [
+          {
+            "role": "背景材质参考",
+            "reason": "白石和纸信纸的白不是屏幕白，有云一样的纹理，适合作为首页背景，传达自然、克制的质感。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_99e677c4db",
+              "modality": "image",
+              "label": "白石和纸信纸",
+              "human_thought": "这张纸本身就是内容。白但不是屏幕的白，有云一样的纹理。首页背景想要这种白。",
+              "summary": "一张白色纤维纸张，背景为黑色，呈现出自然的纤维纹理。",
+              "style": [
+                "自然纹理",
+                "简洁",
+                "对比",
+                "纤维质感",
+                "单色"
+              ],
+              "keywords": [
+                "纤维纸张",
+                "自然纹理",
+                "黑色背景",
+                "简洁设计",
+                "纤维质感",
+                "单色背景",
+                "自然材料"
+              ],
+              "mood": [
+                "简洁",
+                "自然"
+              ],
+              "colors": [
+                {
+                  "hex": "#beb5b0",
+                  "ratio": 0.193,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#c3bab5",
+                  "ratio": 0.193,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#b4aca8",
+                  "ratio": 0.179,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4d4a4a",
+                  "ratio": 0.16,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b9b1ac",
+                  "ratio": 0.143,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cac1b9",
+                  "ratio": 0.132,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Shiroishi_washi_letter_paper.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Shiroishi_washi_letter_paper.jpg",
+                "page_title": "白石和纸信纸",
+                "captured_at": "2026-09-17T07:12:05+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_99e677c4db/file"
+            }
+          },
+          {
+            "role": "纹理细节参考",
+            "reason": "和纸纤维的颗粒感和墨线渗化效果，可用于强调非数码的、有温度的表面细节。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_c35b3ff8c7",
+              "modality": "image",
+              "label": "和纸纤维特写（浮世绘印刷）",
+              "human_thought": "喜欢这种纸纤维的颗粒感，墨线压在上面有一点渗，不是数码那种干净的边。",
+              "summary": "这张图片展示了一个黑色边框的灰色和白色渐变背景，设计简洁，具有现代感。",
+              "style": [
+                "现代",
+                "简洁",
+                "渐变",
+                "对比",
+                "几何",
+                "极简"
+              ],
+              "keywords": [
+                "现代设计",
+                "渐变背景",
+                "极简风格",
+                "黑色边框",
+                "灰色渐变",
+                "白色渐变",
+                "现代感",
+                "简洁设计"
+              ],
+              "mood": [
+                "现代",
+                "冷静",
+                "简洁"
+              ],
+              "colors": [
+                {
+                  "hex": "#6c6965",
+                  "ratio": 0.217,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cecbc9",
+                  "ratio": 0.184,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#797672",
+                  "ratio": 0.183,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#3a3835",
+                  "ratio": 0.154,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#dad6d4",
+                  "ratio": 0.132,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#a7a4a0",
+                  "ratio": 0.13,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Washi_close-up_from_ukiyo-e_print.jpeg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Washi_close-up_from_ukiyo-e_print.jpeg",
+                "page_title": "和纸纤维特写（浮世绘印刷）",
+                "captured_at": "2026-09-17T07:11:59+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_c35b3ff8c7/file"
+            }
+          },
+          {
+            "role": "粗糙质感参考",
+            "reason": "剁斧混凝土表面粗糙但有意为之，对应网页中“粗糙的精致”，可用于局部纹理或视觉隐喻。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_9f18d90439",
+              "modality": "image",
+              "label": "Barbican 剁斧混凝土表面",
+              "human_thought": "剁斧混凝土的表面，粗糙但是有意为之。想找网页里对应的“粗糙的精致”。",
+              "summary": "这张图片展示了一块碎石地面，表面粗糙不平，有明显的石块和碎屑分布。",
+              "style": [
+                "粗糙质感",
+                "自然纹理",
+                "自然风格",
+                "工业风格",
+                "自然材料"
+              ],
+              "keywords": [
+                "碎石",
+                "地面",
+                "自然纹理",
+                "工业风格",
+                "自然材料",
+                "粗糙质感",
+                "户外场景"
+              ],
+              "mood": [
+                "自然",
+                "质朴"
+              ],
+              "colors": [
+                {
+                  "hex": "#8f877c",
+                  "ratio": 0.271,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#676059",
+                  "ratio": 0.188,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#9e978d",
+                  "ratio": 0.152,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b8aea0",
+                  "ratio": 0.146,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#aba192",
+                  "ratio": 0.129,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#ccc4b5",
+                  "ratio": 0.114,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Barbican_Concrete_finish_(8085917893).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Barbican_Concrete_finish_%288085917893%29.jpg",
+                "page_title": "Barbican 剁斧混凝土表面",
+                "captured_at": "2026-09-17T07:12:31+00:00",
+                "license": "CC BY-SA 2.0"
+              },
+              "file_endpoint": "/materials/mat_9f18d90439/file"
+            }
+          },
+          {
+            "role": "不完美表面参考",
+            "reason": "生锈的蓝色卷帘门展示被时间用过的表面，可用于打破完美感，增加真实性和物质感。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_ea9962aea6",
+              "modality": "image",
+              "label": "生锈的蓝色卷帘门（Poly Haven 扫描）",
+              "human_thought": "锈掉的蓝色卷帘门，丑得很真实。想要一点这种不完美的、被时间用过的表面。",
+              "summary": "一个生锈的蓝色卷帘门，门上覆盖着锈迹斑斑的蓝色油漆。",
+              "style": [
+                "工业风格",
+                "复古",
+                "纹理丰富",
+                "低饱和度",
+                "实用主义"
+              ],
+              "keywords": [
+                "卷帘门",
+                "锈迹",
+                "蓝色",
+                "工业",
+                "复古",
+                "纹理",
+                "建筑元素",
+                "地面"
+              ],
+              "mood": [
+                "粗犷",
+                "沉稳"
+              ],
+              "colors": [
+                {
+                  "hex": "#607189",
+                  "ratio": 0.225,
+                  "name": "muted blue"
+                },
+                {
+                  "hex": "#777176",
+                  "ratio": 0.206,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#bfae98",
+                  "ratio": 0.178,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#484855",
+                  "ratio": 0.156,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#888d8a",
+                  "ratio": 0.13,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#d1d5d8",
+                  "ratio": 0.105,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone"
+              ],
+              "text": null,
+              "text_in_image": "®",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Ref_1_-_rusted_shutter_(Dimitrios_Savva_via_Poly_Haven).webp",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Ref_1_-_rusted_shutter_%28Dimitrios_Savva_via_Poly_Haven%29.webp",
+                "page_title": "生锈的蓝色卷帘门（Poly Haven 扫描）",
+                "captured_at": "2026-09-17T07:12:55+00:00",
+                "license": "CC0"
+              },
+              "file_endpoint": "/materials/mat_ea9962aea6/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "色彩方向",
+        "purpose": "确立低饱和、自然、非蓝紫的色调范围。",
+        "members": [
+          {
+            "role": "强调色参考",
+            "reason": "红楔子海报中的暗红与黑白对比，提供一种有力量但不浮夸的强调色方案。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_2d15a911f3",
+              "modality": "image",
+              "label": "El Lissitzky《红楔子打白军》1919",
+              "human_thought": "一个红三角、一个白圆、几行字，力量全靠几何和留白。海报级的克制。",
+              "summary": "这是一幅具有强烈几何构成和对比色彩的海报，主要使用红色和黑色，传达出一种激进和革命性的氛围。",
+              "style": [
+                "几何构成",
+                "对比色彩",
+                "激进设计",
+                "革命海报",
+                "红色",
+                "黑色"
+              ],
+              "keywords": [
+                "几何图形",
+                "红色",
+                "黑色",
+                "激进",
+                "革命",
+                "海报",
+                "构图",
+                "对比"
+              ],
+              "mood": [
+                "激进",
+                "强烈",
+                "革命"
+              ],
+              "colors": [
+                {
+                  "hex": "#4d3936",
+                  "ratio": 0.26,
+                  "name": "muted red"
+                },
+                {
+                  "hex": "#dfd7c7",
+                  "ratio": 0.218,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e1dbcb",
+                  "ratio": 0.177,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e7e0d1",
+                  "ratio": 0.139,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#c1b5a7",
+                  "ratio": 0.106,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#661615",
+                  "ratio": 0.099,
+                  "name": "red"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "KANHOM\nKPACHDIM\nBEW\nBEAbIX\nN19\nTOANTYnPABAEHHA BAnOPOHTA\nAMTM3AAT\nHOBNC",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Beat_the_Whites_with_the_Red_Wedge.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Beat_the_Whites_with_the_Red_Wedge.jpg",
+                "page_title": "El Lissitzky《红楔子打白军》1919",
+                "captured_at": "2026-09-17T07:12:16+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_2d15a911f3/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "排版与字体",
+        "purpose": "参考具有秩序感、工具感或极简主义的排版风格。",
+        "members": [
+          {
+            "role": "秩序感排版参考",
+            "reason": "活字铅字盒的标签和排列展示工具本身的秩序感，可用于导航、标签或作品集列表的排版。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_f654caf068",
+              "modality": "image",
+              "label": "活字铅字盒",
+              "human_thought": "铅字盒子和手写标签，工具本身的秩序感。做作品集页面时想用这种“工坊”气质。",
+              "summary": "一排整齐的纸箱和盒子，上面贴有标签，展示出一种有序的存储和分类方式。",
+              "style": [
+                "工业风",
+                "实用主义",
+                "有序",
+                "标签化",
+                "复古"
+              ],
+              "keywords": [
+                "纸箱",
+                "标签",
+                "存储",
+                "分类",
+                "工业风",
+                "复古",
+                "实用主义"
+              ],
+              "mood": [
+                "冷静",
+                "实用"
+              ],
+              "colors": [
+                {
+                  "hex": "#1b1711",
+                  "ratio": 0.245,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a38f71",
+                  "ratio": 0.209,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a5bac0",
+                  "ratio": 0.202,
+                  "name": "muted teal"
+                },
+                {
+                  "hex": "#73593e",
+                  "ratio": 0.157,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#33383c",
+                  "ratio": 0.115,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#d1c49e",
+                  "ratio": 0.072,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": "BALLOON EXTKABLO\n36SEMISCRIPT\nBoOKMAa\nCAPS\n+Lc/a-f)\n24KABELLT1TAL\n(BAUFR)\nL.C\n1OCLOISTEK BLACK\nCTKBITONAL\n24 PERICLES\n36L1BRA\nKodak\nAmSTERAm)\nPAP专E",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Letterpress_typefaces.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Letterpress_typefaces.jpg",
+                "page_title": "活字铅字盒",
+                "captured_at": "2026-09-17T07:12:09+00:00",
+                "license": "CC BY 2.0"
+              },
+              "file_endpoint": "/materials/mat_f654caf068/file"
+            }
+          },
+          {
+            "role": "结构裸露参考",
+            "reason": "粗野主义展示材料本身而非装饰，对应不遮掩的排版结构，如清晰的网格、无衬线字体和原始布局。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_ef37fc27b1",
+              "modality": "text",
+              "label": "Brutalist architecture - Wikipedia",
+              "human_thought": "“展示材料本身而不是装饰”——网页里的对应物是什么？也许是不遮掩的排版结构和真实的照片，而不是插画。",
+              "summary": "Brutalist buildings are characterized by minimalist constructions that showcase bare building materials and structural elements over decorative design. The style commonly makes use of exposed, unpainted concrete or brick, angular geometric shapes and a predominantly monochrome colour palette.",
+              "style": [
+                "technical",
+                "descriptive"
+              ],
+              "keywords": [
+                "Brutalist architecture",
+                "minimalist construction",
+                "exposed concrete",
+                "angular geometry",
+                "monochrome palette",
+                "structural elements",
+                "raw materials",
+                "decorative design"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "Brutalist buildings are characterised by minimalist constructions that showcase the bare building materials and structural elements over decorative design. The style commonly makes use of exposed, unpainted concrete or brick, angular geometric shapes and a predominantly monochrome colour palette.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/Brutalist_architecture",
+                "resource_url": null,
+                "page_title": "Brutalist architecture - Wikipedia",
+                "captured_at": "2026-09-17T07:15:04+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "氛围与文案语气",
+        "purpose": "提供克制、宣言式的文案态度和整体氛围。",
+        "members": [
+          {
+            "role": "文案态度参考",
+            "reason": "“宁朴无巧”可作为删减动效和渐变的准则，传达克制、质朴的价值观。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_f75ad4747d",
+              "modality": "text",
+              "label": "文震亨《长物志》",
+              "human_thought": "明代人的“反潮流”宣言。宁朴无巧——首页的动效和渐变都该按这句删。",
+              "summary": "强调以古朴质朴为美，摒弃浮华与俗气，追求简约克制的审美原则。",
+              "style": [
+                "克制",
+                "质朴",
+                "宣言"
+              ],
+              "keywords": [
+                "极简主义",
+                "质朴",
+                "克制",
+                "无饰",
+                "自然",
+                "素雅",
+                "传统美学",
+                "谦逊"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "宁古无时，宁朴无巧，宁俭无俗。",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://zh.wikisource.org/wiki/長物志",
+                "resource_url": null,
+                "page_title": "文震亨《长物志》",
+                "captured_at": "2026-09-17T07:14:53+00:00",
+                "license": "public domain"
+              },
+              "file_endpoint": null
+            }
+          },
+          {
+            "role": "文案内容参考",
+            "reason": "“实用或美，二者之外都不要”可直接作为首页文案，强调功能与美学的统一。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_a997bcb2f1",
+              "modality": "text",
+              "label": "William Morris - Wikipedia",
+              "human_thought": "这句可以直接当首页文案的态度：实用或美，二者之外都不要",
+              "summary": "强调家居物品应兼具实用性与美学价值，体现极简主义生活理念。",
+              "style": [
+                "克制",
+                "宣言式",
+                "理性"
+              ],
+              "keywords": [
+                "极简主义",
+                "功能性设计",
+                "自然材料",
+                "美学原则",
+                "实用与美观",
+                "生活哲学"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "Have nothing in your houses that you do not know to be useful, or believe to be beautiful.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/William_Morris",
+                "resource_url": null,
+                "page_title": "William Morris - Wikipedia",
+                "captured_at": "2026-09-17T06:52:54+00:00",
+                "license": null
+              },
+              "file_endpoint": null
+            }
+          },
+          {
+            "role": "留白理念参考",
+            "reason": "留白不是空，是让人有地方停，指导首屏设计：一句话、一张材质图，其他都不放。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_704721b06b",
+              "modality": "text",
+              "label": "留白 - 维基百科",
+              "human_thought": "留白不是“空”，是让人有地方停。首页首屏想做成这样：一句话，一张材质图，其他都不放。",
+              "summary": "留白是中国艺术创作中通过有意保留空白以达到画面协调与想象空间的手法，常见于书画艺术领域。",
+              "style": [
+                "克制",
+                "技术性",
+                "阐释性"
+              ],
+              "keywords": [
+                "留白",
+                "书画艺术",
+                "协调精美",
+                "想象空间",
+                "创作手法",
+                "艺术原则"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "留白是中国艺术作品创作中常用的一种手法，指书画艺术创作中为使整个作品画面、章法更为协调精美而有意留下相应的空白，留有想象的空间。",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://zh.wikipedia.org/wiki/留白",
+                "resource_url": null,
+                "page_title": "留白 - 维基百科",
+                "captured_at": "2026-09-17T07:16:04+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "反例",
+        "purpose": "明确需要避免的视觉风格和元素。",
+        "members": [
+          {
+            "role": "典型AI蓝紫反例",
+            "reason": "蓝紫渐变、霓虹网格、发光是AI产品页的默认脸，必须避免。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_1e68a1cd6e",
+              "modality": "image",
+              "label": "Synthwave 霓虹网格日落（3D 渲染）",
+              "human_thought": "反例。蓝紫渐变、霓虹网格、发光——这就是所有 AI 产品页的默认脸。以后凡是像这个的都删。",
+              "summary": "这是一个80年代风格的复古未来主义图像，展示了一个充满霓虹色彩的山地景观和一个巨大的太阳。",
+              "style": [
+                "复古未来主义",
+                "霓虹灯",
+                "网格背景",
+                "80年代",
+                "几何构成",
+                "鲜艳色彩",
+                "未来感"
+              ],
+              "keywords": [
+                "80年代",
+                "复古未来主义",
+                "霓虹灯",
+                "网格",
+                "山地",
+                "太阳",
+                "未来感",
+                "鲜艳色彩"
+              ],
+              "mood": [
+                "未来感",
+                "复古",
+                "霓虹",
+                "明亮"
+              ],
+              "colors": [
+                {
+                  "hex": "#5c1e8e",
+                  "ratio": 0.241,
+                  "name": "purple"
+                },
+                {
+                  "hex": "#19bde6",
+                  "ratio": 0.234,
+                  "name": "teal"
+                },
+                {
+                  "hex": "#e6e7bb",
+                  "ratio": 0.16,
+                  "name": "yellow"
+                },
+                {
+                  "hex": "#2edff2",
+                  "ratio": 0.136,
+                  "name": "teal"
+                },
+                {
+                  "hex": "#6fe9f5",
+                  "ratio": 0.115,
+                  "name": "teal"
+                },
+                {
+                  "hex": "#4e8ac8",
+                  "ratio": 0.113,
+                  "name": "blue"
+                }
+              ],
+              "palette": [
+                "high saturation",
+                "mid-tone",
+                "cool"
+              ],
+              "text": null,
+              "text_in_image": "AN",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Synthwave_cyberspace_sunset_(low_res).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Synthwave_cyberspace_sunset_%28low_res%29.jpg",
+                "page_title": "Synthwave 霓虹网格日落（3D 渲染）",
+                "captured_at": "2026-09-17T07:13:14+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_1e68a1cd6e/file"
+            }
+          },
+          {
+            "role": "扁平插画反例",
+            "reason": "Corporate Memphis及其AI版本（蓝紫渐变+玻璃拟态+发光边框）是SaaS同质化的原因，应避开。",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_33b9fe346a",
+              "modality": "text",
+              "label": "Corporate Memphis - Wikipedia",
+              "human_thought": "反例。所有 SaaS 长得一样的原因。避开这个，也避开它的 AI 版本：蓝紫渐变 + 玻璃拟态 + 发光边框。",
+              "summary": "Corporate Memphis是一种2010年代后期科技公司插画中流行的扁平化几何艺术风格，以简化人体比例和明亮色块为特征。",
+              "style": [
+                "neutral",
+                "explanatory",
+                "technical"
+              ],
+              "keywords": [
+                "Corporate Memphis",
+                "Alegria",
+                "flat design",
+                "geometric style",
+                "simplified figures",
+                "pastel colors",
+                "big tech art",
+                "disproportionate limbs"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "Corporate Memphis (also known as Alegria, big tech art, or flat art) is a term used, often disparagingly, to describe a flat, geometric art style widely used in illustrations of tech companies in the late 2010s and early 2020s. It is characterised by simplified human figures with disproportionate limbs and bright, often pastel, colours.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/Corporate_Memphis",
+                "resource_url": null,
+                "page_title": "Corporate Memphis - Wikipedia",
+                "captured_at": "2026-09-17T07:15:50+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      }
+    ],
+    "removed_by_human": [],
+    "human_edits": []
+  }
+}
