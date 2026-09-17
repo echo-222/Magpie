@@ -30,7 +30,14 @@ class LLM(Protocol):
     embed_model: str
 
     def chat_json(
-        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+        self,
+        system: str,
+        user: str,
+        *,
+        images: list[bytes] | None = None,
+        purpose: str = "",
+        temperature: float = 0.2,
+        max_tokens: int | None = None,
     ) -> dict: ...
 
     def embed(self, texts: list[str]) -> list[list[float]]: ...
@@ -68,12 +75,14 @@ class OpenAICompatLLM:
         self.chat_model = settings.chat_model
         self.vision_model = settings.vision_model
         self.embed_model = settings.embed_model
-        self.client = OpenAI(base_url=settings.llm_base_url, api_key=settings.llm_api_key, timeout=settings.llm_timeout_s)
+        # max_retries=0: a slow local model must not turn one timeout into three.
+        self.client = OpenAI(base_url=settings.llm_base_url, api_key=settings.llm_api_key, timeout=settings.llm_timeout_s, max_retries=0)
         if settings.embed_base_url or settings.embed_api_key:
             self.embed_client = OpenAI(
                 base_url=settings.embed_base_url or settings.llm_base_url,
                 api_key=settings.embed_api_key or settings.llm_api_key,
                 timeout=settings.llm_timeout_s,
+                max_retries=1,
             )
         else:
             self.embed_client = self.client
@@ -86,7 +95,14 @@ class OpenAICompatLLM:
         return system
 
     def chat_json(
-        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+        self,
+        system: str,
+        user: str,
+        *,
+        images: list[bytes] | None = None,
+        purpose: str = "",
+        temperature: float = 0.2,
+        max_tokens: int | None = None,
     ) -> dict:
         model = self.vision_model if images else self.chat_model
         content: list[dict] | str
@@ -104,6 +120,8 @@ class OpenAICompatLLM:
         last_err: Exception | None = None
         for attempt in range(2):
             kwargs = dict(model=model, messages=messages, temperature=temperature)
+            if max_tokens:
+                kwargs["max_tokens"] = max_tokens
             if attempt == 0:
                 kwargs["response_format"] = {"type": "json_object"}
             try:
@@ -159,7 +177,14 @@ class FakeLLM:
         return vecs
 
     def chat_json(
-        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+        self,
+        system: str,
+        user: str,
+        *,
+        images: list[bytes] | None = None,
+        purpose: str = "",
+        temperature: float = 0.2,
+        max_tokens: int | None = None,
     ) -> dict:
         words = [w for w in re.split(r"[\s,，。、;；:：\"'()（）\[\]]+", user) if 2 <= len(w) <= 12][:8]
         if purpose == "image_analysis":

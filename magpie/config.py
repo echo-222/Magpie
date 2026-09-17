@@ -26,7 +26,9 @@ class Settings:
     llm_provider: str = field(default_factory=lambda: _env("MAGPIE_LLM_PROVIDER", "openai"))
     llm_base_url: str = field(default_factory=lambda: _env("MAGPIE_LLM_BASE_URL", "http://localhost:11434/v1"))
     llm_api_key: str = field(default_factory=lambda: _env("MAGPIE_LLM_API_KEY", "ollama"))
-    chat_model: str = field(default_factory=lambda: _env("MAGPIE_CHAT_MODEL", "qwen3:8b"))
+    # qwen3:8b-16k = qwen3:8b with num_ctx 16384 (scripts/setup_ollama_models.sh); Ollama's default
+    # 4096-token context silently truncates the recomposition prompt.
+    chat_model: str = field(default_factory=lambda: _env("MAGPIE_CHAT_MODEL", "qwen3:8b-16k"))
     vision_model: str = field(default_factory=lambda: _env("MAGPIE_VISION_MODEL", "qwen2.5vl:7b"))
 
     embed_model: str = field(default_factory=lambda: _env("MAGPIE_EMBED_MODEL", "bge-m3"))

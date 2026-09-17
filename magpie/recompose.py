@@ -70,29 +70,28 @@ Return ONLY a JSON object with the single key "reasons" mapping every candidate 
 
 
 def describe_candidate(m: Material, hit: Hit | None = None) -> str:
+    """Compact candidate card. Kept short on purpose: local 7-8B models lose the schema when
+    the prompt approaches their context window (Ollama defaults to 4096 tokens)."""
     a = m.analysis
-    lines = [f"[{m.id}] {m.modality} | {m.source.page_title or m.original.filename or m.short_label()}"]
-    lines.append(f"  Human thought: {m.human.thought or '(none)'}")
+    lines = [f"[{m.id}] {m.modality} | {(m.source.page_title or m.original.filename or m.short_label())[:60]}"]
+    lines.append(f"  Human thought: {(m.human.thought or '(none)')[:120]}")
     ai_bits = []
     if a.summary:
-        ai_bits.append(a.summary)
-    if a.style:
-        ai_bits.append("style: " + ", ".join(a.style[:6]))
-    if a.keywords:
-        ai_bits.append("keywords: " + ", ".join(a.keywords[:8]))
-    if a.mood:
-        ai_bits.append("mood: " + ", ".join(a.mood[:4]))
+        ai_bits.append(a.summary[:110])
+    tags = [*a.style[:4], *[k for k in a.keywords[:5] if k not in a.style], *a.mood[:2]]
+    if tags:
+        ai_bits.append("tags: " + ", ".join(dict.fromkeys(tags)))
     if m.modality == "image":
         pal = (m.objective_metadata.get("palette") or {}).get("descriptors") or []
-        cols = [c.name for c in a.colors[:4] if c.name]
+        cols = [c.name for c in a.colors[:3] if c.name]
         if pal or cols:
-            ai_bits.append("palette: " + ", ".join(pal + cols))
+            ai_bits.append("palette: " + ", ".join(dict.fromkeys(pal + cols)))
     if ai_bits:
         lines.append("  AI: " + " | ".join(ai_bits))
     if m.modality == "text" and m.original.content:
-        lines.append("  Text: " + m.original.content.strip().replace("\n", " ")[:240])
+        lines.append("  Text: " + m.original.content.strip().replace("\n", " ")[:160])
     elif a.ocr:
-        lines.append("  Text in image: " + a.ocr.replace("\n", " ")[:120])
+        lines.append("  Text in image: " + a.ocr.replace("\n", " ")[:60])
     if hit is not None:
         lines.append(f"  retrieval: {hit.score:.2f} via {hit.via}")
     return "\n".join(lines)
@@ -174,7 +173,7 @@ class Recomposer:
             ex2=hits[-1].material_id,
         )
         try:
-            plan = self.llm.chat_json(RECOMPOSE_SYSTEM, user, purpose="recompose", temperature=0.1)
+            plan = self.llm.chat_json(RECOMPOSE_SYSTEM, user, purpose="recompose", temperature=0.1, max_tokens=2000)
             if any(g.get("members") for g in plan.get("groups", []) if isinstance(g, dict)):
                 return plan, False
             log.warning("recomposition returned no members; using retrieval fallback")
@@ -228,6 +227,7 @@ class Recomposer:
                 ),
                 purpose="alternatives",
                 temperature=0.1,
+                max_tokens=800,
             )
             reasons = {str(k): str(v) for k, v in (data.get("reasons") or {}).items()}
         except Exception as e:  # noqa: BLE001

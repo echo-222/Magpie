@@ -1,0 +1,845 @@
+{
+  "magpie_pack": {
+    "id": "pack_cf18804507",
+    "name": "为一本讲述中文字体历史的小册子设计封面和内页排版，以呈现纸本书的物质感并参考传统版面知识",
+    "created_at": "2026-09-17T08:27:32+00:00",
+    "updated_at": "2026-09-17T08:27:32+00:00",
+    "task": {
+      "raw_request": "为一本讲中文字体历史的小册子做封面和内页排版，要有纸本书的物质感，参考老版本的版面知识。",
+      "purpose": "为一本讲述中文字体历史的小册子设计封面和内页排版，以呈现纸本书的物质感并参考传统版面知识",
+      "desired_qualities": [
+        "纸张质感与凹凸压印效果",
+        "传统版式结构如栏框与留白",
+        "中文字体演变的时间轴可视化",
+        "古籍装帧与现代印刷的结合",
+        "水墨晕染与印刷网点的层次感",
+        "符合阅读动线的版面节奏"
+      ],
+      "avoid": [
+        "过度使用荧光色或渐变效果",
+        "扁平化设计，保持手工艺感",
+        "数字屏幕交互元素"
+      ],
+      "constraints": [
+        "纸质印刷品，A5或类似尺寸",
+        "适合实体书的装帧方式如精装或线装",
+        "面向对中文字体历史感兴趣的读者"
+      ],
+      "needed_reference_types": [
+        "材质/质感",
+        "排版/字体",
+        "版式结构",
+        "色彩",
+        "老版书籍实物或图片"
+      ],
+      "search_queries": [
+        "老版书籍封面材质与压纹效果",
+        "传统中文字体排版实例",
+        "纸张纹理与凹凸印刷效果",
+        "民国时期书籍版式结构",
+        "水墨与印刷网点的结合案例",
+        "古籍装帧结构分解图"
+      ],
+      "language": "zh"
+    },
+    "human_direction": "聚焦纸张肌理与传统版式，用古籍装帧的厚重感呼应字体演变史，通过留白与栏框构建阅读节奏，避免数字化扁平化，让材质本身成为叙事媒介。",
+    "groups": [
+      {
+        "name": "材质/质感",
+        "purpose": "呈现纸张物理特性与墨色层次",
+        "members": [
+          {
+            "role": "基底材质",
+            "reason": "和纸纤维颗粒感与墨渗效果，模拟古籍纸张的呼吸感",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_c35b3ff8c7",
+              "modality": "image",
+              "label": "和纸纤维特写（浮世绘印刷）",
+              "human_thought": "喜欢这种纸纤维的颗粒感，墨线压在上面有一点渗，不是数码那种干净的边。",
+              "summary": "这张图片展示了一个黑色边框的灰色和白色渐变背景，设计简洁，具有现代感。",
+              "style": [
+                "现代",
+                "简洁",
+                "渐变",
+                "对比",
+                "几何",
+                "极简"
+              ],
+              "keywords": [
+                "现代设计",
+                "渐变背景",
+                "极简风格",
+                "黑色边框",
+                "灰色渐变",
+                "白色渐变",
+                "现代感",
+                "简洁设计"
+              ],
+              "mood": [
+                "现代",
+                "冷静",
+                "简洁"
+              ],
+              "colors": [
+                {
+                  "hex": "#6c6965",
+                  "ratio": 0.217,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cecbc9",
+                  "ratio": 0.184,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#797672",
+                  "ratio": 0.183,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#3a3835",
+                  "ratio": 0.154,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#dad6d4",
+                  "ratio": 0.132,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#a7a4a0",
+                  "ratio": 0.13,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Washi_close-up_from_ukiyo-e_print.jpeg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/c/c2/Washi_close-up_from_ukiyo-e_print.jpeg",
+                "page_title": "和纸纤维特写（浮世绘印刷）",
+                "captured_at": "2026-09-17T07:11:59+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_c35b3ff8c7/file"
+            }
+          },
+          {
+            "role": "背景材质",
+            "reason": "云纹白纸的温润质感，替代数码渐变的冷感",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_99e677c4db",
+              "modality": "image",
+              "label": "白石和纸信纸",
+              "human_thought": "这张纸本身就是内容。白但不是屏幕的白，有云一样的纹理。首页背景想要这种白。",
+              "summary": "一张白色纤维纸张，背景为黑色，呈现出自然的纤维纹理。",
+              "style": [
+                "自然纹理",
+                "简洁",
+                "对比",
+                "纤维质感",
+                "单色"
+              ],
+              "keywords": [
+                "纤维纸张",
+                "自然纹理",
+                "黑色背景",
+                "简洁设计",
+                "纤维质感",
+                "单色背景",
+                "自然材料"
+              ],
+              "mood": [
+                "简洁",
+                "自然"
+              ],
+              "colors": [
+                {
+                  "hex": "#beb5b0",
+                  "ratio": 0.193,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#c3bab5",
+                  "ratio": 0.193,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#b4aca8",
+                  "ratio": 0.179,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4d4a4a",
+                  "ratio": 0.16,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b9b1ac",
+                  "ratio": 0.143,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cac1b9",
+                  "ratio": 0.132,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Shiroishi_washi_letter_paper.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Shiroishi_washi_letter_paper.jpg",
+                "page_title": "白石和纸信纸",
+                "captured_at": "2026-09-17T07:12:05+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_99e677c4db/file"
+            }
+          },
+          {
+            "role": "视觉纹理",
+            "reason": "碑拓石纹与墨色渗透，强化文字的物质性",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_26b404c8cc",
+              "modality": "image",
+              "label": "唐《李世勣碑》拓本",
+              "human_thought": "碑拓：黑底白字，字口的边缘有石头的毛糙。这是中文排版最“物质”的样子。",
+              "summary": "这是一张古代书法拓片，展示了精美的行书书法，纸张略显泛黄，边缘有破损。",
+              "style": [
+                "传统",
+                "行书",
+                "古朴",
+                "黑白对比",
+                "书法艺术"
+              ],
+              "keywords": [
+                "书法",
+                "拓片",
+                "古代",
+                "行书",
+                "纸张",
+                "边缘",
+                "破损",
+                "传统艺术"
+              ],
+              "mood": [
+                "古朴",
+                "庄重",
+                "典雅"
+              ],
+              "colors": [
+                {
+                  "hex": "#383f4c",
+                  "ratio": 0.213,
+                  "name": "muted blue"
+                },
+                {
+                  "hex": "#282e39",
+                  "ratio": 0.206,
+                  "name": "muted blue"
+                },
+                {
+                  "hex": "#303948",
+                  "ratio": 0.164,
+                  "name": "muted blue"
+                },
+                {
+                  "hex": "#515764",
+                  "ratio": 0.157,
+                  "name": "muted blue"
+                },
+                {
+                  "hex": "#d8d2cb",
+                  "ratio": 0.141,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a9a6a5",
+                  "ratio": 0.119,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "cool"
+              ],
+              "text": null,
+              "text_in_image": "國\n也\n康中\n弓存道\n子\n设讯\n其成术\n面\n多\n威\n妆其\n同善\n慈方\n苏纯\n宏旅\n道敬能基\n史谋",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Li_Shiji_bei.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Li_Shiji_bei.jpg",
+                "page_title": "唐《李世勣碑》拓本",
+                "captured_at": "2026-09-17T07:13:05+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": "/materials/mat_26b404c8cc/file"
+            }
+          },
+          {
+            "role": "反例对比",
+            "reason": "铅字盒的工业秩序感，暗示排版工具的物质性",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_f654caf068",
+              "modality": "image",
+              "label": "活字铅字盒",
+              "human_thought": "铅字盒子和手写标签，工具本身的秩序感。做作品集页面时想用这种“工坊”气质。",
+              "summary": "一排整齐的纸箱和盒子，上面贴有标签，展示出一种有序的存储和分类方式。",
+              "style": [
+                "工业风",
+                "实用主义",
+                "有序",
+                "标签化",
+                "复古"
+              ],
+              "keywords": [
+                "纸箱",
+                "标签",
+                "存储",
+                "分类",
+                "工业风",
+                "复古",
+                "实用主义"
+              ],
+              "mood": [
+                "冷静",
+                "实用"
+              ],
+              "colors": [
+                {
+                  "hex": "#1b1711",
+                  "ratio": 0.245,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a38f71",
+                  "ratio": 0.209,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a5bac0",
+                  "ratio": 0.202,
+                  "name": "muted teal"
+                },
+                {
+                  "hex": "#73593e",
+                  "ratio": 0.157,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#33383c",
+                  "ratio": 0.115,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#d1c49e",
+                  "ratio": 0.072,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": "BALLOON EXTKABLO\n36SEMISCRIPT\nBoOKMAa\nCAPS\n+Lc/a-f)\n24KABELLT1TAL\n(BAUFR)\nL.C\n1OCLOISTEK BLACK\nCTKBITONAL\n24 PERICLES\n36L1BRA\nKodak\nAmSTERAm)\nPAP专E",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Letterpress_typefaces.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/51/Letterpress_typefaces.jpg",
+                "page_title": "活字铅字盒",
+                "captured_at": "2026-09-17T07:12:09+00:00",
+                "license": "CC BY 2.0"
+              },
+              "file_endpoint": "/materials/mat_f654caf068/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "排版/字体",
+        "purpose": "构建传统版式与字体演进的时空线索",
+        "members": [
+          {
+            "role": "结构参考",
+            "reason": "宋版疏朗字距与朱印层次，建立传统排版基准",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_8d66397e87",
+              "modality": "image",
+              "label": "宋版《周易》书页",
+              "human_thought": "宋版书：竖排、字距松、朱印压在上面。宋体字的来源，中文网站想要这种气质而不是微软雅黑。",
+              "summary": "这是一本古代中文书籍的页面，内容为《周易》的注释，页面上有复杂的汉字排版和红色的印章。",
+              "style": [
+                "古籍",
+                "繁体字",
+                "红色印章",
+                "传统排版",
+                "文化符号"
+              ],
+              "keywords": [
+                "古代",
+                "中国",
+                "周易",
+                "注释",
+                "繁体",
+                "红色",
+                "印章",
+                "文化"
+              ],
+              "mood": [
+                "庄重",
+                "古典",
+                "历史"
+              ],
+              "colors": [
+                {
+                  "hex": "#c1a68d",
+                  "ratio": 0.251,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#ae8f7a",
+                  "ratio": 0.194,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#c8b097",
+                  "ratio": 0.149,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#d3b596",
+                  "ratio": 0.139,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#d9bea1",
+                  "ratio": 0.139,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#e4caad",
+                  "ratio": 0.127,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "light",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": "睦回纂固互注周易上經乾第\n九三君子終日乾乾夕惕丽无答\n人放同大非出元本比乾\n人君\n大\n位\n准\n生德明首義\n王童\n云\n乾元宜利卓初九龍勿用\n王弼\n易盆友\n肾初能\n品\n云乾健地此\n於地\n重意\n合一意\n九二見龍在田利見大\n童世解兄孜题第一\n果及亚里\n同协大云学\n四则或罐\n昔后\n重言\n極居票\n反\n福周\n日\n云用具\n利見\n位蛋线\n不立日\n抗利\n小",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:I_Ching_Song_Dynasty_print.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/3/35/I_Ching_Song_Dynasty_print.jpg",
+                "page_title": "宋版《周易》书页",
+                "captured_at": "2026-09-17T07:11:03+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_8d66397e87/file"
+            }
+          },
+          {
+            "role": "栏框范例",
+            "reason": "双栏嵌图的黄金比例，平衡文字与图像的信息密度",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_60215c6387",
+              "modality": "image",
+              "label": "《纽伦堡编年史》1497 年版书页",
+              "human_thought": "1493 年的排版：双栏、木刻插图嵌在字里、字块和图的比例特别舒服。老的版面知识比现代模板可靠。",
+              "summary": "这是一幅中世纪风格的插图，描绘了一个城市景观和多个历史人物，配有拉丁文叙述。",
+              "style": [
+                "中世纪",
+                "木刻",
+                "线描",
+                "历史插图",
+                "拉丁文叙述"
+              ],
+              "keywords": [
+                "中世纪",
+                "木刻插图",
+                "历史人物",
+                "拉丁文",
+                "线描艺术",
+                "城市景观",
+                "历史插图"
+              ],
+              "mood": [
+                "庄重",
+                "古典",
+                "历史感"
+              ],
+              "colors": [
+                {
+                  "hex": "#f7eee3",
+                  "ratio": 0.23,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#79746f",
+                  "ratio": 0.201,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b0a9a1",
+                  "ratio": 0.177,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#f4eadf",
+                  "ratio": 0.148,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#f9f1e6",
+                  "ratio": 0.145,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#d6cdc3",
+                  "ratio": 0.099,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "light",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": "Salium\nSerudartag mundi\n天i\nDiniue\nMmmm\nRueaCrifte\nRoth\ndeosmortuus ejtn ciui\n2ruchfilinsra\n(Baruch)\ntatealoeoum que dici\ngaunatuseftan\nturhur.Eius autemfilias\nnomibi.2905.\nfratrcs fuidurerunt oro\nxirit aut annis23o.zmo\ntnseff.\nham et lbiabam a\nysnnyo\ntay.porro thare dum ter\nuchnateftan\nramaldeorunobio ba\nnomumdi.3035\nbuiffet propte ibola que\nCCCO\nani viteei9,148.z0efuict9\napudcosinprecio habe\n(arod)\narefinachouna\nuvur\nbantur.quia ignem ado\natuseft anno munn\nrabant.zp:opterluctum\ndis114zhabuitijfi\nZram filifuimigrauit ca\nlio6.ititaiit05.genuitaute\nfiuis in charam mefopota\nabahamnachoizaram.2lr\nmie ciuitatem.obiet de\nam tertiusfilius thare babuit\nmummou9eft.cum oi\nonimfilium z duas fliasfa\nriffet anni.cc.,iam e\nrai ororis abrahe.liTelda or\nhomies vita decrefcere in\nouTachor-Lotb filiusram\ncipiebat.Etpaulatim di\nbare\nbabuit duos filios failicet\ncs eius fiebant breuiozes\noabideft patermoabi\ntarum.Zlmon fecinduspa\nmoyfi\n2ram\nter amonitarun.\nam am gemif\nfet oth filins oni\ncnm et arai ct\nHeichamfiliainter chal",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Nuremberg_Chronicle_Pirated_Page.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Nuremberg_Chronicle_Pirated_Page.jpg",
+                "page_title": "《纽伦堡编年史》1497 年版书页",
+                "captured_at": "2026-09-17T07:13:28+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_60215c6387/file"
+            }
+          },
+          {
+            "role": "留白示范",
+            "reason": "几何构图与负空间，引导时间轴的视觉动线",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_2d15a911f3",
+              "modality": "image",
+              "label": "El Lissitzky《红楔子打白军》1919",
+              "human_thought": "一个红三角、一个白圆、几行字，力量全靠几何和留白。海报级的克制。",
+              "summary": "这是一幅具有强烈几何构成和对比色彩的海报，主要使用红色和黑色，传达出一种激进和革命性的氛围。",
+              "style": [
+                "几何构成",
+                "对比色彩",
+                "激进设计",
+                "革命海报",
+                "红色",
+                "黑色"
+              ],
+              "keywords": [
+                "几何图形",
+                "红色",
+                "黑色",
+                "激进",
+                "革命",
+                "海报",
+                "构图",
+                "对比"
+              ],
+              "mood": [
+                "激进",
+                "强烈",
+                "革命"
+              ],
+              "colors": [
+                {
+                  "hex": "#4d3936",
+                  "ratio": 0.26,
+                  "name": "muted red"
+                },
+                {
+                  "hex": "#dfd7c7",
+                  "ratio": 0.218,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e1dbcb",
+                  "ratio": 0.177,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e7e0d1",
+                  "ratio": 0.139,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#c1b5a7",
+                  "ratio": 0.106,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#661615",
+                  "ratio": 0.099,
+                  "name": "red"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "KANHOM\nKPACHDIM\nBEW\nBEAbIX\nN19\nTOANTYnPABAEHHA BAnOPOHTA\nAMTM3AAT\nHOBNC",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Beat_the_Whites_with_the_Red_Wedge.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/1/13/Beat_the_Whites_with_the_Red_Wedge.jpg",
+                "page_title": "El Lissitzky《红楔子打白军》1919",
+                "captured_at": "2026-09-17T07:12:16+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_2d15a911f3/file"
+            }
+          },
+          {
+            "role": "网格反例",
+            "reason": "国际风格的冷感网格，需与纸张温度结合使用",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_a79a537766",
+              "modality": "text",
+              "label": "International Typographic Style - Wikipedia",
+              "human_thought": "网格 + 左对齐 + 无衬线，这套骨架永远不出错，但只用它会太冷。要和纸张、材质配着用。",
+              "summary": "The International Typographic Style, or Swiss Style, focuses on cleanliness, readability, and objectivity, characterized by asymmetric layouts, grid systems, sans-serif fonts like Akzidenz-Grotesk, and flush left, ragged right text alignment.",
+              "style": [
+                "technical",
+                "neutral",
+                "descriptive"
+              ],
+              "keywords": [
+                "International Typographic Style",
+                "Swiss Style",
+                "asymmetric layouts",
+                "grid system",
+                "sans-serif typefaces",
+                "Akzidenz-Grotesk",
+                "flush left",
+                "ragged right"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "The International Typographic Style, also known as the Swiss Style, emphasises cleanliness, readability, and objectivity. Hallmarks of the style are asymmetric layouts, use of a grid, sans-serif typefaces like Akzidenz-Grotesk, and flush left, ragged right text.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/International_Typographic_Style",
+                "resource_url": null,
+                "page_title": "International Typographic Style - Wikipedia",
+                "captured_at": "2026-09-17T07:16:26+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      },
+      {
+        "name": "装饰/边框",
+        "purpose": "融合古籍装饰与现代版面节奏",
+        "members": [
+          {
+            "role": "边框灵感",
+            "reason": "手工花卉边框的密集感，平衡现代简约需求",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_d65a7826e7",
+              "modality": "image",
+              "label": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+              "human_thought": "满版的装饰边框和黑体字，密到透不过气，但每一寸都是手工。反极简的极致，做对比参考。",
+              "summary": "这是一本装饰华丽的古籍，页面上布满了复杂的花卉图案和精细的插图，文字采用复古字体，整体设计风格典雅而精致。",
+              "style": [
+                "复古风格",
+                "精细插图",
+                "花卉装饰",
+                "复杂图案",
+                "优雅设计"
+              ],
+              "keywords": [
+                "古籍",
+                "复古设计",
+                "花卉装饰",
+                "复杂图案",
+                "精致插图",
+                "优雅",
+                "复古字体"
+              ],
+              "mood": [
+                "优雅",
+                "精致",
+                "古典"
+              ],
+              "colors": [
+                {
+                  "hex": "#736251",
+                  "ratio": 0.205,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#9d8971",
+                  "ratio": 0.192,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#84725e",
+                  "ratio": 0.165,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#433629",
+                  "ratio": 0.163,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#bda688",
+                  "ratio": 0.162,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e2c9a4",
+                  "ratio": 0.113,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "hrror\nroffrr\nH\nCA\nThe\n189\nTh\nPr\nre\nca\nfig\nde\nkaoul\nDath intheRam bishalfecoursyronne,\nChatslepenalthenyghtwithopeneye,\nHnd smalefowelesmaken melodye,\nSoprikethhemnatureinhircorages;\nChanne longen folktogoonon pilgrimages,\nHnd palmercefortosekenstraungestrondes,\nCofernehalwes,kowtheinsondry londes;\nHndspecially，fromeveryshiresende\nOfEngelond,toCaunterburythey wende,\nmpmtro\nhathembathholpenwhanthattheywere\nseeke\nfILthat in that sesononaday,\nInSouthwerkattheCabardas\nlay,\nHTHprillewithhisshouressoote\ncorage,\nvithfuldevout\nAroghtcorMarchhathpercedtotheroote,\nHndbathedevery veyneingwichlicour,\nHtnyghtwerecomeinto thathostelrye\nwhichvertuengendredistheflour;\netnyneandtwenty ina compaignye,\nhanZephiruocekwithhisswetebreeth\nOfsondryfolk,byaventurefall\nnopiredhathineveryholt and beeth\nInfelweshipeandpilgrimewereheyalt,\nChattoward Caunterbury woldenryde.",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Kelmscott_Chaucer.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Kelmscott_Chaucer.jpg",
+                "page_title": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+                "captured_at": "2026-09-17T07:12:36+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_d65a7826e7/file"
+            }
+          },
+          {
+            "role": "反例排除",
+            "reason": "园林框景属于空间构图范畴，非直接版面元素",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_1e4c4893fa",
+              "modality": "image",
+              "label": "苏州拙政园月洞门与漏窗",
+              "human_thought": "白墙、月洞门、漏窗，中国式的“框景”。首页可以这样：用一个洞让人往里看。",
+              "summary": "一座传统中式园林的拱门，墙上装饰有镂空窗格，绿树成荫，小径蜿蜒，远处行人隐约可见。",
+              "style": [
+                "传统中式",
+                "园林风格",
+                "镂空窗格",
+                "自然环境",
+                "人文景观"
+              ],
+              "keywords": [
+                "中式园林",
+                "拱门",
+                "镂空窗格",
+                "自然环境",
+                "传统建筑",
+                "休闲散步",
+                "户外活动"
+              ],
+              "mood": [
+                "宁静",
+                "自然",
+                "和谐"
+              ],
+              "colors": [
+                {
+                  "hex": "#24281e",
+                  "ratio": 0.215,
+                  "name": "muted green"
+                },
+                {
+                  "hex": "#626a53",
+                  "ratio": 0.173,
+                  "name": "muted green"
+                },
+                {
+                  "hex": "#c5c5ba",
+                  "ratio": 0.167,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#879378",
+                  "ratio": 0.167,
+                  "name": "muted green"
+                },
+                {
+                  "hex": "#435a36",
+                  "ratio": 0.165,
+                  "name": "green"
+                },
+                {
+                  "hex": "#eaeae4",
+                  "ratio": 0.114,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Suzhou_2006_09-57.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/2/2a/Suzhou_2006_09-57.jpg",
+                "page_title": "苏州拙政园月洞门与漏窗",
+                "captured_at": "2026-09-17T07:13:00+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": "/materials/mat_1e4c4893fa/file"
+            }
+          }
+        ]
+      }
+    ],
+    "removed_by_human": [],
+    "human_edits": []
+  }
+}

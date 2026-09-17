@@ -1,0 +1,753 @@
+{
+  "magpie_pack": {
+    "id": "pack_939dd82f46",
+    "name": "设计一个克制且具有物质感的网站首页，避免典型AI蓝紫色调，以传达简洁而有质感的用户体验",
+    "created_at": "2026-09-17T07:28:32+00:00",
+    "updated_at": "2026-09-17T07:30:38+00:00",
+    "task": {
+      "raw_request": "我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。",
+      "purpose": "设计一个克制且具有物质感的网站首页，避免典型AI蓝紫色调，以传达简洁而有质感的用户体验",
+      "desired_qualities": [
+        "克制的视觉元素",
+        "物质感的材质表现",
+        "中性色调搭配",
+        "简洁布局结构",
+        "低调的高级感",
+        "避免过度设计"
+      ],
+      "avoid": [
+        "典型AI蓝紫色调",
+        "过度数字化的视觉元素",
+        "浮夸的装饰性设计"
+      ],
+      "constraints": [],
+      "needed_reference_types": [
+        "材质/质感",
+        "色彩",
+        "排版/字体",
+        "氛围",
+        "反例"
+      ],
+      "search_queries": [
+        "材质参考：金属/木材纹理",
+        "中性色调参考：米白/灰/驼色",
+        "极简排版设计",
+        "克制的氛围感设计",
+        "避免AI蓝紫的网页案例",
+        "低调高级字体设计"
+      ],
+      "language": "zh"
+    },
+    "human_direction": "设计一个克制的主页，强调材质的真实感和中性色调，避免AI常见的蓝紫色调和过度数字化元素。使用自然纹理作为背景，搭配低饱和度色彩，保持布局简洁，营造低调的高级感。避免任何浮夸或过度设计的视觉元素。",
+    "groups": [
+      {
+        "name": "材质/质感",
+        "purpose": "提供自然纹理作为背景材质，增强真实感",
+        "members": [
+          {
+            "role": "主材质",
+            "reason": "白石和纸信纸的纤维纹理适合营造自然材质感，符合克制的视觉需求",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_99e677c4db",
+              "modality": "image",
+              "label": "白石和纸信纸",
+              "human_thought": "这张纸本身就是内容。白但不是屏幕的白，有云一样的纹理。首页背景想要这种白。",
+              "summary": "一张白色纤维纸张，背景为黑色，呈现出自然的纤维纹理。",
+              "style": [
+                "自然纹理",
+                "简洁",
+                "对比",
+                "纤维质感",
+                "单色"
+              ],
+              "keywords": [
+                "纤维纸张",
+                "自然纹理",
+                "黑色背景",
+                "简洁设计",
+                "纤维质感",
+                "单色背景",
+                "自然材料"
+              ],
+              "mood": [
+                "简洁",
+                "自然"
+              ],
+              "colors": [
+                {
+                  "hex": "#beb5b0",
+                  "ratio": 0.193,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#c3bab5",
+                  "ratio": 0.193,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#b4aca8",
+                  "ratio": 0.179,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4d4a4a",
+                  "ratio": 0.16,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b9b1ac",
+                  "ratio": 0.143,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#cac1b9",
+                  "ratio": 0.132,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Shiroishi_washi_letter_paper.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/0/0a/Shiroishi_washi_letter_paper.jpg",
+                "page_title": "白石和纸信纸",
+                "captured_at": "2026-09-17T07:12:05+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_99e677c4db/file"
+            }
+          },
+          {
+            "role": "辅助纹理",
+            "reason": "沙丘风纹的颗粒感可作为背景纹理，与主材质形成层次",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_95347fdd45",
+              "modality": "image",
+              "label": "沙丘风纹（Death Valley）",
+              "human_thought": "风留下的纹理，重复但不机械。想用作背景，代替那种噪点渐变。",
+              "summary": "沙丘纹理的自然景观，展示了沙漠的宁静与壮丽。",
+              "style": [
+                "自然纹理",
+                "水平线条",
+                "开阔视野",
+                "温暖色调",
+                "自然构图"
+              ],
+              "keywords": [
+                "沙漠",
+                "沙丘",
+                "自然景观",
+                "水平线条",
+                "开阔视野",
+                "温暖色调",
+                "自然构图"
+              ],
+              "mood": [
+                "宁静",
+                "壮丽",
+                "开阔"
+              ],
+              "colors": [
+                {
+                  "hex": "#b2864f",
+                  "ratio": 0.252,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#a77d4e",
+                  "ratio": 0.206,
+                  "name": "orange"
+                },
+                {
+                  "hex": "#9d7a53",
+                  "ratio": 0.178,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#a48c72",
+                  "ratio": 0.163,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#866743",
+                  "ratio": 0.152,
+                  "name": "brown"
+                },
+                {
+                  "hex": "#ba9566",
+                  "ratio": 0.049,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/9/92/Ripples_on_Mesquite_Flat_Sand_Dunes.jpg",
+                "page_title": "沙丘风纹（Death Valley）",
+                "captured_at": "2026-09-17T07:13:24+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_95347fdd45/file"
+            }
+          },
+          {
+            "role": "工业质感",
+            "reason": "剁斧混凝土的粗粝感为设计增添材质对比，避免单调",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_9f18d90439",
+              "modality": "image",
+              "label": "Barbican 剁斧混凝土表面",
+              "human_thought": "剁斧混凝土的表面，粗糙但是有意为之。想找网页里对应的“粗糙的精致”。",
+              "summary": "这张图片展示了一块碎石地面，表面粗糙不平，有明显的石块和碎屑分布。",
+              "style": [
+                "粗糙质感",
+                "自然纹理",
+                "自然风格",
+                "工业风格",
+                "自然材料"
+              ],
+              "keywords": [
+                "碎石",
+                "地面",
+                "自然纹理",
+                "工业风格",
+                "自然材料",
+                "粗糙质感",
+                "户外场景"
+              ],
+              "mood": [
+                "自然",
+                "质朴"
+              ],
+              "colors": [
+                {
+                  "hex": "#8f877c",
+                  "ratio": 0.271,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#676059",
+                  "ratio": 0.188,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#9e978d",
+                  "ratio": 0.152,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b8aea0",
+                  "ratio": 0.146,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#aba192",
+                  "ratio": 0.129,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#ccc4b5",
+                  "ratio": 0.114,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Barbican_Concrete_finish_(8085917893).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Barbican_Concrete_finish_%288085917893%29.jpg",
+                "page_title": "Barbican 剁斧混凝土表面",
+                "captured_at": "2026-09-17T07:12:31+00:00",
+                "license": "CC BY-SA 2.0"
+              },
+              "file_endpoint": "/materials/mat_9f18d90439/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "色彩方向",
+        "purpose": "中性色调搭配，避免蓝紫色调的AI感",
+        "members": [
+          {
+            "role": "主色调",
+            "reason": "汝窑青瓷的青绿色调介于蓝绿之间，可替代科技蓝，保持中性",
+            "note": "主色就用这个天青，别再调蓝",
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_ad89b604d5",
+              "modality": "image",
+              "label": "北宋汝窑青瓷",
+              "human_thought": "汝窑这种天青色：介于蓝绿灰之间，说不清是什么色。想拿它当主色，代替科技蓝。",
+              "summary": "一个青釉刻花碗，碗内有波浪形的刻花图案。",
+              "style": [
+                "传统",
+                "简洁",
+                "细腻",
+                "青瓷",
+                "刻花"
+              ],
+              "keywords": [
+                "青釉",
+                "刻花碗",
+                "传统瓷器",
+                "波浪纹",
+                "青瓷艺术",
+                "中式设计",
+                "手工雕刻"
+              ],
+              "mood": [
+                "古典",
+                "优雅",
+                "宁静"
+              ],
+              "colors": [
+                {
+                  "hex": "#746766",
+                  "ratio": 0.279,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#615754",
+                  "ratio": 0.189,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4c4442",
+                  "ratio": 0.172,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#6e6160",
+                  "ratio": 0.143,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#b2b4ab",
+                  "ratio": 0.137,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#858377",
+                  "ratio": 0.079,
+                  "name": "grey"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Ru_Ware_Celadon,_Northern_Song_(38093962915).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Ru_Ware_Celadon%2C_Northern_Song_%2838093962915%29.jpg",
+                "page_title": "北宋汝窑青瓷",
+                "captured_at": "2026-09-17T07:12:27+00:00",
+                "license": "CC0"
+              },
+              "file_endpoint": "/materials/mat_ad89b604d5/file"
+            }
+          },
+          {
+            "role": "氛围色",
+            "reason": "Hammershøi画作的冷调灰蓝与暖黄平衡，符合克制的视觉需求",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_21890e87ef",
+              "modality": "image",
+              "label": "Hammershøi《有镜子的室内》约1907",
+              "human_thought": "灰调、几乎没有饱和度、家具很少，但一点都不冷。“安静”的参考标准。",
+              "summary": "这幅画描绘了一个宁静的室内场景，光线柔和，色调冷淡，营造出一种静谧的氛围。",
+              "style": [
+                "静谧",
+                "冷色调",
+                "几何构图",
+                "室内设计",
+                "古典风格"
+              ],
+              "keywords": [
+                "室内设计",
+                "静谧",
+                "冷色调",
+                "古典",
+                "几何构图",
+                "室内场景",
+                "柔和光线"
+              ],
+              "mood": [
+                "静谧",
+                "冷峻"
+              ],
+              "colors": [
+                {
+                  "hex": "#5d5c4c",
+                  "ratio": 0.207,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#31322e",
+                  "ratio": 0.193,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#41433b",
+                  "ratio": 0.171,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#4c4b40",
+                  "ratio": 0.167,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#77735e",
+                  "ratio": 0.144,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#9b957b",
+                  "ratio": 0.118,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "dark",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_(ca.1907).jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Vilhelm_Hammersh%C3%B8i_-_Interior_with_a_mirror_%28ca.1907%29.jpg",
+                "page_title": "Hammershøi《有镜子的室内》约1907",
+                "captured_at": "2026-09-17T07:12:22+00:00",
+                "license": "Public domain"
+              },
+              "file_endpoint": "/materials/mat_21890e87ef/file"
+            }
+          },
+          {
+            "role": "辅助色",
+            "reason": "Braun SK4的哑光黑与白搭配，强化材质对比的同时保持低饱和度",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_70f4f410f0",
+              "modality": "image",
+              "label": "Braun SK 4（Dieter Rams / Hans Gugelot）",
+              "human_thought": "白色金属+木侧板+透明盖，Rams 的“白雪公主的棺材”。工业但温和，颜色只用材料本身的颜色。",
+              "summary": "这是一个复古风格的留声机，设计简洁，带有木质边框和透明的保护盖。",
+              "style": [
+                "简约",
+                "复古",
+                "木质质感",
+                "透明设计",
+                "经典",
+                "功能性"
+              ],
+              "keywords": [
+                "留声机",
+                "复古",
+                "木质",
+                "透明",
+                "经典设计",
+                "音乐设备",
+                "家庭装饰"
+              ],
+              "mood": [
+                "经典",
+                "怀旧",
+                "优雅"
+              ],
+              "colors": [
+                {
+                  "hex": "#827469",
+                  "ratio": 0.25,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#5f5550",
+                  "ratio": 0.202,
+                  "name": "grey"
+                },
+                {
+                  "hex": "#493d38",
+                  "ratio": 0.174,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#8f7e71",
+                  "ratio": 0.174,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#b6a69d",
+                  "ratio": 0.1,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#74655b",
+                  "ratio": 0.1,
+                  "name": "warm neutral"
+                }
+              ],
+              "palette": [
+                "low saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "BxRun",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Braun_SK_4.1.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Braun_SK_4.1.jpg",
+                "page_title": "Braun SK 4（Dieter Rams / Hans Gugelot）",
+                "captured_at": "2026-09-17T07:12:51+00:00",
+                "license": "CC BY-SA 2.0"
+              },
+              "file_endpoint": "/materials/mat_70f4f410f0/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "反例",
+        "purpose": "避免过度设计与AI趋势",
+        "members": [
+          {
+            "role": "反例",
+            "reason": "Corporate Memphis的高饱和色彩与几何图案属于典型AI设计风格，需规避",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_33b9fe346a",
+              "modality": "text",
+              "label": "Corporate Memphis - Wikipedia",
+              "human_thought": "反例。所有 SaaS 长得一样的原因。避开这个，也避开它的 AI 版本：蓝紫渐变 + 玻璃拟态 + 发光边框。",
+              "summary": "Corporate Memphis是一种2010年代后期科技公司插画中流行的扁平化几何艺术风格，以简化人体比例和明亮色块为特征。",
+              "style": [
+                "neutral",
+                "explanatory",
+                "technical"
+              ],
+              "keywords": [
+                "Corporate Memphis",
+                "Alegria",
+                "flat design",
+                "geometric style",
+                "simplified figures",
+                "pastel colors",
+                "big tech art",
+                "disproportionate limbs"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "Corporate Memphis (also known as Alegria, big tech art, or flat art) is a term used, often disparagingly, to describe a flat, geometric art style widely used in illustrations of tech companies in the late 2010s and early 2020s. It is characterised by simplified human figures with disproportionate limbs and bright, often pastel, colours.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/Corporate_Memphis",
+                "resource_url": null,
+                "page_title": "Corporate Memphis - Wikipedia",
+                "captured_at": "2026-09-17T07:15:50+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          },
+          {
+            "role": "反例",
+            "reason": "Kelmscott Chaucer的密集排版与装饰性字体易造成视觉压迫，不符合克制原则",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_d65a7826e7",
+              "modality": "image",
+              "label": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+              "human_thought": "满版的装饰边框和黑体字，密到透不过气，但每一寸都是手工。反极简的极致，做对比参考。",
+              "summary": "这是一本装饰华丽的古籍，页面上布满了复杂的花卉图案和精细的插图，文字采用复古字体，整体设计风格典雅而精致。",
+              "style": [
+                "复古风格",
+                "精细插图",
+                "花卉装饰",
+                "复杂图案",
+                "优雅设计"
+              ],
+              "keywords": [
+                "古籍",
+                "复古设计",
+                "花卉装饰",
+                "复杂图案",
+                "精致插图",
+                "优雅",
+                "复古字体"
+              ],
+              "mood": [
+                "优雅",
+                "精致",
+                "古典"
+              ],
+              "colors": [
+                {
+                  "hex": "#736251",
+                  "ratio": 0.205,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#9d8971",
+                  "ratio": 0.192,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#84725e",
+                  "ratio": 0.165,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#433629",
+                  "ratio": 0.163,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#bda688",
+                  "ratio": 0.162,
+                  "name": "warm neutral"
+                },
+                {
+                  "hex": "#e2c9a4",
+                  "ratio": 0.113,
+                  "name": "orange"
+                }
+              ],
+              "palette": [
+                "medium saturation",
+                "mid-tone",
+                "warm",
+                "near-monochrome"
+              ],
+              "text": null,
+              "text_in_image": "hrror\nroffrr\nH\nCA\nThe\n189\nTh\nPr\nre\nca\nfig\nde\nkaoul\nDath intheRam bishalfecoursyronne,\nChatslepenalthenyghtwithopeneye,\nHnd smalefowelesmaken melodye,\nSoprikethhemnatureinhircorages;\nChanne longen folktogoonon pilgrimages,\nHnd palmercefortosekenstraungestrondes,\nCofernehalwes,kowtheinsondry londes;\nHndspecially，fromeveryshiresende\nOfEngelond,toCaunterburythey wende,\nmpmtro\nhathembathholpenwhanthattheywere\nseeke\nfILthat in that sesononaday,\nInSouthwerkattheCabardas\nlay,\nHTHprillewithhisshouressoote\ncorage,\nvithfuldevout\nAroghtcorMarchhathpercedtotheroote,\nHndbathedevery veyneingwichlicour,\nHtnyghtwerecomeinto thathostelrye\nwhichvertuengendredistheflour;\netnyneandtwenty ina compaignye,\nhanZephiruocekwithhisswetebreeth\nOfsondryfolk,byaventurefall\nnopiredhathineveryholt and beeth\nInfelweshipeandpilgrimewereheyalt,\nChattoward Caunterbury woldenryde.",
+              "source": {
+                "page_url": "https://commons.wikimedia.org/wiki/File:Kelmscott_Chaucer.jpg",
+                "resource_url": "https://upload.wikimedia.org/wikipedia/commons/4/45/Kelmscott_Chaucer.jpg",
+                "page_title": "Kelmscott Chaucer 扉页（William Morris, 1896）",
+                "captured_at": "2026-09-17T07:12:36+00:00",
+                "license": "CC BY-SA 3.0"
+              },
+              "file_endpoint": "/materials/mat_d65a7826e7/file"
+            }
+          }
+        ]
+      },
+      {
+        "name": "版式结构",
+        "purpose": "added by human",
+        "members": [
+          {
+            "role": "反例",
+            "reason": "International Typographic Style的网格布局虽整洁，但可能因过度结构化而显得生硬",
+            "note": null,
+            "added_by": "magpie",
+            "material": {
+              "id": "mat_a79a537766",
+              "modality": "text",
+              "label": "International Typographic Style - Wikipedia",
+              "human_thought": "网格 + 左对齐 + 无衬线，这套骨架永远不出错，但只用它会太冷。要和纸张、材质配着用。",
+              "summary": "The International Typographic Style, or Swiss Style, focuses on cleanliness, readability, and objectivity, characterized by asymmetric layouts, grid systems, sans-serif fonts like Akzidenz-Grotesk, and flush left, ragged right text alignment.",
+              "style": [
+                "technical",
+                "neutral",
+                "descriptive"
+              ],
+              "keywords": [
+                "International Typographic Style",
+                "Swiss Style",
+                "asymmetric layouts",
+                "grid system",
+                "sans-serif typefaces",
+                "Akzidenz-Grotesk",
+                "flush left",
+                "ragged right"
+              ],
+              "mood": [],
+              "colors": [],
+              "palette": null,
+              "text": "The International Typographic Style, also known as the Swiss Style, emphasises cleanliness, readability, and objectivity. Hallmarks of the style are asymmetric layouts, use of a grid, sans-serif typefaces like Akzidenz-Grotesk, and flush left, ragged right text.",
+              "text_in_image": null,
+              "source": {
+                "page_url": "https://en.wikipedia.org/wiki/International_Typographic_Style",
+                "resource_url": null,
+                "page_title": "International Typographic Style - Wikipedia",
+                "captured_at": "2026-09-17T07:16:26+00:00",
+                "license": "CC BY-SA 4.0"
+              },
+              "file_endpoint": null
+            }
+          }
+        ]
+      }
+    ],
+    "removed_by_human": [
+      {
+        "id": "mat_ea9962aea6",
+        "label": "生锈的蓝色卷帘门（Poly Haven 扫描）"
+      }
+    ],
+    "human_edits": [
+      {
+        "op": "remove",
+        "at": "2026-09-17T07:30:38+00:00",
+        "material_id": "mat_ea9962aea6",
+        "from_group": "材质/质感",
+        "to_group": null,
+        "detail": null
+      },
+      {
+        "op": "move",
+        "at": "2026-09-17T07:30:38+00:00",
+        "material_id": "mat_a79a537766",
+        "from_group": "排版/字体",
+        "to_group": "版式结构",
+        "detail": null
+      },
+      {
+        "op": "note",
+        "at": "2026-09-17T07:30:38+00:00",
+        "material_id": "mat_ad89b604d5",
+        "from_group": null,
+        "to_group": null,
+        "detail": "主色就用这个天青，别再调蓝"
+      }
+    ]
+  }
+}

@@ -121,8 +121,29 @@ def cmd_doctor(args):
             print(f"chat call  : ok {out} ({time.time() - t:.1f}s)")
         except Exception as e:  # noqa: BLE001
             print(f"chat call  : FAILED {e}")
+        _ollama_context_check(s)
     db = Database(s.db_path)
     print(f"materials  : {db.count_materials()}  embeddings: {db.embedding_stats()}")
+
+
+def _ollama_context_check(s) -> None:
+    """Ollama only: warn when the loaded chat model runs with a context too small for recomposition."""
+    if "11434" not in s.llm_base_url:
+        return
+    try:
+        import json as _json
+        import urllib.request
+
+        base = s.llm_base_url.split("/v1")[0]
+        with urllib.request.urlopen(base + "/api/ps", timeout=5) as r:
+            models = _json.load(r).get("models", [])
+    except Exception:  # noqa: BLE001
+        return
+    for m in models:
+        if m.get("name", "").split(":")[0] in s.chat_model.split(":")[0] or m.get("name") == s.chat_model:
+            ctx = m.get("context_length") or 0
+            flag = "ok" if ctx >= 8192 else "TOO SMALL -> run scripts/setup_ollama_models.sh and set MAGPIE_CHAT_MODEL=qwen3:8b-16k"
+            print(f"context    : {m.get('name')} num_ctx={ctx} {flag}")
 
 
 def cmd_pack(args):
