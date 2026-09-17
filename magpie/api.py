@@ -7,7 +7,6 @@ details; that lives in ingest.py / recompose.py.
 
 from __future__ import annotations
 
-import json
 import logging
 import threading
 from contextlib import asynccontextmanager
@@ -18,11 +17,14 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTex
 from pydantic import BaseModel
 
 from . import __version__
+from . import pack as pack_ops
 from .config import get_settings
 from .db import Database
+from .export import pack_to_json, pack_to_markdown
 from .ingest import Ingestor
 from .llm import get_llm
-from .models import CapturePayload, Human, Source
+from .models import CapturePayload, Human, MaterialPack, Source
+from .recompose import Recomposer
 from .retrieval import Retriever
 
 log = logging.getLogger(__name__)
@@ -37,6 +39,7 @@ class AppState:
         self.llm = get_llm(self.settings)
         self.ingestor = Ingestor(db=self.db, settings=self.settings, llm=self.llm)
         self.retriever = Retriever(db=self.db, llm=self.llm)
+        self.recomposer = Recomposer(db=self.db, retriever=self.retriever, llm=self.llm)
         self.analysis_lock = threading.Lock()  # one local model call at a time
 
     def analyze_in_background(self, material_id: str) -> None:
@@ -237,5 +240,144 @@ def similar(request: Request, material_id: str, limit: int = 8):
     return {"hits": [{"material_id": h.material_id, "score": round(h.score, 4), "via": h.via, "material": h.material.model_dump()} for h in hits]}
 
 
-def _pretty(obj) -> str:
-    return json.dumps(obj, ensure_ascii=False, indent=2)
+# ------------------------------------------------------------------------ packs (Gate C)
+
+
+class BuildPackBody(BaseModel):
+    task: str
+    candidates: int = 12
+
+
+class MemberBody(BaseModel):
+    material_id: str
+
+
+class MoveBody(MemberBody):
+    to_group: str
+    position: int | None = None
+
+
+class AddBody(MemberBody):
+    group: str
+    reason: str | None = None
+    role: str | None = None
+
+
+class NoteBody(MemberBody):
+    note: str | None = None
+
+
+class AlternativesBody(BaseModel):
+    material_id: str | None = None
+    group: str | None = None
+    limit: int = 4
+
+
+class RenameGroupBody(BaseModel):
+    old: str
+    new: str
+
+
+def _pack_response(st: AppState, pack: MaterialPack, extra_ids: list[str] | None = None) -> dict:
+    ids = pack.member_ids() + pack.removed_material_ids + list(extra_ids or [])
+    mats = st.db.get_materials(ids)
+    return {"pack": pack.model_dump(), "materials": {k: v.model_dump() for k, v in mats.items()}}
+
+
+def _load_pack(st: AppState, pack_id: str) -> MaterialPack:
+    pack = st.db.get_pack(pack_id)
+    if not pack:
+        raise HTTPException(404, "pack not found")
+    return pack
+
+
+@app.post("/packs", status_code=201)
+def build_pack(request: Request, body: BuildPackBody):
+    st = state(request)
+    if not body.task.strip():
+        raise HTTPException(400, "task text required")
+    with st.analysis_lock:
+        pack = st.recomposer.build(body.task, limit=body.candidates)
+    return _pack_response(st, pack)
+
+
+@app.get("/packs")
+def list_packs(request: Request):
+    st = state(request)
+    return {
+        "items": [
+            {"id": p.id, "name": p.name, "updated_at": p.updated_at, "groups": len(p.groups), "members": len(p.member_ids()), "edits": len(p.human_edits)}
+            for p in st.db.list_packs()
+        ]
+    }
+
+
+@app.get("/packs/{pack_id}")
+def get_pack(request: Request, pack_id: str):
+    st = state(request)
+    return _pack_response(st, _load_pack(st, pack_id))
+
+
+@app.delete("/packs/{pack_id}")
+def delete_pack(request: Request, pack_id: str):
+    st = state(request)
+    _load_pack(st, pack_id)
+    st.db.delete_pack(pack_id)
+    return {"deleted": pack_id}
+
+
+def _edit(st: AppState, pack_id: str, fn, *args):
+    pack = _load_pack(st, pack_id)
+    try:
+        pack = fn(st.db, pack, *args)
+    except pack_ops.PackError as e:
+        raise HTTPException(400, str(e)) from e
+    return _pack_response(st, pack)
+
+
+@app.post("/packs/{pack_id}/remove")
+def pack_remove(request: Request, pack_id: str, body: MemberBody):
+    return _edit(state(request), pack_id, pack_ops.remove_member, body.material_id)
+
+
+@app.post("/packs/{pack_id}/move")
+def pack_move(request: Request, pack_id: str, body: MoveBody):
+    return _edit(state(request), pack_id, pack_ops.move_member, body.material_id, body.to_group, body.position)
+
+
+@app.post("/packs/{pack_id}/add")
+def pack_add(request: Request, pack_id: str, body: AddBody):
+    return _edit(state(request), pack_id, pack_ops.add_member, body.material_id, body.group, body.reason, body.role)
+
+
+@app.post("/packs/{pack_id}/note")
+def pack_note(request: Request, pack_id: str, body: NoteBody):
+    return _edit(state(request), pack_id, pack_ops.set_note, body.material_id, body.note)
+
+
+@app.post("/packs/{pack_id}/rename-group")
+def pack_rename_group(request: Request, pack_id: str, body: RenameGroupBody):
+    return _edit(state(request), pack_id, pack_ops.rename_group, body.old, body.new)
+
+
+@app.post("/packs/{pack_id}/alternatives")
+def pack_alternatives(request: Request, pack_id: str, body: AlternativesBody):
+    """Find more like this — task-aware, excludes current members and human-removed items."""
+    st = state(request)
+    pack = _load_pack(st, pack_id)
+    with st.analysis_lock:
+        suggestions = st.recomposer.alternatives(pack, body.material_id, body.group, limit=body.limit)
+    return {
+        "pack_id": pack.id,
+        "suggestions": [{k: v for k, v in s.items() if k != "material"} for s in suggestions],
+        "materials": {s["material_id"]: s["material"].model_dump() for s in suggestions},
+    }
+
+
+@app.get("/packs/{pack_id}/export")
+def export_pack(request: Request, pack_id: str, format: str = "markdown"):
+    st = state(request)
+    pack = _load_pack(st, pack_id)
+    if format == "json":
+        return pack_to_json(pack, st.db)
+    return PlainTextResponse(pack_to_markdown(pack, st.db), media_type="text/markdown; charset=utf-8")

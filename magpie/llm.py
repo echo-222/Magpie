@@ -29,7 +29,9 @@ class LLM(Protocol):
     vision_model: str
     embed_model: str
 
-    def chat_json(self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "") -> dict: ...
+    def chat_json(
+        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+    ) -> dict: ...
 
     def embed(self, texts: list[str]) -> list[list[float]]: ...
 
@@ -83,7 +85,9 @@ class OpenAICompatLLM:
             return system + "\n/no_think"
         return system
 
-    def chat_json(self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "") -> dict:
+    def chat_json(
+        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+    ) -> dict:
         model = self.vision_model if images else self.chat_model
         content: list[dict] | str
         if images:
@@ -99,7 +103,7 @@ class OpenAICompatLLM:
         ]
         last_err: Exception | None = None
         for attempt in range(2):
-            kwargs = dict(model=model, messages=messages, temperature=0.2)
+            kwargs = dict(model=model, messages=messages, temperature=temperature)
             if attempt == 0:
                 kwargs["response_format"] = {"type": "json_object"}
             try:
@@ -154,7 +158,9 @@ class FakeLLM:
             vecs.append([x / norm for x in v])
         return vecs
 
-    def chat_json(self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "") -> dict:
+    def chat_json(
+        self, system: str, user: str, *, images: list[bytes] | None = None, purpose: str = "", temperature: float = 0.2
+    ) -> dict:
         words = [w for w in re.split(r"[\s,，。、;；:：\"'()（）\[\]]+", user) if 2 <= len(w) <= 12][:8]
         if purpose == "image_analysis":
             return {

@@ -188,7 +188,7 @@ def main(argv: list[str] | None = None):
 
     p = sub.add_parser("pack", help="Task -> Material Pack")
     p.add_argument("task")
-    p.add_argument("--candidates", type=int, default=16)
+    p.add_argument("--candidates", type=int, default=12)
     p.set_defaults(fn=cmd_pack)
 
     p = sub.add_parser("packs", help="list packs")
