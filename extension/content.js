@@ -12,10 +12,11 @@
   if (window.__magpieCapture) return;
 
   const HOST_ID = "magpie-capture-host";
-  const AUTO_CLOSE_MS = 2400;
+  const AUTO_CLOSE_MS = 2400; // duplicates, toasts
+  const AUTO_CLOSE_SAVED_MS = 4500; // after a save: leaves time to hit 撤销 (hover pauses the timer)
   const TEXT_PREVIEW_CHARS = 400;
 
-  const state = { host: null, root: null, candidate: null, closeTimer: null, pick: null, onDocKey: null };
+  const state = { host: null, root: null, candidate: null, closeTimer: null, lastCloseMs: AUTO_CLOSE_MS, pick: null, onDocKey: null };
   window.__magpieCapture = state;
 
   chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
@@ -81,22 +82,37 @@
   }
 
   // Prefer the largest srcset candidate (PRD F01.2: highest resolution the page offers),
-  // else what the browser is showing, else src.
+  // else what the browser is showing, else src. Lazy-loaded images that still show a data:
+  // placeholder fall back to the usual data-* attributes. URL fragments are dropped (never sent
+  // to the server; WeChat appends "#imgIndex=0").
+  const LAZY_ATTRS = ["data-src", "data-original", "data-lazy-src", "data-actualsrc"];
   function bestImageUrl(img) {
     let best = null;
-    if (img.srcset) {
+    const srcset = img.srcset || img.getAttribute("data-srcset") || "";
+    if (srcset) {
       // candidate = url [descriptor] separated by commas; urls themselves may contain commas
       // (Cloudinary "w_800,c_fill/…"), so match "non-space run + optional descriptor" instead of split(",")
-      for (const m of img.srcset.matchAll(/(\S+)(?:\s+(\d*\.?\d+)[wx])?\s*(?:,|$)/g)) {
+      for (const m of srcset.matchAll(/(\S+)(?:\s+(\d*\.?\d+)[wx])?\s*(?:,|$)/g)) {
         const u = m[1].replace(/,$/, "");
         if (!u) continue;
         const v = m[2] ? parseFloat(m[2]) : 1; // "800w" or "2x" — a srcset never mixes the two
         if (!best || v > best.v) best = { u, v };
       }
     }
-    const chosen = (best && best.u) || img.currentSrc || img.src || "";
+    let chosen = (best && best.u) || img.currentSrc || img.src || "";
+    if (!chosen || /^data:/i.test(chosen)) {
+      for (const attr of LAZY_ATTRS) {
+        const v = img.getAttribute(attr);
+        if (v && !/^data:/i.test(v)) {
+          chosen = v;
+          break;
+        }
+      }
+    }
     try {
-      return new URL(chosen, document.baseURI).href;
+      const u = new URL(chosen, document.baseURI);
+      u.hash = "";
+      return u.href;
     } catch (_) {
       return chosen;
     }
@@ -200,7 +216,7 @@
     // hovering the card pauses the auto-close after a save
     card.addEventListener("mouseenter", () => clearTimeout(state.closeTimer));
     card.addEventListener("mouseleave", () => {
-      if (root.querySelector(".status.ok, .status.warn")) scheduleClose();
+      if (root.querySelector(".status.ok, .status.warn")) scheduleClose(state.lastCloseMs);
     });
 
     state.onDocKey = (e) => {
@@ -252,9 +268,10 @@
     teardownHost();
   }
 
-  function scheduleClose() {
+  function scheduleClose(ms = AUTO_CLOSE_MS) {
     clearTimeout(state.closeTimer);
-    state.closeTimer = setTimeout(closeOverlay, AUTO_CLOSE_MS);
+    state.lastCloseMs = ms;
+    state.closeTimer = setTimeout(closeOverlay, ms);
   }
 
   // ---------------------------------------------------------------- save
@@ -289,7 +306,8 @@
       return;
     }
     if (res.created) {
-      setStatus(root, "ok", "已保存 ✓ 正在后台分析", { library: true });
+      setStatus(root, "ok", "已保存 ✓ 正在后台分析", { library: true, undo: res.material && res.material.id });
+      scheduleClose(AUTO_CLOSE_SAVED_MS);
     } else {
       const m = res.material || {};
       const when = fmtDate((m.source && m.source.captured_at) || m.created_at);
@@ -299,7 +317,22 @@
         else if (m.human && m.human.thought) text += `。原 Thought 保留：“${m.human.thought}”，本次输入未保存`;
       }
       setStatus(root, "warn", text, { library: true });
+      scheduleClose();
     }
+  }
+
+  // 撤销本次收集 (PRD §5.1): delete the material we just created. Only offered for created
+  // materials — a duplicate existed before this capture and is left alone.
+  async function undoSave(root, materialId) {
+    clearTimeout(state.closeTimer);
+    setStatus(root, "info", "撤销中…");
+    const res = await send({ type: "MAGPIE_DELETE_MATERIAL", payload: { id: materialId } });
+    if (state.root !== root) return;
+    if (!res.ok) {
+      setStatus(root, "error", `撤销失败：${(res.error && res.error.message) || "未知错误"}`, [{ label: "重试", onClick: () => undoSave(root, materialId) }]);
+      return;
+    }
+    setStatus(root, "info", "已撤销，这条素材已从库里删除");
     scheduleClose();
   }
 
@@ -327,8 +360,13 @@
           if (state.root !== root) return;
           setBusy(root, false);
           if (!res.ok) return setStatus(root, "error", (res.error && res.error.message) || "保存失败", [{ label: "重试", onClick: save }]);
-          setStatus(root, "ok", res.created ? "已保存渲染版本 ✓（非原始文件）" : "已在素材库里", { library: true });
-          scheduleClose();
+          if (res.created) {
+            setStatus(root, "ok", "已保存渲染版本 ✓（非原始文件）", { library: true, undo: res.material && res.material.id });
+            scheduleClose(AUTO_CLOSE_SAVED_MS);
+          } else {
+            setStatus(root, "warn", "已在素材库里", { library: true });
+            scheduleClose();
+          }
         },
       });
     }
@@ -379,7 +417,7 @@
     if (input) input.disabled = busy;
   }
 
-  // actions: array of {label, onClick} | {library: true} → "打开素材库" link
+  // actions: array of {label, onClick}  |  { undo: materialId, library: true } for the standard buttons
   function setStatus(root, kind, text, actions) {
     const el = root.querySelector(".status");
     if (!el) return;
@@ -388,6 +426,7 @@
     el.textContent = "";
     el.append(Object.assign(document.createElement("span"), { textContent: text }));
     const list = Array.isArray(actions) ? actions : [];
+    if (actions && actions.undo) list.push({ label: "撤销", onClick: () => undoSave(root, actions.undo) });
     if (actions && actions.library) list.push({ label: "打开素材库", onClick: () => send({ type: "MAGPIE_OPEN_LIBRARY" }) });
     for (const a of list) {
       const b = document.createElement("button");

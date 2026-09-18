@@ -53,6 +53,7 @@ const HANDLERS = {
   MAGPIE_SAVE_TEXT: saveText,
   MAGPIE_SAVE_IMAGE: saveImage,
   MAGPIE_GET_MATERIAL: getMaterial,
+  MAGPIE_DELETE_MATERIAL: deleteMaterial,
   MAGPIE_HEALTH: health,
   MAGPIE_OPEN_LIBRARY: openLibrary,
   MAGPIE_CAPTURE_ACTIVE_TAB: async () => {
@@ -226,6 +227,14 @@ async function getMaterial({ id }) {
   const resp = await coreFetch(`/materials/${encodeURIComponent(id)}`);
   if (!resp.ok) throw await httpError(resp);
   return { material: await resp.json() };
+}
+
+// "撤销本次收集": the extension only ever deletes a material it created moments ago.
+async function deleteMaterial({ id }) {
+  if (!id) throw new CaptureError("bad_request", "没有素材 id");
+  const resp = await coreFetch(`/materials/${encodeURIComponent(id)}`, { method: "DELETE" });
+  if (!resp.ok) throw await httpError(resp);
+  return { deleted: id };
 }
 
 async function health() {
