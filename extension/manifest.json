@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Magpie Capture",
+  "version": "0.1.0",
+  "description": "Collect inspiration. Create with it. 选中文字或点选图片，加一句 Human Thought，保存到本地 Magpie Core。",
+  "permissions": ["activeTab", "scripting", "storage", "contextMenus"],
+  "host_permissions": ["http://127.0.0.1:8765/*", "<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "action": {
+    "default_title": "Magpie Capture",
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "commands": {
+    "capture": {
+      "suggested_key": { "default": "Alt+Shift+M" },
+      "description": "收集：有选中文字就收文字，否则点选一张图片"
+    }
+  }
+}
