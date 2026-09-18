@@ -306,6 +306,7 @@
       return;
     }
     if (res.created) {
+      lockForm(root, "已保存");
       setStatus(root, "ok", "已保存 ✓ 正在后台分析", { library: true, undo: res.material && res.material.id });
       scheduleClose(AUTO_CLOSE_SAVED_MS);
     } else {
@@ -316,6 +317,7 @@
         if (res.thoughtApplied) text += "，已补上这句 Thought";
         else if (m.human && m.human.thought) text += `。原 Thought 保留：“${m.human.thought}”，本次输入未保存`;
       }
+      lockForm(root, "已在库中");
       setStatus(root, "warn", text, { library: true });
       scheduleClose();
     }
@@ -332,6 +334,7 @@
       setStatus(root, "error", `撤销失败：${(res.error && res.error.message) || "未知错误"}`, [{ label: "重试", onClick: () => undoSave(root, materialId) }]);
       return;
     }
+    lockForm(root, "已撤销");
     setStatus(root, "info", "已撤销，这条素材已从库里删除");
     scheduleClose();
   }
@@ -361,9 +364,11 @@
           setBusy(root, false);
           if (!res.ok) return setStatus(root, "error", (res.error && res.error.message) || "保存失败", [{ label: "重试", onClick: save }]);
           if (res.created) {
+            lockForm(root, "已保存");
             setStatus(root, "ok", "已保存渲染版本 ✓（非原始文件）", { library: true, undo: res.material && res.material.id });
             scheduleClose(AUTO_CLOSE_SAVED_MS);
           } else {
+            lockForm(root, "已在库中");
             setStatus(root, "warn", "已在素材库里", { library: true });
             scheduleClose();
           }
@@ -415,6 +420,14 @@
       btn.textContent = busy ? "保存中…" : "保存";
     }
     if (input) input.disabled = busy;
+  }
+
+  // After a successful save the form stays locked: a second Enter must not create a duplicate
+  // request; the remaining actions are 撤销 / 打开素材库 / Esc.
+  function lockForm(root, label) {
+    setBusy(root, true);
+    const btn = root.querySelector(".save");
+    if (btn) btn.textContent = label;
   }
 
   // actions: array of {label, onClick}  |  { undo: materialId, library: true } for the standard buttons

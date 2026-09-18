@@ -65,7 +65,7 @@ Core 不会自己下载 `resource_url`，扩展按顺序尝试：
 
 ## 已验证
 
-- 无头 Chrome for Testing 对本地 Core 的端到端：59 项检查，覆盖文字/textarea 选区、字段逐项比对、重复与补 Thought、srcset 最大候选、懒加载占位、`blob:`、防盗链跨域图的 canvas 询问、撤销、Core 未启动 → 重试、chrome:// 页面报错
+- 无头 Chrome for Testing 对本地 Core 的端到端：61 项检查，覆盖文字/textarea 选区、字段逐项比对、重复与补 Thought、srcset 最大候选、懒加载占位、`blob:`、防盗链跨域图的 canvas 询问、撤销、保存后表单锁定、Core 未启动 → 重试、chrome:// 页面报错
 - 真实站点：Wikipedia（文字 + CDN 图）、微信公众号文章（文字 + `mmbiz` 图，字节与原图一致）
 
 ## 已知限制
