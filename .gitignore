@@ -12,6 +12,7 @@ build/
 
 # runtime data (SQLite db, stored originals, thumbnails)
 data/
+data_*/
 
 # os / editor
 .DS_Store
