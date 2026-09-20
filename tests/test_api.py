@@ -57,7 +57,7 @@ def test_background_analysis_path(client, sample_image):
 
 
 def test_index_and_health(client):
-    assert "MAGPIE MVP" in client.get("/").text
+    assert "MAGPIE" in client.get("/").text
     h = client.get("/health").json()
     assert h["provider"] == "fake" and h["materials"] == 0
 

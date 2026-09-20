@@ -149,6 +149,12 @@ class Task(BaseModel):
     needed_reference_types: list[str] = Field(default_factory=list)
     search_queries: list[str] = Field(default_factory=list)  # query expansion for retrieval
     language: str | None = None
+    # Structured hints pulled out of an abstract request so retrieval can use *facts* about the
+    # materials (palette hue families, modality) and not only embeddings.  Shape (all optional):
+    #   {"colors": {"primary": ["red"], "adjacent": ["pink", "orange"], "saturation": "any|high|low",
+    #               "lightness": "any|dark|light", "weight": "must|prefer"},
+    #    "modality": "image|text|any", "must_terms": ["..."]}
+    facets: dict[str, Any] = Field(default_factory=dict)
 
 
 # --------------------------------------------------------------------------- Match / Pack
@@ -162,6 +168,7 @@ class PackMember(BaseModel):
     reason: str | None = None  # why this helps THIS task now
     note: str | None = None  # optional human task-specific note
     score: float | None = None  # retrieval score (for transparency only)
+    relevance: int | None = None  # 0-3 judged relevance to the task (agent step 3)
     added_by: Literal["magpie", "human"] = "magpie"
 
 
@@ -177,6 +184,9 @@ class Candidate(BaseModel):
     material_id: str
     score: float
     via: str  # "human_thought" | "machine" | "fts"
+    relevance: int | None = None  # judged 0-3 (None when the judge step was skipped)
+    why: str | None = None  # judge's one-line verdict
+    signals: dict[str, float | None] = Field(default_factory=dict)  # combined / human / fts / color
 
 
 class HumanEdit(BaseModel):
@@ -196,6 +206,7 @@ class MaterialPack(BaseModel):
     human_direction: str | None = None  # one-paragraph restatement used in export
     candidates: list[Candidate] = Field(default_factory=list)
     excluded: list[dict[str, str]] = Field(default_factory=list)  # {material_id, reason}
+    gaps: list[str] = Field(default_factory=list)  # what the library lacks for this task (agent is honest about coverage)
     removed_material_ids: list[str] = Field(default_factory=list)  # human removals: never re-suggested
     human_edits: list[HumanEdit] = Field(default_factory=list)
     generation: dict[str, Any] = Field(default_factory=dict)  # model names, timings

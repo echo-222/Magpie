@@ -140,13 +140,15 @@ class Database:
         rows = self.conn.execute(f"SELECT * FROM materials WHERE id IN ({q})", ids).fetchall()
         return {r["id"]: self._row_to_material(r) for r in rows}
 
-    def list_materials(self, limit: int = 500, offset: int = 0, modality: str | None = None) -> list[Material]:
+    def list_materials(self, limit: int = 500, offset: int = 0, modality: str | None = None, order: str = "newest") -> list[Material]:
+        """`order`: newest (default) or oldest, by entry time (created_at)."""
         sql = "SELECT * FROM materials"
         args: list = []
         if modality:
             sql += " WHERE modality=?"
             args.append(modality)
-        sql += " ORDER BY created_at DESC, rowid DESC LIMIT ? OFFSET ?"
+        direction = "ASC" if order == "oldest" else "DESC"
+        sql += f" ORDER BY created_at {direction}, rowid {direction} LIMIT ? OFFSET ?"
         args += [limit, offset]
         return [self._row_to_material(r) for r in self.conn.execute(sql, args).fetchall()]
 
@@ -283,6 +285,19 @@ class Database:
             )
             self.conn.commit()
         self._vec_cache.pop(kind, None)
+
+    def prune_orphan_embeddings(self) -> int:
+        """Drop vectors whose material is gone (a delete racing a background analysis leaves them behind).
+        Orphans silently eat retrieval slots, so this runs at startup and after each analysis."""
+        with self._lock:
+            cur = self.conn.execute(
+                "DELETE FROM material_embeddings WHERE material_id NOT IN (SELECT id FROM materials)"
+            )
+            self.conn.execute("DELETE FROM materials_fts WHERE material_id NOT IN (SELECT id FROM materials)")
+            self.conn.commit()
+        if cur.rowcount:
+            self._vec_cache.clear()
+        return cur.rowcount
 
     def get_embedding(self, material_id: str, kind: str = "combined") -> np.ndarray | None:
         row = self.conn.execute(

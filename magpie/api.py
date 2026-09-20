@@ -19,6 +19,8 @@ from pydantic import BaseModel, ValidationError
 
 from . import __version__
 from . import pack as pack_ops
+from .agent import RetrievalAgent, order_hits, time_since
+from .intent import classify_intent
 from .config import get_settings
 from .db import Database
 from .export import pack_to_json, pack_to_markdown
@@ -37,10 +39,14 @@ class AppState:
         self.settings = get_settings()
         self.settings.ensure_dirs()
         self.db = Database(self.settings.db_path)
+        pruned = self.db.prune_orphan_embeddings()
+        if pruned:
+            log.info("pruned %d orphan embedding rows", pruned)
         self.llm = get_llm(self.settings)
         self.ingestor = Ingestor(db=self.db, settings=self.settings, llm=self.llm)
         self.retriever = Retriever(db=self.db, llm=self.llm)
         self.recomposer = Recomposer(db=self.db, retriever=self.retriever, llm=self.llm)
+        self.agent = RetrievalAgent(db=self.db, retriever=self.retriever, llm=self.llm)
         self.analysis_lock = threading.Lock()  # one local model call at a time
 
     def analyze_in_background(self, material_id: str) -> None:
@@ -76,6 +82,15 @@ def state(request: Request) -> AppState:
 @app.get("/", response_class=HTMLResponse)
 def index():
     return (WEB_DIR / "index.html").read_text(encoding="utf-8")
+
+
+@app.get("/static/{name}")
+def static_file(name: str):
+    """Assets for the dev page (logo). Flat directory, no traversal."""
+    path = WEB_DIR / "static" / Path(name).name
+    if not path.is_file():
+        raise HTTPException(404, "not found")
+    return FileResponse(path)
 
 
 @app.get("/health")
@@ -163,9 +178,15 @@ async def create_material(
 
 
 @app.get("/materials")
-def list_materials(request: Request, limit: int = 500, modality: str | None = None):
+def list_materials(request: Request, limit: int = 500, modality: str | None = None, sort: str = "newest"):
+    """`sort`: newest | oldest (entry time)."""
     st = state(request)
-    return {"items": [m.model_dump() for m in st.db.list_materials(limit=limit, modality=modality)], "total": st.db.count_materials()}
+    order = "oldest" if sort == "oldest" else "newest"
+    return {
+        "items": [m.model_dump() for m in st.db.list_materials(limit=limit, modality=modality, order=order)],
+        "total": st.db.count_materials(),
+        "sort": order,
+    }
 
 
 @app.get("/materials/{material_id}")
@@ -237,11 +258,64 @@ def delete_material(request: Request, material_id: str):
 
 
 @app.get("/search")
-def search(request: Request, q: str, limit: int = 12):
+def search(request: Request, q: str, limit: int = 12, mode: str = "auto", sort: str | None = None, within_days: int | None = None):
+    """One search box, routed by an intent layer (mode=auto, default):
+      keyword -> instant hybrid search (embeddings + FTS) on the literal text
+      request -> the agent: understand -> recall (+facets) -> judge; hits carry relevance 0-3 + verdict
+    `mode=fast|agent` forces a route (the UI's "改为…" override).
+    `sort=relevance|newest|oldest` and `within_days` override what the intent layer read from the text.
+    Every response carries `intent` so the caller can show what was decided.
+    """
     st = state(request)
-    hits = st.retriever.search(q, limit=limit)
+    if not q.strip():
+        raise HTTPException(400, "q required")
+    intent = classify_intent(q, st.llm if mode == "auto" else None)
+    route = {"fast": "keyword", "agent": "request"}.get(mode, intent.mode)
+    order = sort if sort in ("relevance", "newest", "oldest") else intent.sort
+    since_days = within_days if within_days else intent.within_days
+    since = time_since({"time": {"within_days": since_days}}) if since_days else None
+    base = {"query": q, "intent": intent.to_dict(), "route": route, "sort": order, "within_days": since_days}
+
+    if route == "request":
+        with st.analysis_lock:
+            res = st.agent.find(q, limit=max(limit, 12))
+        kept = [j for j in res.judged if j.relevance >= 1]
+        if since:
+            kept = [j for j in kept if (j.material.created_at or "") >= since]
+        # explicit sort wins; otherwise the time order the brief extracted; otherwise relevance
+        order = order if sort else ((res.task.facets.get("time") or {}).get("order") or order)
+        kept = order_hits(kept, order, key=lambda j: j.material.created_at)[:limit]
+        return {
+            **base,
+            "mode": "agent",
+            "sort": order,
+            "task": res.task.model_dump(),
+            "trace": res.trace,
+            "hits": [
+                {
+                    "material_id": j.hit.material_id,
+                    "score": j.final,
+                    "relevance": j.relevance,
+                    "aspect": j.aspect,
+                    "why": j.why,
+                    "via": j.hit.via,
+                    "signals": j.hit.signals,
+                    "material": j.material.model_dump(),
+                }
+                for j in kept
+            ],
+            "dropped": [
+                {"material_id": j.hit.material_id, "why": j.why, "material": j.material.model_dump()} for j in res.judged if j.relevance == 0
+            ],
+        }
+
+    hits = st.retriever.search(q, limit=limit * 3 if since or order != "relevance" else limit)
+    if since:
+        hits = [h for h in hits if (h.material.created_at or "") >= since]
+    hits = order_hits(hits, order, key=lambda h: h.material.created_at)[:limit]
     return {
-        "query": q,
+        **base,
+        "mode": "fast",
         "hits": [
             {"material_id": h.material_id, "score": round(h.score, 4), "via": h.via, "signals": h.signals, "material": h.material.model_dump()}
             for h in hits
@@ -261,7 +335,7 @@ def similar(request: Request, material_id: str, limit: int = 8):
 
 class BuildPackBody(BaseModel):
     task: str
-    candidates: int = 12
+    candidates: int | None = None  # recall width handed to the judge; default agent.RECALL_K
 
 
 class MemberBody(BaseModel):
@@ -295,7 +369,7 @@ class RenameGroupBody(BaseModel):
 
 
 def _pack_response(st: AppState, pack: MaterialPack, extra_ids: list[str] | None = None) -> dict:
-    ids = pack.member_ids() + pack.removed_material_ids + list(extra_ids or [])
+    ids = pack.member_ids() + pack.removed_material_ids + [e["material_id"] for e in pack.excluded] + list(extra_ids or [])
     mats = st.db.get_materials(ids)
     return {"pack": pack.model_dump(), "materials": {k: v.model_dump() for k, v in mats.items()}}
 
@@ -322,10 +396,37 @@ def list_packs(request: Request):
     st = state(request)
     return {
         "items": [
-            {"id": p.id, "name": p.name, "updated_at": p.updated_at, "groups": len(p.groups), "members": len(p.member_ids()), "edits": len(p.human_edits)}
+            {
+                "id": p.id,
+                "name": p.name,
+                "task": p.task.raw_request,
+                "created_at": p.created_at,
+                "updated_at": p.updated_at,
+                "groups": len(p.groups),
+                "group_names": [g.name for g in p.groups],
+                "members": len(p.member_ids()),
+                "edits": len(p.human_edits),
+                "gaps": len(p.gaps),
+                "cover_ids": p.member_ids()[:4],  # for thumbnails in the history list
+            }
             for p in st.db.list_packs()
         ]
     }
+
+
+class RenamePackBody(BaseModel):
+    name: str
+
+
+@app.post("/packs/{pack_id}/rename")
+def rename_pack(request: Request, pack_id: str, body: RenamePackBody):
+    st = state(request)
+    pack = _load_pack(st, pack_id)
+    name = body.name.strip()
+    if not name:
+        raise HTTPException(400, "name required")
+    pack.name = name[:120]
+    return _pack_response(st, st.db.save_pack(pack))
 
 
 @app.get("/packs/{pack_id}")

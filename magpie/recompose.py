@@ -1,55 +1,23 @@
-"""Task -> candidates -> task-aware selection -> groups -> reasons -> Material Pack (spec §6.3-F).
+"""Material Pack building and editing helpers (spec §6.3-F).
 
-This is the differentiated Magpie logic. Retrieval only proposes; the recomposition
-step decides *usefulness for this task*, assigns each material a role inside a
-task-specific group, and writes a reason that references the task (and the human's
-own thought when relevant).  Groups are not a fixed taxonomy.
+`Recomposer.build` runs the retrieval agent (agent.py: understand -> recall -> judge -> compose ->
+verify).  This module keeps what the pack *editing* side needs: candidate cards, plan validation
+and task-aware "find alternatives".  Groups are never a fixed taxonomy.
 """
 
 from __future__ import annotations
 
 import logging
-import time
 from dataclasses import dataclass
 
 import numpy as np
 
 from .db import Database
 from .llm import LLM
-from .models import Candidate, Material, MaterialPack, PackGroup, PackMember, Task
+from .models import Material, MaterialPack
 from .retrieval import Hit, Retriever
-from .task import understand_task
 
 log = logging.getLogger(__name__)
-
-# Prompt shape matters for small local models (qwen3:8b): the exact keys are stated in the system
-# prompt AND repeated as a fill-in skeleton (with two real candidate ids) at the very end.
-RECOMPOSE_SYSTEM = """You are Magpie, a material-memory assistant for a designer. You receive a task brief and candidate materials the designer saved earlier, each with the designer's own Human Thought (why it caught them) and machine analysis (what it is). Recompose the useful ones into a task-specific Material Pack.
-You MUST answer with one JSON object with EXACTLY these top-level keys: "human_direction" (string), "groups" (array), "excluded" (array).
-Each group: {"name": string, "purpose": string, "members": [{"material_id": string, "role": string, "reason": string}]}.
-Each excluded item: {"material_id": string, "reason": string}.
-material_id values MUST be copied verbatim from the candidate list (they look like mat_xxxxxxxxxx). Never invent ids or labels.
-Rules:
-- Usefulness for THIS task beats similarity; leave out candidates that are merely similar (list them in "excluded" with a short reason).
-- 2-5 task-specific groups (e.g. 材质/质感, 色彩方向, 排版/字体, 氛围, 文案语气, 版式结构, 反例). No generic buckets like "Images"/"Texts". 1-4 members each; each material at most once.
-- A material may serve as a counter-example when the task says what to avoid; say so in its role.
-- Every reason says why the material helps THIS task now (1-2 sentences) and builds on the Human Thought when relevant.
-- "human_direction": 2-3 sentences restating the direction for another AI agent: what to go for, what to avoid.
-Write in the task's language."""
-
-RECOMPOSE_USER = """TASK BRIEF
-raw: {raw}
-purpose: {purpose}
-desired qualities: {desired}
-avoid: {avoid}
-constraints: {constraints}
-reference types wanted: {ref_types}
-
-CANDIDATES ({n})
-{candidates}
-
-Now return ONLY the JSON object. Skeleton to fill (keep these exact keys; replace the values; use only candidate ids):
-{{"human_direction": "...", "groups": [{{"name": "...", "purpose": "...", "members": [{{"material_id": "{ex1}", "role": "...", "reason": "..."}}]}}], "excluded": [{{"material_id": "{ex2}", "reason": "..."}}]}}"""
 
 ALTERNATIVES_SYSTEM = (
     "You are Magpie. A designer is building a Material Pack for a task and asked for more materials like a given one "
@@ -140,110 +108,13 @@ class Recomposer:
     llm: LLM
 
     # ------------------------------------------------------------------ build
-    def build(self, raw_task: str, limit: int = 12) -> MaterialPack:
-        t0 = time.time()
-        task = understand_task(self.llm, raw_task)
-        t1 = time.time()
-        hits = self.retriever.search([task.raw_request] + task.search_queries, limit=limit)
-        t2 = time.time()
-        plan, fallback = self._plan(task, hits)
-        t3 = time.time()
+    def build(self, raw_task: str, limit: int | None = None) -> MaterialPack:
+        """Run the retrieval agent (understand -> recall -> judge -> compose -> verify) and save the pack.
+        `limit` caps recall (how many candidates the judge sees), default agent.RECALL_K."""
+        from .agent import RECALL_K, RetrievalAgent  # local import: agent.py reuses helpers from here
 
-        by_id = {h.material_id: h for h in hits}
-        groups: list[PackGroup] = []
-        used: set[str] = set()
-        for g in plan.get("groups", []):
-            members: list[PackMember] = []
-            for mem in g.get("members", []):
-                mid = str(mem.get("material_id", "")).strip()
-                if mid not in by_id or mid in used:
-                    continue
-                used.add(mid)
-                members.append(
-                    PackMember(
-                        material_id=mid,
-                        role=_s(mem.get("role")),
-                        reason=_s(mem.get("reason")),
-                        score=round(by_id[mid].score, 4),
-                    )
-                )
-            if members:
-                groups.append(PackGroup(name=_s(g.get("name")) or "Relevant", purpose=_s(g.get("purpose")), members=members))
-        excluded = [
-            {"material_id": str(e.get("material_id")), "reason": _s(e.get("reason")) or ""}
-            for e in plan.get("excluded", [])
-            if str(e.get("material_id", "")) in by_id and str(e.get("material_id")) not in used
-        ]
-        name = (task.purpose or task.raw_request).strip()[:80]
-        pack = MaterialPack(
-            name=name,
-            task=task,
-            groups=groups,
-            human_direction=_s(plan.get("human_direction")),
-            candidates=[Candidate(material_id=h.material_id, score=round(h.score, 4), via=h.via) for h in hits],
-            excluded=excluded,
-            generation={
-                "chat_provider": getattr(self.llm, "chat_provider", None),
-                "chat_model": self.llm.chat_model,
-                "chat_model_used": getattr(self.llm, "last_chat_model", None) or self.llm.chat_model,
-                "embed_model": self.llm.embed_model,
-                "fallback": fallback,
-                "plan_attempts": plan.get("_attempts", 0),
-                "task_understood": task.purpose is not None,
-                "timing_s": {"task": round(t1 - t0, 1), "retrieve": round(t2 - t1, 1), "recompose": round(t3 - t2, 1)},
-                "queries": [task.raw_request] + task.search_queries,
-            },
-        )
-        return self.db.save_pack(pack)
-
-    def _plan(self, task: Task, hits: list[Hit]) -> tuple[dict, bool]:
-        if not hits:
-            return {"groups": [], "excluded": [], "human_direction": task.purpose}, True
-        cands = "\n".join(describe_candidate(h.material, h) for h in hits if h.material)
-        user = RECOMPOSE_USER.format(
-            raw=task.raw_request,
-            purpose=task.purpose or "-",
-            desired=", ".join(task.desired_qualities) or "-",
-            avoid=", ".join(task.avoid) or "-",
-            constraints=", ".join(task.constraints) or "-",
-            ref_types=", ".join(task.needed_reference_types) or "-",
-            n=len(hits),
-            candidates=cands,
-            ex1=hits[0].material_id,
-            ex2=hits[-1].material_id,
-        )
-        valid_ids = {h.material_id for h in hits}
-        prompt = user
-        for attempt in range(2):
-            try:
-                plan = self.llm.chat_json(RECOMPOSE_SYSTEM, prompt, purpose="recompose", temperature=0.1, max_tokens=2000)
-            except Exception as e:  # noqa: BLE001
-                log.warning("recomposition call failed (%s); using retrieval fallback", e)
-                break
-            problems = plan_schema_problems(plan, valid_ids)
-            if not problems:
-                plan["_attempts"] = attempt + 1
-                return plan, False
-            log.warning("recomposition reply off-schema (attempt %d): %s", attempt + 1, "; ".join(problems))
-            # minimal repair: same prompt + what was wrong; still validated by the same code path
-            prompt = (
-                user
-                + "\n\nYour previous answer was rejected: "
-                + "; ".join(problems)
-                + f".\nAnswer again with EXACTLY the keys human_direction / groups / excluded and only these material_id values: {sorted(valid_ids)}"
-            )
-        # plumbing fallback: keep the loop alive even when the model misbehaves (never used for validation runs)
-        return {
-            "human_direction": task.purpose,
-            "groups": [
-                {
-                    "name": "Relevant materials (retrieval only)",
-                    "purpose": "model recomposition unavailable; ranked by retrieval",
-                    "members": [{"material_id": h.material_id, "role": None, "reason": f"retrieval match ({h.via}, {h.score:.2f})"} for h in hits[:8]],
-                }
-            ],
-            "excluded": [],
-        }, True
+        agent = RetrievalAgent(db=self.db, retriever=self.retriever, llm=self.llm)
+        return agent.build_pack(raw_task, limit=limit or RECALL_K)
 
     # ------------------------------------------------------------------ alternatives
     def alternatives(self, pack: MaterialPack, material_id: str | None = None, group: str | None = None, limit: int = 4) -> list[dict]:
