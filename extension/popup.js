@@ -18,8 +18,9 @@ async function refresh() {
     dot.className = "dot bad";
     status.textContent = (res.error && res.error.message) || "Core 未启动";
   }
-  const { coreUrl } = await chrome.storage.local.get("coreUrl");
+  const { coreUrl, hoverMenu } = await chrome.storage.local.get(["coreUrl", "hoverMenu"]);
   if (coreUrl) $("#coreUrl").value = coreUrl;
+  $("#hoverMenu").checked = hoverMenu !== false; // default on
 
   const commands = await chrome.commands.getAll();
   const cmd = commands.find((c) => c.name === "capture");
@@ -36,6 +37,8 @@ $("#capture").addEventListener("click", async () => {
 });
 
 $("#open").addEventListener("click", () => send({ type: "MAGPIE_OPEN_LIBRARY" }).then(() => window.close()));
+// content scripts on open pages pick this up via chrome.storage.onChanged
+$("#hoverMenu").addEventListener("change", (e) => chrome.storage.local.set({ hoverMenu: e.target.checked }));
 $("#shortcuts").addEventListener("click", () => chrome.tabs.create({ url: "chrome://extensions/shortcuts" }));
 $("#saveUrl").addEventListener("click", async () => {
   await send({ type: "MAGPIE_SET_CORE_URL", payload: { coreUrl: $("#coreUrl").value } });

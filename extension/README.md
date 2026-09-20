@@ -3,8 +3,11 @@
 Collect inspiration. Create with it. 在网页上选中文字或点选一张图，加一句 Human Thought，保存到本地 Magpie Core。
 
 ```
-网页 → ⌥⇧M（Alt+Shift+M）或右键菜单 → 选中文字 | 点选 <img>
-→ 一行 Human Thought（可选）→ Enter 保存 → POST /materials → 已保存 / 已在素材库 / 错误(可重试)
+网页 → 鼠标停在 <img> 上出现 Magpie 按钮 → 悬停展开环形菜单：保存 | 加批注保存 | 打开素材库
+     → 选中一段文字松开鼠标 → 光标旁出现保存条：保存 | 加批注保存
+     → ⌥⇧M（Alt+Shift+M）或右键菜单（备选入口）
+→ 保存：一键 POST /materials → 右下角提示 已保存 ✓，可当场补一句 Thought / 撤销 / 打开素材库
+→ 加批注保存：浮层 → 一行 Human Thought → Enter 保存 → 已保存 / 已在素材库 / 错误(可重试)
 ```
 
 接口以 [`docs/CAPTURE_API_CONTRACT.md`](../docs/CAPTURE_API_CONTRACT.md) 为准；扩展只用 `POST /materials`、`GET /materials/{id}`、`PATCH /materials/{id}/thought`、`DELETE /materials/{id}` 和 `GET /health`。
@@ -21,9 +24,15 @@ Manifest V3，纯 JS，没有构建步骤。
 
 ## 用法
 
+- **悬停收集（默认开，popup 里可关）**：content script 在所有 http(s) 页面常驻
+  - 鼠标停在一张图上（渲染尺寸 ≥ 64×64 且面积 ≥ 12000px²，图标/头像不算）约 0.16 s 后，图片右上角出现一个黑色 Magpie 圆点；鼠标移到圆点上，向图片内侧展开三个按钮：**＋ 保存**（一键存，不打断浏览）、**✎ 加批注保存**（打开浮层写 Thought）、**▦ 打开素材库**。移开约 0.3 s 后收起；触屏/触控笔点圆点也能展开
+  - 选中一段文字松开鼠标，光标旁出现一个小条：**保存** / **加批注保存**；再点别处或 Esc 收起
+  - 一键保存后右下角弹出提示：**已保存 ✓ 正在后台分析**，下面直接有一个输入框可以补一句 Thought（Enter 提交，走 `PATCH /materials/{id}/thought`），以及 **撤销** / **打开素材库**；6 s 后自动收起，鼠标停在上面或正在输入时不收
+  - 一键保存拿不到原图（跨域 / 防盗链）时自动切到浮层，沿用那里的重试 / 保存渲染版本流程
+  - 悬停 UI 有独立的 shadow host，和浮层互不覆盖；浮层或点选模式打开期间不出现
 - **快捷键 ⌥⇧M**：有选中文字就收文字；没有就进入点选模式，鼠标移到图片上高亮，点击选中，Esc 取消。快捷键冲突时到 `chrome://extensions/shortcuts` 改（popup 里有入口）
 - **右键菜单**：选中文字上「收集到 Magpie：选中的文字」；图片上「收集到 Magpie：这张图片」
-- **popup**：Core 状态、「在当前页面收集」（快捷键的备选）、打开 Dev UI、改 Core 地址（默认 `http://127.0.0.1:8765`）
+- **popup**：Core 状态、「在当前页面收集」（快捷键的备选）、打开 Dev UI、悬停收集开关、改 Core 地址（默认 `http://127.0.0.1:8765`）
 - 浮层里 Enter 保存、Esc 关闭；中文输入法组合中的 Enter 不会触发保存。保存成功后可「撤销」（删掉刚存的这条）
 - 同样内容再次保存会提示「已在素材库里」：若旧素材没有 Thought，会把这次输入补上去；若已有，保留旧的并提示本次输入未保存（Core 按内容哈希去重，见合同 §11）
 
@@ -67,6 +76,7 @@ Core 不会自己下载 `resource_url`，扩展按顺序尝试：
 
 - 无头 Chrome for Testing 对本地 Core 的端到端：61 项检查，覆盖文字/textarea 选区、字段逐项比对、重复与补 Thought、srcset 最大候选、懒加载占位、`blob:`、防盗链跨域图的 canvas 询问、撤销、保存后表单锁定、Core 未启动 → 重试、chrome:// 页面报错
 - 真实站点：Wikipedia（文字 + CDN 图）、微信公众号文章（文字 + `mmbiz` 图，字节与原图一致）
+- 悬停收集（Chrome for Testing + 真实 Core，21 项）：小图不出圆点、圆点定位在图片右上角、悬停展开 / 标签、一键保存 → 提示 → 补 Thought 落库、重复保存提示、加批注保存打开浮层、选区保存条 → 一键保存、撤销、popup 开关关闭后不再出现
 
 ## 已知限制
 
@@ -79,8 +89,8 @@ Core 不会自己下载 `resource_url`，扩展按顺序尝试：
 
 ## 文件
 
-- `manifest.json` — MV3；权限说明：`<all_urls>` 是为了在 background 取第三方站点的图片字节，`scripting` 按需注入 content script，`contextMenus` 右键入口，`storage` 存 Core 地址
+- `manifest.json` — MV3；`content_scripts` 让 content.js 在 http(s) 页面常驻（悬停收集需要）；权限说明：`<all_urls>` 是为了在 background 取第三方站点的图片字节，`scripting` 给已打开的旧页面按需注入，`contextMenus` 右键入口，`storage` 存 Core 地址和悬停开关
 - `background.js` — 所有 Core HTTP、右键菜单、快捷键、受限页面提示（工具栏角标 `!`）
-- `content.js` — 选区 / 点选模式 / 浮层（Shadow DOM，不受页面样式影响）
+- `content.js` — 悬停圆点 + 环形菜单 / 选区保存条 / 一键保存提示（独立 shadow host）；选区 / 点选模式 / 浮层（Shadow DOM，不受页面样式影响）
 - `popup.html` `popup.js` — 工具栏弹窗
-- `icons/` — 占位图标，等正式设计稿替换同名文件即可
+- `icons/` — 品牌图标：一只衔着蓝色卡片的喜鹊，白色圆角底、透明四角。`logo.png`（512）是母版，`icon{16,32,48,128}.png` 由它缩放而来；`icon128.png` 通过 `web_accessible_resources` 暴露给 content script，页面内的悬停徽标和保存 toast 左上角用的是它；`logo-dark.png` 是同一只鸟的白色线稿（透明底），用在选中文字后弹出的黑色小药丸上。换 logo 只需替换这几张 PNG 并在 `chrome://extensions` 里点刷新。`scripts/build_logo.py --out DIR` 是另一版纯几何构成的备选标志（不会自动写进 `icons/`）
