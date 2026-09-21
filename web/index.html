@@ -581,7 +581,7 @@ function renderPack() {
   const t = pack.task; const c = t.facets?.colors; const tm = t.facets?.time || {};
   const facts = [c && `颜色 ${c.primary.join('/')}`, t.facets?.modality && t.facets.modality !== 'any' && `只看${t.facets.modality === 'image' ? '图片' : '文字'}`, tm.within_days && `最近 ${tm.within_days} 天`, tm.order && `按时间${tm.order === 'newest' ? '倒序' : '正序'}`].filter(Boolean);
   const dir = [t.purpose && `目的：${t.purpose}`, t.desired_qualities?.length && `想要：${t.desired_qualities.join('、')}`, t.avoid?.length && `避免：${t.avoid.join('、')}`, t.constraints?.length && `约束：${t.constraints.join('、')}`, facts.length && `事实条件：${facts.join('，')}`].filter(Boolean);
-  const trace = (pack.generation?.trace?.steps || []).map(s => `${s.step} ${s.s}s${s.candidates != null ? ` (${s.candidates} 候选)` : ''}${s.kept != null ? ` (${s.kept} 相关)` : ''}${s.fallback ? ' ⚠ 降级' : ''}`).join(' → ');
+  const trace = (pack.generation?.trace?.steps || []).map(s => `${s.step} ${s.s}s${s.candidates != null ? ` (${s.candidates} 候选)` : ''}${s.kept != null ? ` (${s.kept} 相关${s.weak ? `，${s.weak} 弱相关` : ''}${s.capped ? `，${s.capped} 条 3→2` : ''})` : ''}${s.trimmed ? ` (超出精选上限 ${s.trimmed} 条)` : ''}${s.fallback ? ' ⚠ 降级' : ''}`).join(' → ');
   const n = pack.groups.reduce((k, g) => k + g.members.length, 0);
   $('pack').innerHTML = `
     <div class="pack-head">

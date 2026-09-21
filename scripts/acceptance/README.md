@@ -20,7 +20,7 @@ library they point at. Run them against a scratch `MAGPIE_DATA_DIR` unless you w
 uv pip install --python .venv/bin/python playwright
 
 # 3. run
-.venv/bin/python scripts/acceptance/extension_acceptance.py   # A–J: hover save, thought, pill, undo, shortcut path, Core down, WeChat
+.venv/bin/python extension/e2e/e2e.py --reset --cleanup       # A–J extension E2E (moved to extension/e2e/, see its README)
 .venv/bin/python scripts/acceptance/ui_acceptance.py          # U1–U19: 素材库 UI incl. drawer, add, pack edits, export (screenshots in $MAGPIE_ACCEPT_OUT)
 .venv/bin/python scripts/acceptance/agent_requests.py         # R1–R5: five real requests through /search (agent) and /packs
 .venv/bin/python scripts/acceptance/agent_context_check.py    # feed the exported pack to a second agent (DeepSeek) and measure grounding
@@ -32,7 +32,6 @@ Environment: `MAGPIE_CORE` (default `http://127.0.0.1:8765`), `MAGPIE_CDP` (defa
 the "Core down" check), `MAGPIE_ENV` (the `.env` holding `DEEPSEEK_API_KEY` for
 `agent_context_check.py`).
 
-Known harness quirks: `extension_acceptance.py` expects the first big image on the Wikipedia
-page not to be in the library yet (delete leftovers from earlier runs first); `ui_acceptance.py`
-answers every `prompt()` with the same string, so the "move to new group" and "note" checks
-report FAIL even though the API shows both edits persisted — verify via `/packs/{id}`.
+Known harness quirk: `ui_acceptance.py` answers every `prompt()` with the same string, so the
+"move to new group" and "note" checks report FAIL even though the API shows both edits persisted —
+verify via `/packs/{id}`. The extension E2E lives in `extension/e2e/` (with `--reset` / `--cleanup`).

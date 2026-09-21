@@ -96,6 +96,11 @@ U1 计数与 Core 一致 · U2 关键词搜索有结果 + 意图说明 · U3 自
 **未发现。** 没有做任何代码修改。
 
 ### P1（明显影响体验，但能完成任务）
+
+> 跟进（2026-09-21 晚）：#2、#3 已按 §9 顺序合入 main；P1-a、P1-b 在分支 `chenbin/agent-p1-fixes` 修复
+> （`agent.py` 精选纪律 + 测试 `tests/test_gate_f_selection_discipline.py`，见 `docs/RETRIEVAL_AGENT.md` §6），
+> 同一分支把扩展 E2E 收进 `extension/e2e/` 并在 README 标明 Chrome ≥ 137 的加载限制（P1-c、P1-d）。
+> 真实复测：R2 判 3 分从 20 条降到 9 条、素材包从 ≈37 条降到 12 条；R4 的 direction 只复述请求，不再出现库里 Thought 推导的偏好。
 - **P1-a 模糊任务时 Human Thought 泄漏为任务约束**（R4）：`human_direction` 把库里 Thought 的偏好（克制、避免霓虹渐变、Corporate Memphis…）写成了用户的要求；judge 的判词里也有「正是中文网站想要的气质」这类源自 Thought 的框定。建议：brief 的 desired/avoid 为空时，compose 只允许 direction 复述请求本身 + 一句「以下是按你库里的整体方向挑的」；或对模糊请求先反问一句。
 - **P1-b 宽泛/抽象请求下的判分通胀与兜底组膨胀**（R2、R4）：37 条候选里 20 条被判 3；verify 把所有 ≥2 都塞进「其他相关」，素材包变成整库（R2 ≈37 条、R4 ≈29 条）。建议：judge 加相对约束（每批 3 分数量上限或"只有 N% 可以是 3"），「其他相关」超过 3–5 条时改为折叠的"还可以看"而不是正式成员。
 - **P1-c 扩展的 E2E 未入库**：`extension/README.md` 声称的 61 项 + 21 项无头 Chrome 检查在仓库里不存在，无法复现；本次的 `scripts/acceptance/extension_acceptance.py` 可作为起点。

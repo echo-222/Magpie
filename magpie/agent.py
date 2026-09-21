@@ -19,6 +19,7 @@ Prompts live next to the step that uses them.  See docs/RETRIEVAL_AGENT.md for t
 from __future__ import annotations
 
 import logging
+import math
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
@@ -38,6 +39,15 @@ W_COLOR_MUST = 0.45  # fusion weight of the colour-fact score when the request I
 W_COLOR_PREFER = 0.2
 COLOR_MUST_PENALTY = 0.25  # images with no trace of the requested colour drop back by this much
 W_JUDGE = 0.7  # final rank = W_JUDGE * relevance/3 + (1-W_JUDGE) * normalised recall score
+
+# Selection discipline (integration acceptance P1-b): a broad request must not turn the whole
+# library into a pack.  Relevance 3 is scarce by definition, a pack is a selection, and the
+# "also relevant" safety net stays small.
+TOP_SHARE = 0.25  # at most this share of judged candidates may keep relevance 3 ...
+TOP_MIN = 3  # ... but never fewer than this many when the judge gave that many
+PACK_MAX_MEMBERS = 12  # hard cap on members in a generated pack (humans can add more)
+STRAGGLER_MAX = 4  # judged >=2 but not grouped by the composer: at most this many are surfaced
+VAGUE_DIRECTION_NOTE = "用户没有给出具体偏好；以下素材按库里的整体方向挑选，不代表用户本次的要求。"
 
 
 # --------------------------------------------------------------------------- step 2: recall
@@ -147,6 +157,7 @@ Scoring scale (be strict, the library is small and the designer will see this or
   2 = clearly useful for the request in a secondary way (a supporting texture, a layout idea, a counter-example the request implies)
   1 = weak / tangential: only a small detail relates, or it relates to the general topic but not to what was asked
   0 = not relevant to this request (leave it out)
+Expected distribution: 3 is scarce — no more than about a quarter of the candidates, even when the whole library shares the request's mood. When many candidates fit equally well, rank them: only the ones a designer would open first get 3, the rest are 2, the merely on-topic are 1. Over-scoring is a failure, not generosity.
 Rules:
 - Judge against the request, not against general quality. A beautiful material that does not serve the request is a 0 or 1.
 - Trust facts over vibes: when the request is about a colour, the "color" signal and the palette line are evidence; a material with color=0 cannot be a 3 for that colour unless its text/OCR clearly mentions it (e.g. red seals on a page).
@@ -231,8 +242,23 @@ def judge(llm: LLM, task: Task, hits: list[Hit]) -> tuple[list[Judged], dict]:
             j = Judged(h, v["relevance"], v["aspect"], v["why"])
         j.final = round(W_JUDGE * (j.relevance / 3) + (1 - W_JUDGE) * recall_norm, 4)
         out.append(j)
+    capped = cap_top_relevance(out)
     out.sort(key=lambda j: (-j.relevance, -j.final))
-    return out, {"batches": batches, "judged": len(verdicts), "fallback": fallback}
+    return out, {"batches": batches, "judged": len(verdicts), "fallback": fallback, "capped": capped}
+
+
+def cap_top_relevance(judged: list[Judged], share: float = TOP_SHARE, minimum: int = TOP_MIN) -> int:
+    """Relevance 3 is scarce: keep at most `share` of the candidates (never fewer than `minimum`)
+    at 3, demoting the weakest 3s (by fused score) to 2.  Returns how many were demoted.
+    Deterministic guard against judge inflation on broad requests (acceptance P1-b)."""
+    threes = sorted((j for j in judged if j.relevance == 3), key=lambda j: -j.final)
+    allowed = max(minimum, math.ceil(len(judged) * share))
+    demoted = 0
+    for j in threes[allowed:]:
+        j.relevance = 2
+        j.final = round(W_JUDGE * (2 / 3) + (j.final - W_JUDGE), 4)  # same recall component, lower judge component
+        demoted += 1
+    return demoted
 
 
 def _judge_card(h: Hit) -> str:
@@ -271,11 +297,12 @@ You MUST answer with one JSON object with EXACTLY these top-level keys: "human_d
 Each group: {"name": string, "purpose": string, "members": [{"material_id": string, "role": string, "reason": string}]}.
 Each excluded item: {"material_id": string, "reason": string}.
 Rules:
-- Groups follow the REQUEST, not a fixed taxonomy. For a colour request think 主色参考 / 配色对比 / 邻近暖色与背景 / 材质与质感 / 反例; for a layout request think 版式结构 / 字体 / 留白 …  2-5 groups, 1-5 members each, each material at most once. No generic buckets like "Images"/"Texts".
+- Groups follow the REQUEST, not a fixed taxonomy. For a colour request think 主色参考 / 配色对比 / 邻近暖色与背景 / 材质与质感 / 反例; for a layout request think 版式结构 / 字体 / 留白 …  2-5 groups, 1-4 members each, each material at most once. No generic buckets like "Images"/"Texts".
+- A pack is a selection, not the library: at most {max_members} members in total, fewer is better. Include the relevance-3 items first, then the relevance-2 items that add something different; everything else goes to "excluded" with a short honest reason (e.g. "同类里已有更直接的").
 - Order groups from most to least central to the request; order members inside a group by relevance (3 first).
-- Include every relevance-3 and relevance-2 item. Relevance-1 items: include only when they add something the stronger ones lack (say what), otherwise list them in "excluded" with a short honest reason.
+- Relevance-1 items: include only when they add something the stronger ones lack (say what), otherwise exclude them.
 - Each "reason" (1-2 sentences, request language) says why this material helps THIS request now, and builds on the designer's Human Thought when relevant. Do not restate the summary.
-- "human_direction": 2-3 sentences for another AI agent: what to go for, what to avoid — only what the request says or clearly implies.
+- "human_direction": 2-3 sentences for another AI agent: what to go for, what to avoid — only what the request says or clearly implies. If the REQUEST block lists no desired qualities and nothing to avoid, the direction may ONLY restate the request and say that the picks follow the library's overall direction; do not add preferences, do not tell the agent to avoid anything.
 - "gaps": 0-3 short sentences on what the library does NOT have for THIS request — derive them from the request's own needed reference types and facets versus what the candidates cover. Be concrete; [] if coverage is fine. Never mention a colour, style or topic the request did not ask for.
 - The REQUEST block below is the only source of what the designer wants now. The Human Thoughts on the cards are notes written when each material was saved (possibly for other projects); use them to explain why a material helps, never as constraints of this request, and never claim "the designer said/wants to avoid X" unless X is in the REQUEST block. This pack is built from scratch: no earlier requests or packs exist.
 material_id values MUST be copied verbatim from the candidate list. Never invent ids. Write in the request's language."""
@@ -287,12 +314,39 @@ desired qualities: {desired}
 avoid: {avoid}
 constraints: {constraints}
 facets: {facets}
-
+{vague_note}
 JUDGED CANDIDATES ({n}; relevance, aspect, judge verdict, then the card)
 {candidates}
 
 Now return ONLY the JSON object. Skeleton to fill (keep these exact keys; replace the values; use only candidate ids):
 {{"human_direction": "...", "groups": [{{"name": "...", "purpose": "...", "members": [{{"material_id": "{ex1}", "role": "...", "reason": "..."}}]}}], "excluded": [{{"material_id": "{ex2}", "reason": "..."}}], "gaps": ["..."]}}"""
+
+
+def trim_to_cap(groups: list[PackGroup], cap: int) -> list[str]:
+    """Keep at most `cap` members across all groups, dropping the weakest (lowest relevance, then
+    fused score) from the least central groups first; drops empty groups.  Returns dropped ids."""
+    total = sum(len(g.members) for g in groups)
+    dropped: list[str] = []
+    while total > cap:
+        # candidates for removal: the last member of each group (members are sorted by relevance desc)
+        victims = [(g, g.members[-1]) for g in groups if g.members]
+        g, m = min(victims, key=lambda gm: (gm[1].relevance or 0, gm[1].score or 0.0, -groups.index(gm[0])))
+        g.members.remove(m)
+        dropped.append(m.material_id)
+        total -= 1
+    groups[:] = [g for g in groups if g.members]
+    return dropped
+
+
+def is_vague(task: Task) -> bool:
+    """A request that names nothing to go for or avoid: the brief has no qualities, no avoid list,
+    no constraints.  Such packs must not invent preferences (acceptance P1-a)."""
+    return not (task.desired_qualities or task.avoid or task.constraints)
+
+
+def vague_direction(task: Task) -> str:
+    base = (task.purpose or task.raw_request).strip().rstrip("。.")
+    return f"{base}。{VAGUE_DIRECTION_NOTE}"
 
 
 def compose(llm: LLM, task: Task, judged: list[Judged]) -> tuple[dict, bool]:
@@ -305,6 +359,12 @@ def compose(llm: LLM, task: Task, judged: list[Judged]) -> tuple[dict, bool]:
         + describe_candidate(j.material, None)
         for j in relevant
     )
+    vague_note = (
+        "NOTE: the request names nothing to go for or avoid. Keep human_direction to a restatement of the request; "
+        "do not add any preference, style or avoid-list derived from the Human Thoughts.\n"
+        if is_vague(task)
+        else ""
+    )
     user = COMPOSE_USER.format(
         raw=task.raw_request,
         purpose=task.purpose or "-",
@@ -312,16 +372,18 @@ def compose(llm: LLM, task: Task, judged: list[Judged]) -> tuple[dict, bool]:
         avoid=", ".join(task.avoid) or "-",
         constraints=", ".join(task.constraints) or "-",
         facets=_facets_line(task),
+        vague_note=vague_note,
         n=len(relevant),
         candidates=cards,
         ex1=relevant[0].hit.material_id,
         ex2=relevant[-1].hit.material_id,
     )
+    system = COMPOSE_SYSTEM.replace("{max_members}", str(PACK_MAX_MEMBERS))
     valid_ids = {j.hit.material_id for j in relevant}
     prompt = user
     for attempt in range(2):
         try:
-            plan = llm.chat_json(COMPOSE_SYSTEM, prompt, purpose="recompose", temperature=0.1, max_tokens=2400)
+            plan = llm.chat_json(system, prompt, purpose="recompose", temperature=0.1, max_tokens=2400)
         except Exception as e:  # noqa: BLE001
             log.warning("compose call failed (%s); grouping by judged aspect", e)
             break
@@ -384,7 +446,13 @@ class RetrievalAgent:
             "steps": [
                 {"step": "understand", "s": round(t1 - t0, 1), "facets": task.facets, "queries": [task.raw_request] + task.search_queries},
                 {"step": "recall", "s": round(t2 - t1, 1), "candidates": len(hits), "k": limit, "since": time_since(task.facets or {})},
-                {"step": "judge", "s": round(t3 - t2, 1), **jtrace, "kept": sum(1 for j in judged if j.relevance >= 1)},
+                {
+                    "step": "judge",
+                    "s": round(t3 - t2, 1),
+                    **jtrace,
+                    "kept": sum(1 for j in judged if j.relevance >= 2),  # what "相关" means to the user: primary + supporting
+                    "weak": sum(1 for j in judged if j.relevance == 1),
+                },
             ]
         }
         return AgentResult(task=task, judged=judged, trace=trace)
@@ -420,22 +488,37 @@ class RetrievalAgent:
             if members:
                 members.sort(key=lambda m: -(m.relevance or 0))
                 groups.append(PackGroup(name=_s(g.get("name")) or "Relevant", purpose=_s(g.get("purpose")), members=members))
-        # verify: anything judged 2-3 that the composer dropped is surfaced, not silently lost
-        stragglers = [j for j in judged if j.relevance >= 2 and j.hit.material_id not in used]
-        if stragglers:
+        # verify 1: a pack is a selection — enforce the member cap the composer was asked to respect
+        excluded_ids: set[str] = set()
+        excluded: list[dict[str, str]] = []
+        trimmed = trim_to_cap(groups, PACK_MAX_MEMBERS)
+        for mid in trimmed:
+            used.discard(mid)
+            excluded.append({"material_id": mid, "reason": f"精选上限 {PACK_MAX_MEMBERS} 条，未入包（{by_id[mid].why or '判定相关'}）"})
+            excluded_ids.add(mid)
+        # verify 2: anything judged 2-3 that the composer dropped is surfaced, not silently lost —
+        # but only a few, and only while there is room under the cap
+        room = max(0, PACK_MAX_MEMBERS - sum(len(g.members) for g in groups))
+        stragglers = sorted(
+            (j for j in judged if j.relevance >= 2 and j.hit.material_id not in used and j.hit.material_id not in excluded_ids),
+            key=lambda j: (-j.relevance, -j.final),
+        )
+        shown, overflow = stragglers[: min(STRAGGLER_MAX, room)], stragglers[min(STRAGGLER_MAX, room) :]
+        if shown:
             groups.append(
                 PackGroup(
                     name="其他相关" if (task.language or "zh").startswith("zh") else "Also relevant",
                     purpose="判定相关但未被分组的素材",
                     members=[
                         PackMember(material_id=j.hit.material_id, role=j.aspect, reason=j.why, score=round(j.final, 4), relevance=j.relevance)
-                        for j in stragglers
+                        for j in shown
                     ],
                 )
             )
-            used.update(j.hit.material_id for j in stragglers)
-        excluded_ids: set[str] = set()
-        excluded: list[dict[str, str]] = []
+            used.update(j.hit.material_id for j in shown)
+        for j in overflow:
+            excluded.append({"material_id": j.hit.material_id, "reason": f"判定相关（{j.relevance}）但超出精选上限，未入包：{j.why or ''}".rstrip("：")})
+            excluded_ids.add(j.hit.material_id)
         for e in plan.get("excluded", []):
             mid = str(e.get("material_id", ""))
             if mid in by_id and mid not in used and mid not in excluded_ids:
@@ -447,16 +530,30 @@ class RetrievalAgent:
                 excluded_ids.add(j.hit.material_id)
 
         gaps = [s for s in (_s(x) for x in (plan.get("gaps") or []) if isinstance(x, (str, int, float))) if s][:3]
+        # verify 3: a vague request gets a direction that restates it — Human Thoughts are history, not the brief
+        model_direction = _s(plan.get("human_direction"))
+        direction = vague_direction(task) if is_vague(task) else model_direction
         name = (task.purpose or task.raw_request).strip()[:80]
         trace = dict(res.trace)
         trace["steps"] = trace["steps"] + [
-            {"step": "compose", "s": round(t4 - t3, 1), "fallback": fallback, "attempts": plan.get("_attempts", 0), "groups": len(groups)}
+            {
+                "step": "compose",
+                "s": round(t4 - t3, 1),
+                "fallback": fallback,
+                "attempts": plan.get("_attempts", 0),
+                "groups": len(groups),
+                "trimmed": len(trimmed),
+                "stragglers_shown": len(shown),
+                "stragglers_excluded": len(overflow),
+                "vague": is_vague(task),
+                **({"model_direction": model_direction} if is_vague(task) and model_direction else {}),
+            }
         ]
         pack = MaterialPack(
             name=name,
             task=task,
             groups=groups,
-            human_direction=_s(plan.get("human_direction")),
+            human_direction=direction,
             candidates=[
                 Candidate(
                     material_id=j.hit.material_id,

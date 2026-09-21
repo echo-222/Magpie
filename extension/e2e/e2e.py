@@ -1,13 +1,38 @@
-"""Extension acceptance (A-J) against Brave/Chromium 153 with the unpacked extension and the real Core.
-Drives the content-script UI with real mouse events; verifies every save through the Core HTTP API."""
-import asyncio, json, os, sys, time, urllib.request, subprocess
+"""Magpie Capture — end-to-end test of the unpacked extension against a running Core.
+
+Checks A–J from the integration acceptance: hover badge + arc, quick save (+ thought via the
+toast), 加批注保存 overlay, text selection pill, duplicate handling, undo, the shortcut/command
+path (selection → overlay, none → pick mode), popup, Core-down error + retry, an ordinary page
+(Wikipedia) and a real WeChat 公众号 article (text + `mmbiz` image bytes).
+
+Needs: a Chromium with the extension loaded and remote debugging on (see README.md — Google
+Chrome ≥ 137 ignores --load-extension; use Chromium / Brave / Chrome for Testing), a Core with
+real models (saves are analysed), and `playwright` as a CDP client (no browser download).
+
+    python extension/e2e/e2e.py --reset            # delete leftovers from earlier runs first
+    python extension/e2e/e2e.py --reset --cleanup  # ...and remove what this run created
+
+Exit code 1 when any check fails."""
+import argparse, asyncio, json, os, sys, time, urllib.request, subprocess
 from playwright.async_api import async_playwright
 
 CORE = os.environ.get("MAGPIE_CORE", "http://127.0.0.1:8765")
-WIKI = "https://en.wikipedia.org/wiki/Letterpress_printing"
-WECHAT = "https://mp.weixin.qq.com/s/BGXeAXrEo6CM5-gtdQOuYA"
+CDP = os.environ.get("MAGPIE_CDP", "http://localhost:9222")
+WIKI = os.environ.get("MAGPIE_E2E_PAGE", "https://en.wikipedia.org/wiki/Letterpress_printing")
+WECHAT = os.environ.get("MAGPIE_E2E_WECHAT", "https://mp.weixin.qq.com/s/BGXeAXrEo6CM5-gtdQOuYA")
 RESULTS = []
-CREATED = []  # material ids created by this run (for later inspection / cleanup notes)
+CREATED = []  # material ids created by this run
+ARGS = None
+
+
+def reset_leftovers():
+    """Delete materials saved from the test pages by earlier runs, so quick-save is a fresh save."""
+    st, d = core("/materials?limit=500")
+    n = 0
+    for m in d.get("items", []) if st == 200 else []:
+        if (m["source"].get("page_url") or "").split("#")[0] in (WIKI, WECHAT):
+            core(f"/materials/{m['id']}", "DELETE"); n += 1
+    print(f"reset: deleted {n} leftover test material(s)")
 
 
 def rec(name, ok, detail=""):
@@ -140,7 +165,7 @@ async def select_text(page, min_len=40):
 
 async def main():
     async with async_playwright() as p:
-        browser = await p.chromium.connect_over_cdp(os.environ.get("MAGPIE_CDP", "http://localhost:9222"))
+        browser = await p.chromium.connect_over_cdp(CDP)
         ctx = browser.contexts[0]
         page = ctx.pages[0] if ctx.pages else await ctx.new_page()
         await page.set_viewport_size({"width": 1400, "height": 900})
@@ -303,7 +328,11 @@ async def main():
         await page.keyboard.press("Escape"); await asyncio.sleep(0.4)
 
         # ------------------------------------------------------------ J. WeChat article
+        if ARGS.no_wechat:
+            print("skip  J (--no-wechat)")
         try:
+            if ARGS.no_wechat:
+                raise StopIteration
             await page.goto(WECHAT, wait_until="domcontentloaded", timeout=60000)
             await page.wait_for_timeout(4000)
             title = await page.title()
@@ -339,13 +368,34 @@ async def main():
                     rec("J2 WeChat image saved via background fetch", False, "no arc on wechat image")
             else:
                 rec("J2 WeChat image saved via background fetch", False, "no large image found on page")
+        except StopIteration:
+            pass
         except Exception as e:
             rec("J0 WeChat article loaded", False, f"{type(e).__name__}: {str(e)[:120]}")
 
         await browser.close()
 
     print("\nCREATED:", CREATED)
-    print(f"\n{sum(1 for _,ok,_ in RESULTS if ok)}/{len(RESULTS)} checks passed")
-    json.dump({"results": RESULTS, "created": CREATED}, open(os.environ.get("MAGPIE_ACCEPT_OUT", "/tmp") + "/extension_acceptance_results.json", "w"), ensure_ascii=False, indent=1)
+    passed = sum(1 for _, ok, _ in RESULTS if ok)
+    print(f"\n{passed}/{len(RESULTS)} checks passed")
+    out_dir = os.environ.get("MAGPIE_ACCEPT_OUT", "/tmp")
+    json.dump({"results": RESULTS, "created": CREATED}, open(out_dir + "/extension_e2e_results.json", "w"), ensure_ascii=False, indent=1)
+    if ARGS.cleanup:
+        for mid in CREATED:
+            core(f"/materials/{mid}", "DELETE")
+        print(f"cleanup: deleted {len(CREATED)} material(s) created by this run")
+    return passed == len(RESULTS)
 
-asyncio.run(main())
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--reset", action="store_true", help="delete leftover test materials from the test pages before running")
+    ap.add_argument("--cleanup", action="store_true", help="delete the materials this run created when done")
+    ap.add_argument("--no-wechat", action="store_true", help="skip the WeChat article checks (J)")
+    ARGS = ap.parse_args()
+    if core("/health")[0] != 200:
+        sys.exit(f"Core not reachable at {CORE}; start it with `magpie serve` first")
+    if ARGS.reset:
+        reset_leftovers()
+    ok = asyncio.run(main())
+    sys.exit(0 if ok else 1)
