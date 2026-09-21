@@ -14,6 +14,8 @@
     button { border: 0; border-radius: 8px; padding: 8px 12px; font: inherit; font-weight: 600; cursor: pointer; background: #111; color: #fff; width: 100%; }
     button.secondary { background: #f3f4f6; color: #111; font-weight: 500; }
     .hint { font-size: 12px; color: #6b7280; margin-top: 10px; }
+    .toggle { margin-top: 12px; align-items: flex-start; font-size: 12px; color: #374151; cursor: pointer; }
+    .toggle input { margin: 2px 0 0; flex: none; }
     kbd { font: 11px/1 ui-monospace, Menlo, monospace; padding: 2px 5px; border: 1px solid #d1d5db; border-bottom-width: 2px; border-radius: 4px; background: #f9fafb; }
     a { color: #2563eb; cursor: pointer; text-decoration: none; }
     details { margin-top: 12px; font-size: 12px; color: #6b7280; }
@@ -28,6 +30,8 @@
 
   <div class="row"><button id="capture">在当前页面收集</button></div>
   <div class="row"><button id="open" class="secondary">打开素材库（Dev UI）</button></div>
+
+  <label class="row toggle"><input id="hoverMenu" type="checkbox"><span>悬停收集：鼠标停在图片上出现 Magpie 按钮，选中文字后出现保存条</span></label>
 
   <p class="hint">快捷键 <kbd id="shortcut">…</kbd> · 有选中文字收文字，否则点选图片。<a id="shortcuts">修改快捷键</a></p>
 

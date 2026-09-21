@@ -250,8 +250,29 @@ class FakeLLM:
                 "constraints": [],
                 "needed_reference_types": ["mood", "texture"],
                 "search_queries": [user[:30]] + words[:2],
+                "facets": {
+                    "colors": {"primary": ["red"], "adjacent": ["pink", "orange"], "saturation": "any", "lightness": "any", "weight": "must"}
+                    if ("红" in user or "red" in user.lower())
+                    else {"primary": []},
+                    "modality": "image" if "参考图" in user else "any",
+                    "time": {"within_days": 7 if "这周" in user else None, "order": "newest" if "最新" in user else None},
+                },
                 "language": "zh",
             }
+        if purpose == "intent":
+            body = user.split('"""')[1] if '"""' in user else user
+            return {"mode": "request" if len(body) > 12 else "keyword", "sort": "relevance", "within_days": None, "reason": "fake intent"}
+        if purpose == "judge":
+            # every candidate judged; "color" signal decides between primary / supporting so colour tests are meaningful
+            out = []
+            for block in re.split(r"\n(?=\[mat_)", user):
+                mm = re.match(r"\[(mat_[0-9a-f]{6,})\]", block.strip())
+                if not mm:
+                    continue
+                col = re.search(r"color (\d\.\d+)", block)
+                rel = 3 if col and float(col.group(1)) >= 0.5 else (1 if col and float(col.group(1)) == 0 else 2)
+                out.append({"material_id": mm.group(1), "relevance": rel, "aspect": "fake aspect", "why": f"fake verdict for {mm.group(1)}"})
+            return {"judgments": out}
         if purpose in ("recompose", "alternatives"):
             ids = list(dict.fromkeys(re.findall(r"mat_[0-9a-f]{6,}", user)))
             if purpose == "alternatives":
@@ -263,7 +284,7 @@ class FakeLLM:
                 {"name": "Material / Texture", "purpose": "surface quality", "members": [
                     {"material_id": mid, "role": "texture reference", "reason": f"fake: adds texture ({mid})"} for mid in ids[half:]]},
             ]
-            return {"human_direction": user[:80], "groups": [g for g in groups if g["members"]], "excluded": []}
+            return {"human_direction": user[:80], "groups": [g for g in groups if g["members"]], "excluded": [], "gaps": ["fake gap"]}
         return {"result": user[:80]}
 
 

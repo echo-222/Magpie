@@ -118,11 +118,18 @@ class Retriever:
                 else:
                     best[mid] = Hit(mid, FTS_BONUS + 0.3, "fts", {"fts": 1.0})
 
-        hits = sorted(best.values(), key=lambda h: -h.score)[:limit]
-        mats = self.db.get_materials([h.material_id for h in hits])
-        for h in hits:
+        ranked = sorted(best.values(), key=lambda h: -h.score)
+        # attach materials *before* cutting to `limit`: a vector whose material is gone must not
+        # take a slot away from a real hit
+        mats = self.db.get_materials([h.material_id for h in ranked])
+        hits: list[Hit] = []
+        for h in ranked:
             h.material = mats.get(h.material_id)
-        return [h for h in hits if h.material is not None]
+            if h.material is not None:
+                hits.append(h)
+            if len(hits) >= limit:
+                break
+        return hits
 
     def similar_to(self, material_id: str, limit: int = 8, exclude: set[str] | None = None) -> list[Hit]:
         """"More like this" seeded by a material's own combined embedding."""

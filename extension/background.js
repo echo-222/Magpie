@@ -53,6 +53,7 @@ const HANDLERS = {
   MAGPIE_SAVE_TEXT: saveText,
   MAGPIE_SAVE_IMAGE: saveImage,
   MAGPIE_GET_MATERIAL: getMaterial,
+  MAGPIE_SET_THOUGHT: setThought,
   MAGPIE_DELETE_MATERIAL: deleteMaterial,
   MAGPIE_HEALTH: health,
   MAGPIE_OPEN_LIBRARY: openLibrary,
@@ -225,6 +226,19 @@ async function dataUrlToBlob(dataUrl) {
 
 async function getMaterial({ id }) {
   const resp = await coreFetch(`/materials/${encodeURIComponent(id)}`);
+  if (!resp.ok) throw await httpError(resp);
+  return { material: await resp.json() };
+}
+
+// Quick save first, thought second: the hover toast lets the user add the Human Thought after
+// a one-click save (contract: PATCH /materials/{id}/thought).
+async function setThought({ id, thought }) {
+  if (!id) throw new CaptureError("bad_request", "没有素材 id");
+  const resp = await coreFetch(`/materials/${encodeURIComponent(id)}/thought`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ thought: cleanThought(thought) }),
+  });
   if (!resp.ok) throw await httpError(resp);
   return { material: await resp.json() };
 }

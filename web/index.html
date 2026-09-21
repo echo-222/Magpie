@@ -2,277 +2,637 @@
 <html lang="zh">
 <head>
 <meta charset="utf-8">
-<title>MAGPIE MVP — dev UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Magpie — 素材库</title>
 <style>
-  body { font: 14px/1.45 -apple-system, system-ui, sans-serif; margin: 0; padding: 16px 24px 80px; max-width: 1100px; color: #222; }
-  h1 { font-size: 18px; letter-spacing: .12em; margin: 0 0 4px; }
-  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: #666; border-top: 1px solid #ddd; padding-top: 14px; margin: 26px 0 10px; }
-  small, .muted { color: #777; }
-  textarea, input[type=text] { width: 100%; box-sizing: border-box; font: inherit; padding: 6px 8px; border: 1px solid #bbb; }
-  textarea { min-height: 56px; }
-  button { font: inherit; padding: 4px 10px; border: 1px solid #888; background: #f6f6f6; cursor: pointer; }
-  button.primary { background: #222; color: #fff; border-color: #222; }
-  button:disabled { opacity: .5; cursor: default; }
-  .row { display: flex; gap: 10px; align-items: flex-start; }
-  .row > * { flex: 1; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
-  .card { border: 1px solid #ddd; padding: 8px; background: #fff; }
-  .card img { width: 100%; height: 130px; object-fit: cover; background: #eee; display: block; }
-  .card .txt { height: 130px; overflow: hidden; background: #f4f1ea; padding: 6px; font-size: 12px; white-space: pre-wrap; }
-  .card .label { font-weight: 600; margin: 6px 0 2px; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .human { color: #7a3e00; }
-  .ai { color: #245; }
-  .swatch { display: inline-block; width: 12px; height: 12px; border: 1px solid #ccc; vertical-align: middle; margin-right: 2px; }
-  .badge { font-size: 11px; padding: 1px 6px; border: 1px solid #ccc; border-radius: 8px; color: #555; }
-  .badge.ready { border-color: #6a6; color: #285; } .badge.failed { border-color: #c66; color: #a33; } .badge.pending, .badge.analyzing { border-color: #cb8; color: #a80; }
-  .group { border: 1px solid #ccc; margin: 10px 0; padding: 8px 10px; }
-  .group h3 { margin: 0 0 6px; font-size: 14px; }
-  .member { display: flex; gap: 10px; padding: 6px 0; border-top: 1px dashed #e2e2e2; }
-  .member img, .member .txt { width: 84px; height: 64px; object-fit: cover; flex: none; font-size: 10px; }
-  .member .body { flex: 1; }
-  .member .ops { flex: none; display: flex; flex-direction: column; gap: 4px; }
-  .member .ops button, .member .ops select { font-size: 12px; padding: 2px 6px; }
-  pre { background: #f7f7f7; border: 1px solid #ddd; padding: 10px; white-space: pre-wrap; font-size: 12px; max-height: 480px; overflow: auto; }
-  #status { position: fixed; bottom: 0; left: 0; right: 0; background: #222; color: #eee; padding: 6px 24px; font-size: 12px; }
-  .hit-score { font-size: 11px; color: #888; }
-  .alts { background: #fbf8ef; border: 1px dashed #c9b; padding: 8px; margin-top: 6px; }
+  :root {
+    --bg: #f5f3ee; --panel: #fff; --ink: #1c1b18; --muted: #7a776f; --line: #e6e2d9; --line-2: #d6d1c5;
+    --accent: #1c1b18; --human: #8a4b0a; --ai: #26525e; --warn-bg: #fff7ed; --warn: #c2700f; --ok: #2e7d4f; --bad: #b3261e;
+    --side: 240px; --drawer: 420px; --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; font: 14px/1.5 -apple-system, "PingFang SC", "Helvetica Neue", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  a { color: var(--ai); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { border: 1px solid var(--line-2); background: #fff; border-radius: 7px; padding: 6px 12px; cursor: pointer; }
+  button:hover { border-color: #b9b3a5; background: #fbfaf7; }
+  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  button.primary:hover { background: #333; }
+  button.ghost { border-color: transparent; background: transparent; color: var(--muted); padding: 4px 8px; }
+  button.ghost:hover { background: #f0ede6; color: var(--ink); }
+  button:disabled { opacity: .45; cursor: default; }
+  input[type=text], textarea, select { border: 1px solid var(--line-2); border-radius: 7px; padding: 8px 10px; background: #fff; width: 100%; }
+  input[type=text]:focus, textarea:focus { outline: none; border-color: #9a9385; box-shadow: 0 0 0 3px rgba(0,0,0,.05); }
+  textarea { resize: vertical; min-height: 64px; }
+  .muted { color: var(--muted); } .small { font-size: 12px; } .tiny { font-size: 11px; }
+  .human { color: var(--human); } .ai { color: var(--ai); }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .grow { flex: 1; min-width: 0; }
+  .hidden { display: none !important; }
+
+  /* ---------- layout ---------- */
+  .app { display: grid; grid-template-columns: var(--side) 1fr; min-height: 100vh; }
+  .side { position: sticky; top: 0; height: 100vh; border-right: 1px solid var(--line); background: #faf9f6; padding: 18px 12px 0; display: flex; flex-direction: column; gap: 6px; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 16px; flex: none; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  .brand b { letter-spacing: .12em; font-size: 15px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; flex: 1; min-height: 0; }
+  .nav a { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: var(--ink); text-decoration: none; font-weight: 500; flex: none; }
+  .nav a svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; opacity: .75; }
+  .nav a:hover { background: #f0ede6; }
+  .nav a.active { background: var(--ink); color: #fff; }
+  .nav a.active svg { opacity: 1; }
+  .nav a .cnt { margin-left: auto; font-size: 11px; color: var(--muted); }
+  .nav a.active .cnt { color: #ccc; }
+  .nav a .chev { width: 14px; height: 14px; margin-left: 4px; transition: transform .15s; opacity: .6; }
+  .nav a.active .chev { opacity: 1; }
+  .nav a.collapsed .chev { transform: rotate(-90deg); }
+  /* pack history lives under the 素材包 entry; it scrolls on its own so the two entries above stay put */
+  .subnav { display: none; flex: 1; min-height: 0; flex-direction: column; margin: 4px 0 0 0; border-top: 1px solid var(--line); padding-top: 6px; }
+  .subnav.open { display: flex; }
+  .subnav .hh { display: flex; gap: 4px; align-items: center; padding: 2px 2px 6px; flex: none; }
+  .subnav .hh input { padding: 5px 9px; font-size: 12px; background: #fff; }
+  .subnav .hl { overflow: auto; flex: 1; min-height: 0; padding-bottom: 8px; scrollbar-width: thin; }
+  .side .foot { flex: none; font-size: 11px; color: var(--muted); line-height: 1.6; padding: 8px 8px 12px; border-top: 1px solid var(--line); }
+  .side .foot .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); margin-right: 5px; }
+  .side .foot .dot.bad { background: var(--bad); }
+  main { padding: 22px 28px 90px; min-width: 0; }
+  .view { display: none; } .view.active { display: block; }
+  .view-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .view-head h1 { font-size: 20px; margin: 0; font-weight: 600; }
+  .view-head .sub { color: var(--muted); font-size: 13px; }
+
+  /* ---------- search ---------- */
+  .searchbar { display: flex; gap: 8px; align-items: stretch; background: #fff; border: 1px solid var(--line-2); border-radius: 12px; padding: 6px 6px 6px 14px; box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+  .searchbar input { border: 0; padding: 8px 0; font-size: 15px; box-shadow: none !important; }
+  .searchbar select { width: auto; border: 0; background: #f3f1eb; border-radius: 8px; padding: 6px 10px; color: var(--muted); }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 0; align-items: center; }
+  .chip { border: 1px solid var(--line-2); background: #fff; border-radius: 999px; padding: 3px 11px; font-size: 12px; cursor: pointer; color: #444; }
+  .chip:hover { border-color: #b9b3a5; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip.hist { background: #f3f1eb; border-color: transparent; }
+  .chip.hist:hover { background: #e8e4da; }
+  .intent { margin: 12px 0 0; font-size: 12px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .intent b { color: var(--ink); font-weight: 600; }
+  .intent a { cursor: pointer; }
+  .brief { margin: 10px 0 0; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; }
+  .brief .q { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .toolbar { display: flex; align-items: center; gap: 10px; margin: 16px 0 10px; color: var(--muted); font-size: 12px; }
+  .toolbar .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 8px; overflow: hidden; }
+  .toolbar .seg button { border: 0; border-radius: 0; padding: 4px 10px; font-size: 12px; background: #fff; }
+  .toolbar .seg button.on { background: var(--ink); color: #fff; }
+
+  /* masonry-ish grid */
+  .grid { columns: 5 200px; column-gap: 12px; }
+  .tile { break-inside: avoid; margin: 0 0 12px; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); cursor: pointer; position: relative; transition: transform .12s ease, box-shadow .12s ease; }
+  .tile:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+  .tile img { display: block; width: 100%; background: #eee; }
+  .tile .quote { padding: 14px 14px 10px; font-size: 13px; line-height: 1.55; color: #333; background: #f7f4ec; max-height: 210px; overflow: hidden; position: relative; }
+  .tile .quote::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: linear-gradient(transparent, #f7f4ec); }
+  .tile .meta { padding: 8px 10px 9px; }
+  .tile .title { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile .thought { font-size: 12px; color: var(--human); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tile .foot { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; color: var(--muted); }
+  .tile .sw { display: inline-flex; gap: 2px; } .tile .sw i { width: 10px; height: 10px; border-radius: 2px; display: block; border: 1px solid rgba(0,0,0,.08); }
+  .tile .st { margin-left: auto; }
+  .tile .st.analyzing, .tile .st.pending { color: var(--warn); } .tile .st.failed { color: var(--bad); }
+  .tile .rel { position: absolute; top: 8px; left: 8px; background: rgba(28,27,24,.82); color: #ffd58a; font-size: 11px; letter-spacing: 1px; padding: 2px 7px; border-radius: 6px; }
+  .tile .why { font-size: 12px; color: #444; margin-top: 4px; }
+  .tile .aspect { font-size: 11px; color: var(--ai); }
+  .empty { padding: 48px 0; text-align: center; color: var(--muted); }
+
+  /* ---------- drawer ---------- */
+  .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: var(--drawer); max-width: 100vw; background: #fff; border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(0,0,0,.08); transform: translateX(105%); transition: transform .18s ease; z-index: 30; display: flex; flex-direction: column; }
+  .drawer.open { transform: none; }
+  .drawer .dh { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .drawer .dh b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .drawer .db { overflow: auto; padding: 14px; flex: 1; }
+  .drawer .hero img { width: 100%; border-radius: 8px; background: #eee; display: block; }
+  .drawer .hero .quote { background: #f7f4ec; border-radius: 8px; padding: 14px; white-space: pre-wrap; font-size: 13px; line-height: 1.6; max-height: 320px; overflow: auto; }
+  .drawer h4 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .drawer .thought-edit { width: 100%; min-height: 64px; border-color: #e6cfa9; background: #fffaf2; color: var(--human); }
+  .drawer .tags { display: flex; flex-wrap: wrap; gap: 5px; } .drawer .tags span { background: #f0ede6; border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+  .drawer .pal { display: flex; gap: 4px; } .drawer .pal i { height: 22px; border-radius: 5px; display: block; border: 1px solid rgba(0,0,0,.08); }
+  .drawer .kv { font-size: 12px; color: #444; } .drawer .kv div { margin: 2px 0; }
+  .drawer .df { padding: 10px 14px; border-top: 1px solid var(--line); display: flex; gap: 6px; flex-wrap: wrap; }
+  .drawer .sim { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; } .drawer .sim img, .drawer .sim .q { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; cursor: pointer; background: #f7f4ec; font-size: 10px; padding: 6px; overflow: hidden; }
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.18); z-index: 25; display: none; } .scrim.on { display: block; }
+
+  /* ---------- add ---------- */
+  .add-wrap { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; align-items: start; }
+  .panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .drop { border: 2px dashed var(--line-2); border-radius: var(--radius); padding: 28px 16px; text-align: center; color: var(--muted); cursor: pointer; transition: background .12s; position: relative; }
+  .drop.over { background: #f3f1eb; border-color: #9a9385; color: var(--ink); }
+  .drop img { max-height: 220px; max-width: 100%; border-radius: 8px; display: block; margin: 0 auto 8px; }
+  .drop input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .segtabs { display: inline-flex; background: #f0ede6; border-radius: 8px; padding: 3px; margin-bottom: 12px; }
+  .segtabs button { border: 0; background: transparent; border-radius: 6px; padding: 5px 14px; color: var(--muted); }
+  .segtabs button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .label { font-size: 12px; color: var(--muted); margin: 12px 0 4px; display: block; }
+  details.more summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 12px; }
+  .recent { display: flex; flex-direction: column; gap: 8px; }
+  .recent .it { display: flex; gap: 10px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+  .recent .it img, .recent .it .q { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; background: #f7f4ec; flex: none; font-size: 9px; overflow: hidden; padding: 3px; }
+  .recent .it .t { font-size: 12px; min-width: 0; } .recent .it .t div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .st-pill { font-size: 11px; padding: 1px 7px; border-radius: 999px; background: #eef5ef; color: var(--ok); margin-left: auto; flex: none; }
+  .st-pill.analyzing, .st-pill.pending { background: #fff4e3; color: var(--warn); } .st-pill.failed { background: #fdeceb; color: var(--bad); }
+
+  /* ---------- packs ---------- */
+  .hl .day { font-size: 10px; color: var(--muted); padding: 8px 8px 2px; text-transform: uppercase; letter-spacing: .08em; }
+  .hl .pi { padding: 7px 8px; border-radius: 8px; cursor: pointer; position: relative; margin: 1px 0; }
+  .hl .pi:hover { background: #f0ede6; } .hl .pi.on { background: #e8e4da; }
+  .hl .pi .n { font-weight: 500; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 18px; }
+  .hl .pi .m { font-size: 10.5px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .hl .pi .cov { display: flex; gap: 3px; margin-top: 5px; } .hl .pi .cov img, .hl .pi .cov .q { width: 30px; height: 30px; object-fit: cover; border-radius: 4px; background: #f7f4ec; }
+  .hl .pi .cov .q { display: grid; place-items: center; color: #c9c2b3; font-size: 14px; } .hl .pi .cov .q::before { content: "❝"; }
+  .hl .pi .x { position: absolute; top: 5px; right: 4px; opacity: 0; font-size: 12px; padding: 0 5px; border: 0; background: transparent; color: var(--muted); }
+  .hl .pi:hover .x { opacity: 1; } .hl .pi .x:hover { color: var(--bad); }
+  .hl .empty { padding: 20px 8px; font-size: 12px; }
+  .newpack { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 14px; }
+  .newpack textarea { min-height: 56px; }
+  .pack-head { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .pack-head h2 { margin: 0; font-size: 17px; display: flex; align-items: center; gap: 8px; }
+  .pack-head h2 input { font-size: 17px; font-weight: 600; padding: 2px 6px; }
+  .pack-head .dir { margin: 8px 0 0; font-size: 13px; }
+  .gaps { background: var(--warn-bg); border-left: 3px solid #f59e0b; padding: 6px 10px; margin: 10px 0 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .trace { font-size: 11px; color: var(--muted); margin-top: 8px; }
+  .group { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); margin-top: 12px; overflow: hidden; }
+  .group .gh { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: #faf9f6; }
+  .group .gh h3 { margin: 0; font-size: 14px; } .group .gh .p { color: var(--muted); font-size: 12px; }
+  .member { display: grid; grid-template-columns: 96px 1fr auto; gap: 12px; padding: 10px 14px; border-top: 1px solid #f1eee7; align-items: start; }
+  .member:first-of-type { border-top: 0; }
+  .member img, .member .q { width: 96px; height: 72px; object-fit: cover; border-radius: 6px; background: #f7f4ec; font-size: 10px; overflow: hidden; padding: 4px; cursor: pointer; }
+  .member .b .t { font-weight: 600; font-size: 13px; } .member .b .t .rel { color: var(--warn); font-size: 11px; letter-spacing: 1px; margin-left: 6px; }
+  .member .b .r { font-size: 13px; margin-top: 2px; } .member .b .h { font-size: 12px; margin-top: 2px; }
+  .member .ops { display: flex; flex-direction: column; gap: 4px; opacity: .35; transition: opacity .12s; } .member:hover .ops { opacity: 1; }
+  .member .ops button, .member .ops select { font-size: 12px; padding: 3px 8px; width: 100%; }
+  .alts { background: #fbf8ef; border-top: 1px dashed #d9c9a3; padding: 8px 14px; font-size: 12px; }
+  .alts .member { grid-template-columns: 72px 1fr auto; padding: 8px 0; }
+  .alts .member img, .alts .member .q { width: 72px; height: 54px; }
+  .excl summary { cursor: pointer; color: var(--muted); font-size: 12px; margin: 12px 0 4px; }
+  .excl div { font-size: 12px; color: var(--muted); padding: 2px 0; }
+  .export { position: fixed; inset: 6vh 8vw; background: #fff; border-radius: 12px; box-shadow: 0 30px 80px rgba(0,0,0,.25); z-index: 40; display: none; flex-direction: column; }
+  .export.on { display: flex; }
+  .export .eh { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .export pre { margin: 0; padding: 14px; overflow: auto; flex: 1; font-size: 12px; white-space: pre-wrap; }
+
+  /* ---------- status toast ---------- */
+  #status { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(20px); background: var(--ink); color: #eee; padding: 8px 16px; border-radius: 999px; font-size: 12px; opacity: 0; transition: all .18s; z-index: 50; pointer-events: none; max-width: 80vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #status.on { opacity: 1; transform: translateX(-50%); }
+  #status.busy::before { content: ""; display: inline-block; width: 9px; height: 9px; border: 2px solid #999; border-top-color: #fff; border-radius: 50%; margin-right: 8px; vertical-align: -1px; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; } .side { position: static; height: auto; padding-bottom: 10px; } .side .foot { display: none; }
+    .nav { flex-direction: row; flex-wrap: wrap; } .subnav { flex-basis: 100%; max-height: 260px; }
+    .add-wrap { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
-<h1>MAGPIE MVP</h1>
-<div class="muted" id="health">…</div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><img src="/static/logo.png" alt="" onerror="this.style.display='none'"><b>MAGPIE</b></div>
+    <nav class="nav">
+      <a href="#search" data-view="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>检索素材<span class="cnt" id="cnt_lib"></span></a>
+      <a href="#add" data-view="add"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>加入素材</a>
+      <a href="#packs" data-view="packs" id="nav_packs"><svg viewBox="0 0 24 24"><path d="M3 7h18v13H3zM3 7l2-4h14l2 4M12 11v5"/></svg>素材包<span class="cnt" id="cnt_packs"></span><svg class="chev" viewBox="0 0 24 24" id="hist_toggle" title="收起/展开历史"><path d="m6 9 6 6 6-6"/></svg></a>
+      <div class="subnav" id="histpanel">
+        <div class="hh"><input type="text" id="histq" placeholder="筛选历史素材包…"><button class="ghost" id="newpack_btn" title="新建素材包">＋</button></div>
+        <div class="hl" id="histlist"></div>
+      </div>
+    </nav>
+    <div class="foot" id="health">…</div>
+  </aside>
 
-<h2>Import Material</h2>
-<div class="row">
-  <div>
-    <div><input type="file" id="file" accept="image/*"> <small>image, or paste text below</small></div>
-    <textarea id="content" placeholder="Text material (paste a paragraph you saved)"></textarea>
-    <div class="row">
-      <input type="text" id="page_url" placeholder="source page URL (optional)">
-      <input type="text" id="page_title" placeholder="page title (optional)">
-    </div>
-  </div>
-  <div>
-    <div class="human">Human Thought — why did this catch you?</div>
-    <textarea id="thought" placeholder="喜欢这里粗糙的纸张质感"></textarea>
-    <button class="primary" id="add">Add</button>
-    <span id="add_msg" class="muted"></span>
-  </div>
+  <main>
+    <!-- ============================== 检索 ============================== -->
+    <section class="view" id="view-search">
+      <div class="view-head"><h1>检索素材</h1><span class="sub">关键词或一句话需求都行，会自动判断</span></div>
+      <div class="searchbar">
+        <input type="text" id="q" placeholder="纸张质感 · brutalist · 我想做一个红色系的页面，找红色系的参考图 · 最近存的粗糙材质…" autocomplete="off">
+        <select id="sort" title="排序"><option value="">按相关度</option><option value="newest">最新入库优先</option><option value="oldest">最早入库优先</option></select>
+        <button class="primary" id="search">搜索</button>
+      </div>
+      <div class="chips" id="recentq"></div>
+      <div id="intent" class="intent hidden"></div>
+      <div id="brief" class="brief hidden"></div>
+      <div class="toolbar">
+        <span id="lib_count"></span>
+        <span class="seg" id="modfilter"><button data-m="" class="on">全部</button><button data-m="image">图片</button><button data-m="text">文字</button></span>
+        <span class="grow"></span>
+        <button class="ghost" id="clear">清除搜索</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- ============================== 加入 ============================== -->
+    <section class="view" id="view-add">
+      <div class="view-head"><h1>加入素材</h1><span class="sub">存下来的东西会在后台做 AI 理解，然后就能被检索到</span></div>
+      <div class="add-wrap">
+        <div class="panel">
+          <div class="segtabs"><button class="on" data-k="image" id="tab_img">图片</button><button data-k="text" id="tab_txt">文字</button></div>
+          <div id="add_image">
+            <div class="drop" id="drop">
+              <input type="file" id="file" accept="image/*">
+              <div id="drop_hint">拖一张图进来、点击选择，或直接 ⌘V 粘贴</div>
+            </div>
+          </div>
+          <div id="add_text" class="hidden">
+            <textarea id="content" placeholder="粘贴一段你想留下的文字" style="min-height:120px"></textarea>
+          </div>
+          <label class="label human">Human Thought — 为什么记下它？</label>
+          <textarea id="thought" placeholder="喜欢这里粗糙的纸张质感 / 反例：所有 SaaS 长得一样的原因"></textarea>
+          <details class="more"><summary>来源（可选）</summary>
+            <div class="row" style="margin-top:8px"><input type="text" id="page_url" placeholder="来源页面 URL"><input type="text" id="page_title" placeholder="页面标题"></div>
+          </details>
+          <div class="row" style="margin-top:14px"><button class="primary" id="add">加入素材库</button><span id="add_msg" class="muted small"></span></div>
+        </div>
+        <div class="panel">
+          <div class="row" style="margin-bottom:8px"><b>刚加入的</b><span class="muted small grow">后台分析中的会自动刷新</span></div>
+          <div class="recent" id="recent_added"><div class="muted small">还没有</div></div>
+          <p class="muted small" style="margin:14px 0 0">在网页上收集更快：装上 Magpie Capture 浏览器插件，悬停图片或选中文字直接保存。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 素材包 ============================== -->
+    <section class="view" id="view-packs">
+      <div class="view-head"><h1>素材包</h1><span class="sub">描述你在做什么，Magpie 从你的素材里挑、排序、分组，并说明库里缺什么</span></div>
+      <div class="newpack" id="newpack">
+        <textarea id="task" placeholder="我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。"></textarea>
+        <div class="row" style="margin-top:8px"><span class="muted small grow" id="task_hint">DeepSeek ≈ 20–40 s · 本地 Qwen ≈ 2–4 min · ⌘↩ 生成</span><button class="primary" id="build">生成素材包</button></div>
+      </div>
+      <div id="pack"><div class="empty">在上方描述任务生成新的素材包，或从左侧历史里选一个</div></div>
+    </section>
+  </main>
 </div>
 
-<h2>What are you making?</h2>
-<textarea id="task" placeholder="我要做一个克制、有物质感、不要典型 AI 蓝紫色的网站首页。"></textarea>
-<div class="row" style="align-items:center">
-  <button class="primary" id="build" style="flex:none">Build Material Pack</button>
-  <span class="muted" style="flex:none">or load:</span>
-  <select id="packs"></select>
+<!-- material drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer">
+  <div class="dh"><b id="d_title"></b><button class="ghost" id="d_close">✕</button></div>
+  <div class="db" id="d_body"></div>
+  <div class="df" id="d_foot"></div>
+</aside>
+
+<!-- export modal -->
+<div class="export" id="export">
+  <div class="eh"><b id="ex_title">Copy for Agent</b><span class="muted small grow" id="ex_msg"></span><button id="ex_copy">复制</button><button class="ghost" id="ex_close">✕</button></div>
+  <pre id="ex_pre"></pre>
 </div>
 
-<h2>Pack</h2>
-<div id="export_box" style="display:none; margin-bottom:8px">
-  <button class="primary" id="copy">Copy for Agent</button>
-  <button id="copy_json">Copy JSON</button>
-  <span id="copy_msg" class="muted"></span>
-</div>
-<div id="pack"><span class="muted">no pack yet — type a task above and build one (≈ 10–40 s with DeepSeek, 1–2.5 min with local Qwen)</span></div>
-<pre id="export" style="display:none"></pre>
-
-<h2>Material Library <span id="lib_count" class="muted"></span></h2>
-<div class="row">
-  <input type="text" id="q" placeholder="search library (Human Thought + AI understanding): 纸张质感 / 克制 / brutalist …">
-  <button id="search" style="flex:none">Search</button>
-  <button id="clear" style="flex:none">All</button>
-  <button id="toggle_lib" style="flex:none">Show all</button>
-</div>
-<div id="library" class="cards" style="margin-top:10px"></div>
-
-<div id="status">ready</div>
+<div id="status"></div>
 
 <script>
 const $ = (id) => document.getElementById(id);
-const status = (t) => { $('status').textContent = t; };
-let materials = {}; let pack = null; let pollTimer = null;
-
+const esc = (s) => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const post = (body) => ({ method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(body) });
 async function api(path, opts = {}) {
   const r = await fetch(path, opts);
   if (!r.ok) { const t = await r.text(); throw new Error(r.status + ' ' + t.slice(0, 300)); }
   return r.headers.get('content-type')?.includes('json') ? r.json() : r.text();
 }
-const esc = (s) => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-// ---------------------------------------------------------------- health
-async function loadHealth() {
-  const h = await api('/health');
-  $('health').textContent = `chat=${h.chat_provider}/${h.chat_model} · vision=${h.vision_model} · embed=${h.embed_model} · ${h.materials} materials · data=${h.data_dir}`;
+let statusTimer = null;
+function status(t, busy = false) {
+  const el = $('status'); el.textContent = t; el.className = 'on' + (busy ? ' busy' : '');
+  clearTimeout(statusTimer); if (!busy) statusTimer = setTimeout(() => el.className = '', 3200);
 }
+function fmtTime(iso, withRel = true) {
+  if (!iso) return '';
+  const d = new Date(iso); if (isNaN(d)) return iso;
+  const diff = (Date.now() - d.getTime()) / 864e5;
+  const rel = diff < 1 ? '今天' : diff < 2 ? '昨天' : diff < 7 ? `${Math.floor(diff)} 天前` : diff < 30 ? `${Math.floor(diff / 7)} 周前` : '';
+  const abs = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return withRel && rel ? `${rel} · ${abs}` : abs;
+}
+const dayKey = (iso) => { const d = new Date(iso); const diff = (Date.now() - d) / 864e5; return diff < 1 ? '今天' : diff < 2 ? '昨天' : diff < 7 ? '本周' : diff < 30 ? '本月' : '更早'; };
+const label = (m) => m.original.filename || m.source.page_title || (m.original.content || '').trim().split('\n')[0].slice(0, 40) || m.id;
+const stars = (n) => '★'.repeat(n) + '☆'.repeat(3 - n);
+const store = { get: (k, d) => { try { return JSON.parse(localStorage.getItem('magpie.' + k)) ?? d; } catch { return d; } }, set: (k, v) => localStorage.setItem('magpie.' + k, JSON.stringify(v)) };
 
-// ---------------------------------------------------------------- import
-$('add').onclick = async () => {
-  const fd = new FormData();
-  const f = $('file').files[0];
-  if (f) { fd.append('file', f); fd.append('modality', 'image'); }
-  else if ($('content').value.trim()) { fd.append('modality', 'text'); fd.append('content', $('content').value); }
-  else { $('add_msg').textContent = 'pick an image or paste text first'; return; }
-  fd.append('thought', $('thought').value);
-  fd.append('page_url', $('page_url').value); fd.append('page_title', $('page_title').value);
-  $('add').disabled = true; $('add_msg').textContent = 'saving…';
-  try {
-    const res = await api('/materials', { method: 'POST', body: fd });
-    $('add_msg').textContent = res.created ? `saved ${res.material.id}, analyzing in background…` : `already in library (${res.material.id})`;
-    $('file').value = ''; $('content').value = ''; $('thought').value = '';
-    await loadLibrary(); startPolling();
-  } catch (e) { $('add_msg').textContent = 'error: ' + e.message; }
-  $('add').disabled = false;
+let materials = {}; let pack = null; let packs = []; let pollTimer = null; let libItems = []; let lastSearch = null; let modFilter = '';
+
+// ======================================================================= routing
+const VIEWS = ['search', 'add', 'packs'];
+function route() {
+  const hash = location.hash.replace('#', '') || 'search';
+  const [view, arg] = hash.split('/');
+  const v = VIEWS.includes(view) ? view : 'search';
+  document.querySelectorAll('.view').forEach(s => s.classList.toggle('active', s.id === 'view-' + v));
+  document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('active', a.dataset.view === v));
+  syncHistPanel(v);
+  if (v === 'packs') { loadPacks().then(() => { if (arg && (!pack || pack.id !== arg)) openPack(arg); }); }
+}
+window.addEventListener('hashchange', route);
+// history panel: expanded whenever the 素材包 view is active, unless the user collapsed it with the chevron
+function syncHistPanel(v) {
+  const collapsed = store.get('histCollapsed', false);
+  $('histpanel').classList.toggle('open', v === 'packs' && !collapsed);
+  $('nav_packs').classList.toggle('collapsed', collapsed);
+}
+$('hist_toggle').onclick = (e) => {
+  const v = location.hash.replace('#', '').split('/')[0] || 'search';
+  if (v !== 'packs') return; // first click on the entry just navigates there
+  e.preventDefault(); e.stopPropagation();
+  store.set('histCollapsed', !store.get('histCollapsed', false)); syncHistPanel('packs');
 };
 
-// ---------------------------------------------------------------- library
-function materialCard(m, hit) {
-  const thumb = m.modality === 'image'
-    ? `<img src="/materials/${m.id}/thumb" loading="lazy">`
-    : `<div class="txt">${esc((m.original.content || '').slice(0, 260))}</div>`;
-  const sw = (m.analysis.colors || []).slice(0, 5).map(c => `<span class="swatch" title="${c.name || ''} ${(c.ratio*100).toFixed(0)}%" style="background:${c.hex}"></span>`).join('');
-  const hitLine = hit ? `<div class="hit-score">score ${hit.score.toFixed(3)} · via ${hit.via}</div>` : '';
-  const label = m.original.filename || m.source.page_title || m.id;
-  return `<div class="card" data-id="${m.id}">
-    ${thumb}
-    <div class="label" title="${esc(label)}">${esc(label)} <span class="badge ${m.processing.status}">${m.processing.status}</span></div>
-    ${hitLine}
-    <div class="human" title="click to edit" onclick="editThought('${m.id}')">Human: ${esc(m.human.thought || '—')}</div>
-    <div class="ai">AI: ${esc(aiLine(m) || (m.processing.status === 'ready' ? '—' : '…'))}</div>
-    <div>${sw} <small class="muted">${m.source.page_url ? `<a href="${esc(m.source.page_url)}" target="_blank">source</a>` : ''} ${m.processing.error ? esc(m.processing.error.slice(0,80)) : ''}</small></div>
-  </div>`;
+// ======================================================================= health
+async function loadHealth() {
+  try {
+    const h = await api('/health');
+    $('health').innerHTML = `<span class="dot"></span>Core 在线 · ${h.materials} 条素材<br>chat ${esc(h.chat_provider)}/${esc(h.chat_model)}<br>vision ${esc(h.vision_model)}<br>embed ${esc(h.embed_model)}`;
+    $('cnt_lib').textContent = h.materials;
+  } catch (e) { $('health').innerHTML = `<span class="dot bad"></span>Core 不可用`; }
 }
-function aiLine(m) {
-  const parts = [...(m.analysis.style || []).slice(0, 3), ...(m.analysis.keywords || []).slice(0, 4)];
-  return [...new Set(parts)].slice(0, 6).join(' / ');
+
+// ======================================================================= library / search
+function tile(m, hit) {
+  const isImg = m.modality === 'image';
+  const body = isImg ? `<img src="/materials/${m.id}/thumb" loading="lazy" alt="">` : `<div class="quote">${esc((m.original.content || '').slice(0, 320))}</div>`;
+  const sw = (m.analysis.colors || []).slice(0, 5).map(c => `<i style="background:${c.hex}" title="${esc(c.name || '')}"></i>`).join('');
+  const rel = hit && hit.relevance != null ? `<span class="rel" title="判定相关度 ${hit.relevance}/3">${stars(hit.relevance)}</span>` : '';
+  const why = hit && hit.why ? `<div class="aspect">${esc(hit.aspect || '')}</div><div class="why">${esc(hit.why)}</div>` : (hit && hit.score != null && hit.relevance == null ? `<div class="tiny muted">匹配 ${hit.score.toFixed(2)} · ${hit.via}</div>` : '');
+  const st = m.processing.status;
+  return `<div class="tile" data-id="${m.id}" onclick="openMaterial('${m.id}')">
+    ${rel}${body}
+    <div class="meta">
+      <div class="title" title="${esc(label(m))}">${esc(label(m))}</div>
+      ${m.human.thought ? `<div class="thought">${esc(m.human.thought)}</div>` : ''}
+      ${why}
+      <div class="foot"><span class="sw">${sw}</span><span>${fmtTime(m.created_at)}</span><span class="st ${st}">${st === 'ready' ? '' : st === 'failed' ? '分析失败' : '分析中…'}</span></div>
+    </div></div>`;
 }
-const LIB_PREVIEW = 8; let libExpanded = false;
+function renderGrid(items, hitsById) {
+  const shown = items.filter(m => !modFilter || m.modality === modFilter);
+  $('grid').innerHTML = shown.map(m => tile(m, hitsById?.[m.id])).join('') || `<div class="empty">${lastSearch ? '没有相关素材' : '素材库还是空的 — 去「加入素材」或装上浏览器插件'}</div>`;
+  $('lib_count').textContent = lastSearch ? `${shown.length} 条结果` : `共 ${shown.length} 条`;
+}
 async function loadLibrary() {
-  const res = await api('/materials');
-  materials = {}; res.items.forEach(m => materials[m.id] = m);
-  const shown = libExpanded ? res.items : res.items.slice(0, LIB_PREVIEW);
-  $('lib_count').textContent = libExpanded || res.total <= LIB_PREVIEW ? `(${res.total})` : `(showing ${shown.length} of ${res.total})`;
-  $('toggle_lib').style.display = res.total > LIB_PREVIEW ? '' : 'none';
-  $('toggle_lib').textContent = libExpanded ? 'Collapse' : `Show all (${res.total})`;
-  $('library').innerHTML = shown.map(m => materialCard(m)).join('') || '<span class="muted">empty — import something</span>';
+  const res = await api('/materials' + ($('sort').value === 'oldest' ? '?sort=oldest' : ''));
+  libItems = res.items; res.items.forEach(m => materials[m.id] = m);
+  $('cnt_lib').textContent = res.total;
+  if (!lastSearch) renderGrid(libItems);
   const busy = res.items.some(m => ['pending', 'analyzing'].includes(m.processing.status));
   if (busy) startPolling(); else stopPolling();
+  renderRecentAdded();
 }
-$('toggle_lib').onclick = () => { libExpanded = !libExpanded; $('q').value = ''; loadLibrary(); };
 function startPolling() { if (!pollTimer) pollTimer = setInterval(loadLibrary, 3000); }
 function stopPolling() { if (pollTimer) { clearInterval(pollTimer); pollTimer = null; } }
-$('search').onclick = async () => {
-  const q = $('q').value.trim(); if (!q) return loadLibrary();
-  stopPolling(); status('searching…');
-  const res = await api('/search?q=' + encodeURIComponent(q));
-  res.hits.forEach(h => materials[h.material_id] = h.material);
-  $('lib_count').textContent = `(${res.hits.length} hits for “${q}”)`;
-  $('library').innerHTML = res.hits.map(h => materialCard(h.material, h)).join('') || '<span class="muted">no hits</span>';
-  status(`search "${q}": ${res.hits.length} hits`);
-};
-$('q').onkeydown = (e) => { if (e.key === 'Enter') $('search').click(); };
-$('clear').onclick = () => { $('q').value = ''; loadLibrary(); };
-window.editThought = async (id) => {
-  const cur = materials[id]?.human?.thought || '';
-  const t = prompt('Human Thought (why did this matter to you?)', cur);
-  if (t === null) return;
-  await api(`/materials/${id}/thought`, { method: 'PATCH', headers: {'content-type': 'application/json'}, body: JSON.stringify({ thought: t }) });
-  loadLibrary();
-};
 
-// ---------------------------------------------------------------- pack
+function renderRecentQueries() {
+  const rq = store.get('recentq', []);
+  $('recentq').innerHTML = rq.length ? `<span class="tiny muted">最近：</span>` + rq.map(q => `<span class="chip hist" onclick="$('q').value=${JSON.stringify(q)};runSearch()">${esc(q)}</span>`).join('') + `<button class="ghost tiny" onclick="store.set('recentq',[]);renderRecentQueries()">清空</button>` : '';
+}
+function rememberQuery(q) { const rq = store.get('recentq', []).filter(x => x !== q); rq.unshift(q); store.set('recentq', rq.slice(0, 8)); renderRecentQueries(); }
+
+window.runSearch = async (force) => {
+  const q = $('q').value.trim();
+  if (!q) { lastSearch = null; $('intent').classList.add('hidden'); $('brief').classList.add('hidden'); return renderGrid(libItems); }
+  stopPolling(); status('判断意图 → 检索 …', true); $('search').disabled = true;
+  try {
+    const sort = $('sort').value;
+    const res = await api(`/search?q=${encodeURIComponent(q)}&limit=40${force ? `&mode=${force}` : ''}${sort ? `&sort=${sort}` : ''}`);
+    rememberQuery(q);
+    res.hits.forEach(h => materials[h.material_id] = h.material);
+    const agent = res.mode === 'agent'; const it = res.intent || {};
+    lastSearch = { q, res };
+    const sortLabel = { relevance: '相关度', newest: '最新入库优先', oldest: '最早入库优先' }[res.sort] || res.sort;
+    $('intent').className = 'intent';
+    $('intent').innerHTML = `识别为 <b>${agent ? '自然语言需求' : '关键词检索'}</b><span>${force ? '（你指定的）' : `（${esc(it.reason || '')}）`}</span><span>· 排序 ${esc(sortLabel)}</span>${res.within_days ? `<span>· 只看最近 ${res.within_days} 天入库</span>` : ''}
+      <a onclick="runSearch('${agent ? 'fast' : 'agent'}')">不对？改为${agent ? '关键词检索' : '自然语言需求'}</a>`;
+    if (agent) {
+      const f = res.task.facets || {}; const c = f.colors; const t = f.time || {};
+      const facets = [c && `颜色 ${c.primary.join('/')}${c.adjacent?.length ? `（邻近 ${c.adjacent.join('/')}）` : ''}`, f.modality && f.modality !== 'any' && `只看${f.modality === 'image' ? '图片' : '文字'}`, t.within_days && `最近 ${t.within_days} 天入库`, t.order && `按时间${t.order === 'newest' ? '倒序' : '正序'}`].filter(Boolean);
+      const steps = (res.trace.steps || []).map(s => `${s.step} ${s.s}s`).join(' → ');
+      $('brief').className = 'brief';
+      $('brief').innerHTML = `<b>理解：</b>${esc(res.task.purpose || q)}${facets.length ? ` · <b>事实条件：</b>${esc(facets.join('，'))}` : ''}
+        <div class="q">检索词：${esc((res.task.search_queries || []).join(' / '))} · ${esc(steps)} · ${res.hits.length} 条相关，${res.dropped.length} 条不相关已隐藏</div>`;
+    } else $('brief').classList.add('hidden');
+    const hitsById = {}; res.hits.forEach(h => hitsById[h.material_id] = h);
+    renderGrid(res.hits.map(h => h.material), hitsById);
+    status(`${res.hits.length} 条结果（${agent ? '自然语言' : '关键词'}）`);
+  } catch (e) { status('出错：' + e.message); }
+  $('search').disabled = false;
+};
+$('search').onclick = () => runSearch();
+$('q').onkeydown = (e) => { if (e.key === 'Enter') runSearch(); };
+$('sort').onchange = () => { $('q').value.trim() ? runSearch() : loadLibrary(); };
+$('clear').onclick = () => { $('q').value = ''; runSearch(); };
+$('modfilter').onclick = (e) => { const b = e.target.closest('button'); if (!b) return; modFilter = b.dataset.m; $('modfilter').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); lastSearch ? renderGrid(lastSearch.res.hits.map(h => h.material), Object.fromEntries(lastSearch.res.hits.map(h => [h.material_id, h]))) : renderGrid(libItems); };
+
+// ======================================================================= material drawer
+window.openMaterial = async (id) => {
+  let m = materials[id]; if (!m) { m = await api('/materials/' + id); materials[id] = m; }
+  const a = m.analysis; const isImg = m.modality === 'image';
+  $('d_title').textContent = label(m);
+  const tags = [...new Set([...(a.style || []), ...(a.keywords || []), ...(a.mood || []), ...(a.subjects || [])])].slice(0, 14);
+  const pal = (a.colors || []).slice(0, 6);
+  const palette = (m.objective_metadata.palette || {}).descriptors || [];
+  $('d_body').innerHTML = `
+    <div class="hero">${isImg ? `<a href="/materials/${m.id}/file" target="_blank"><img src="/materials/${m.id}/file" alt=""></a>` : `<div class="quote">${esc(m.original.content || '')}</div>`}</div>
+    <h4>Human Thought</h4>
+    <textarea class="thought-edit" id="d_thought" placeholder="为什么记下它？（回车保存）">${esc(m.human.thought || '')}</textarea>
+    <div class="tiny muted">Enter 保存 · Shift+Enter 换行</div>
+    <h4>AI 理解 <span class="tiny" style="text-transform:none;letter-spacing:0">${m.processing.status === 'ready' ? '' : m.processing.status === 'failed' ? '· 分析失败' : '· 分析中…'}</span></h4>
+    ${a.summary ? `<div class="ai" style="font-size:13px">${esc(a.summary)}</div>` : '<div class="muted small">—</div>'}
+    ${tags.length ? `<div class="tags" style="margin-top:8px">${tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
+    ${pal.length ? `<div class="pal" style="margin-top:8px">${pal.map(c => `<i style="background:${c.hex};flex:${Math.max(c.ratio, .05)}" title="${esc(c.name || '')} ${(c.ratio * 100).toFixed(0)}%"></i>`).join('')}</div><div class="tiny muted">${esc(palette.join(' · '))}</div>` : ''}
+    ${a.ocr ? `<h4>图中文字</h4><div class="small" style="white-space:pre-wrap">${esc(a.ocr.slice(0, 600))}</div>` : ''}
+    <h4>信息</h4>
+    <div class="kv">
+      <div>入库 ${fmtTime(m.created_at)}${m.source.captured_at ? ` · 抓取 ${fmtTime(m.source.captured_at, false)}` : ''}</div>
+      ${m.source.page_url ? `<div>来源 <a href="${esc(m.source.page_url)}" target="_blank">${esc(m.source.page_title || m.source.page_url)}</a></div>` : ''}
+      <div class="muted">${m.id}${a.model ? ` · ${esc(a.model)}` : ''}${m.processing.error ? ` · <span style="color:var(--bad)">${esc(m.processing.error.slice(0, 120))}</span>` : ''}</div>
+    </div>
+    <h4>相似素材</h4><div class="sim" id="d_sim"><span class="muted small">…</span></div>`;
+  $('d_foot').innerHTML = `<button onclick="reanalyze('${m.id}')">重新分析</button><button onclick="useAsTask('${m.id}')">以此为任务找参考</button><span class="grow"></span><button onclick="deleteMaterial('${m.id}')" style="color:var(--bad)">删除</button>`;
+  $('d_thought').onkeydown = async (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      const t = e.target.value.trim();
+      const res = await api(`/materials/${m.id}/thought`, { method: 'PATCH', headers: {'content-type': 'application/json'}, body: JSON.stringify({ thought: t }) });
+      materials[m.id] = res.material || res; status('已保存 Human Thought'); loadLibrary(); if (lastSearch) { const h = lastSearch.res.hits.find(x => x.material_id === m.id); if (h) h.material = materials[m.id]; }
+    }
+  };
+  $('drawer').classList.add('open'); $('scrim').classList.add('on');
+  try {
+    const sim = await api(`/materials/${m.id}/similar?limit=6`);
+    sim.hits.forEach(h => materials[h.material_id] = h.material);
+    $('d_sim').innerHTML = sim.hits.map(h => h.material.modality === 'image' ? `<img src="/materials/${h.material_id}/thumb" title="${esc(label(h.material))}" onclick="openMaterial('${h.material_id}')">` : `<div class="q" onclick="openMaterial('${h.material_id}')">${esc((h.material.original.content || '').slice(0, 80))}</div>`).join('') || '<span class="muted small">—</span>';
+  } catch { $('d_sim').innerHTML = '<span class="muted small">—</span>'; }
+};
+function closeDrawer() { $('drawer').classList.remove('open'); $('scrim').classList.remove('on'); }
+$('d_close').onclick = closeDrawer; $('scrim').onclick = closeDrawer;
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeDrawer(); $('export').classList.remove('on'); } });
+window.reanalyze = async (id) => { await api(`/materials/${id}/reanalyze`, { method: 'POST' }); status('已加入分析队列'); startPolling(); setTimeout(() => openMaterial(id), 1500); };
+window.deleteMaterial = async (id) => {
+  if (!confirm('删除这条素材？不可恢复。')) return;
+  await api(`/materials/${id}`, { method: 'DELETE' }); delete materials[id]; closeDrawer(); status('已删除');
+  libItems = libItems.filter(m => m.id !== id); if (lastSearch) lastSearch.res.hits = lastSearch.res.hits.filter(h => h.material_id !== id);
+  lastSearch ? renderGrid(lastSearch.res.hits.map(h => h.material), Object.fromEntries(lastSearch.res.hits.map(h => [h.material_id, h]))) : renderGrid(libItems); loadHealth();
+};
+window.useAsTask = (id) => { const m = materials[id]; $('task').value = `找和「${label(m)}」${m.human.thought ? `（${m.human.thought}）` : ''}相似方向的参考`; closeDrawer(); location.hash = '#packs'; $('task').focus(); };
+
+// ======================================================================= add
+let addKind = 'image'; let pendingFile = null; const recentAdded = store.get('recentAdded', []);
+function setAddKind(k) { addKind = k; $('tab_img').classList.toggle('on', k === 'image'); $('tab_txt').classList.toggle('on', k === 'text'); $('add_image').classList.toggle('hidden', k !== 'image'); $('add_text').classList.toggle('hidden', k !== 'text'); }
+$('tab_img').onclick = () => setAddKind('image'); $('tab_txt').onclick = () => setAddKind('text');
+function showFile(f) {
+  pendingFile = f; const url = URL.createObjectURL(f);
+  $('drop').innerHTML = `<input type="file" id="file" accept="image/*"><img src="${url}" alt=""><div class="small">${esc(f.name || 'pasted image')} · ${(f.size / 1024).toFixed(0)} KB · 点击可更换</div>`;
+  $('file').onchange = (e) => e.target.files[0] && showFile(e.target.files[0]);
+}
+$('file').onchange = (e) => e.target.files[0] && showFile(e.target.files[0]);
+['dragenter', 'dragover'].forEach(ev => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('over'); }));
+$('drop').addEventListener('drop', (e) => { const f = [...e.dataTransfer.files].find(f => f.type.startsWith('image/')); if (f) { setAddKind('image'); showFile(f); } });
+document.addEventListener('paste', (e) => {
+  if (!$('view-add').classList.contains('active')) return;
+  const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
+  if (item) { setAddKind('image'); showFile(item.getAsFile()); e.preventDefault(); }
+});
+$('add').onclick = async () => {
+  const fd = new FormData();
+  if (addKind === 'image') { if (!pendingFile) { $('add_msg').textContent = '先选一张图'; return; } fd.append('file', pendingFile, pendingFile.name || 'pasted.png'); fd.append('modality', 'image'); }
+  else { if (!$('content').value.trim()) { $('add_msg').textContent = '先粘贴一段文字'; return; } fd.append('modality', 'text'); fd.append('content', $('content').value); }
+  fd.append('thought', $('thought').value); fd.append('page_url', $('page_url').value); fd.append('page_title', $('page_title').value);
+  $('add').disabled = true; $('add_msg').textContent = '保存中…';
+  try {
+    const res = await api('/materials', { method: 'POST', body: fd });
+    materials[res.material.id] = res.material;
+    $('add_msg').textContent = res.created ? '已保存，后台分析中' : '这条已经在库里了';
+    recentAdded.unshift(res.material.id); store.set('recentAdded', [...new Set(recentAdded)].slice(0, 12));
+    pendingFile = null; $('drop').innerHTML = `<input type="file" id="file" accept="image/*"><div id="drop_hint">拖一张图进来、点击选择，或直接 ⌘V 粘贴</div>`; $('file').onchange = (e) => e.target.files[0] && showFile(e.target.files[0]);
+    $('content').value = ''; $('thought').value = '';
+    await loadLibrary(); startPolling(); loadHealth();
+  } catch (e) { $('add_msg').textContent = '出错：' + e.message; }
+  $('add').disabled = false;
+};
+function renderRecentAdded() {
+  const ids = store.get('recentAdded', []).filter(id => materials[id]);
+  $('recent_added').innerHTML = ids.map(id => { const m = materials[id]; const st = m.processing.status;
+    return `<div class="it" onclick="openMaterial('${id}')">${m.modality === 'image' ? `<img src="/materials/${id}/thumb">` : `<div class="q">${esc((m.original.content || '').slice(0, 60))}</div>`}
+      <div class="t grow"><div><b>${esc(label(m))}</b></div><div class="${m.human.thought ? 'human' : 'muted'}">${esc(m.human.thought || '没有 Human Thought')}</div><div class="ai">${esc(m.analysis.summary || (st === 'ready' ? '' : '分析中…'))}</div></div>
+      <span class="st-pill ${st}">${st === 'ready' ? '已分析' : st === 'failed' ? '失败' : '分析中'}</span></div>`; }).join('') || '<div class="muted small">还没有</div>';
+}
+
+// ======================================================================= packs
+async function loadPacks() {
+  const res = await api('/packs'); packs = res.items; $('cnt_packs').textContent = packs.length || '';
+  renderHist();
+}
+function renderHist() {
+  const f = $('histq').value.trim().toLowerCase();
+  const items = packs.filter(p => !f || (p.name + ' ' + (p.task || '') + ' ' + (p.group_names || []).join(' ')).toLowerCase().includes(f));
+  let lastDay = null; const html = [];
+  for (const p of items) {
+    const d = dayKey(p.updated_at); if (d !== lastDay) { html.push(`<div class="day">${d}</div>`); lastDay = d; }
+    const covers = (p.cover_ids || []).map(id => materials[id] ? (materials[id].modality === 'image' ? `<img src="/materials/${id}/thumb">` : `<div class="q"></div>`) : `<img src="/materials/${id}/thumb" onerror="this.outerHTML='<div class=q></div>'">`).join('');
+    html.push(`<div class="pi ${pack && pack.id === p.id ? 'on' : ''}" onclick="location.hash='#packs/${p.id}'" title="${esc(p.task || '')}">
+      <div class="n">${esc(p.name)}</div>
+      <div class="m">${fmtTime(p.updated_at)} · ${p.members} 条 · ${p.groups} 组${p.edits ? ` · 改过 ${p.edits} 次` : ''}${p.gaps ? ' · 有缺口' : ''}</div>
+      ${covers ? `<div class="cov">${covers}</div>` : ''}
+      <button class="x" title="删除" onclick="event.stopPropagation();deletePack('${p.id}')">✕</button></div>`);
+  }
+  $('histlist').innerHTML = html.join('') || `<div class="empty small">${f ? '没有匹配的素材包' : '还没有素材包'}</div>`;
+}
+$('histq').oninput = renderHist;
+$('newpack_btn').onclick = () => { pack = null; $('pack').innerHTML = '<div class="empty">在上方描述任务生成新的素材包</div>'; $('task').value = ''; renderHist(); location.hash = '#packs'; $('task').focus(); };
+window.deletePack = async (id) => {
+  if (!confirm('删除这个素材包？')) return;
+  await api('/packs/' + id, { method: 'DELETE' }); if (pack && pack.id === id) { pack = null; $('pack').innerHTML = '<div class="empty">已删除</div>'; }
+  await loadPacks(); status('已删除素材包');
+};
+async function openPack(id) { try { setPack(await api('/packs/' + id)); } catch (e) { status('打不开这个素材包：' + e.message); } }
 $('build').onclick = async () => {
   const task = $('task').value.trim(); if (!task) return;
-  $('build').disabled = true; status('understanding task → retrieving → recomposing … (DeepSeek ≈ 10–40 s, local Qwen ≈ 1–2.5 min)');
+  $('build').disabled = true; status('理解请求 → 召回 → 逐条判定相关度 → 分组组合 …', true);
   try {
-    const res = await api('/packs', { method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({ task }) });
-    setPack(res); await loadPacks(); status(`pack ${pack.id} built`);
-  } catch (e) { status('error: ' + e.message); }
+    const res = await api('/packs', post({ task }));
+    setPack(res); await loadPacks(); location.hash = '#packs/' + res.pack.id; status(`素材包已生成：${res.pack.groups.length} 组 · ${res.pack.groups.reduce((n, g) => n + g.members.length, 0)} 条`);
+  } catch (e) { status('出错：' + e.message); }
   $('build').disabled = false;
 };
-async function loadPacks() {
-  const res = await api('/packs');
-  $('packs').innerHTML = '<option value="">— packs —</option>' + res.items.map(p => `<option value="${p.id}" ${pack && pack.id === p.id ? 'selected' : ''}>${esc(p.name.slice(0, 60))} (${p.members})</option>`).join('');
-}
-$('packs').onchange = async () => { const id = $('packs').value; if (!id) return; setPack(await api('/packs/' + id)); };
+$('task').onkeydown = (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) $('build').click(); };
 
-function setPack(res) {
-  pack = res.pack; Object.assign(materials, res.materials || {});
-  renderPack(); $('export_box').style.display = 'block'; $('export').style.display = 'none'; $('export').textContent = ''; $('copy_msg').textContent = '';
-}
-function memberHtml(g, m) {
+function setPack(res) { pack = res.pack; Object.assign(materials, res.materials || {}); $('task').value = pack.task.raw_request; renderPack(); renderHist(); }
+function memberHtml(g, m, alt) {
   const mat = materials[m.material_id]; if (!mat) return '';
-  const thumb = mat.modality === 'image' ? `<img src="/materials/${mat.id}/thumb">` : `<div class="txt">${esc((mat.original.content || '').slice(0, 120))}</div>`;
+  const thumb = mat.modality === 'image' ? `<img src="/materials/${mat.id}/thumb" onclick="openMaterial('${mat.id}')">` : `<div class="q" onclick="openMaterial('${mat.id}')">${esc((mat.original.content || '').slice(0, 110))}</div>`;
   const groups = pack.groups.map(x => `<option ${x.name === g.name ? 'disabled' : ''}>${esc(x.name)}</option>`).join('');
-  return `<div class="member" data-id="${mat.id}">
-    ${thumb}
-    <div class="body">
-      <div><b>${esc(mat.original.filename || mat.source.page_title || mat.id)}</b> <small class="muted">${mat.id} · ${m.role || ''} ${m.added_by === 'human' ? '· added by you' : ''}</small></div>
-      <div class="human">Human: ${esc(mat.human.thought || '—')}</div>
-      <div>Reason: ${esc(m.reason || '')}</div>
-      ${m.note ? `<div class="muted">Note: ${esc(m.note)}</div>` : ''}
+  const ops = alt
+    ? `<button onclick="addMember('${mat.id}', ${JSON.stringify(g.name)}, ${JSON.stringify(m.reason || '')})">加入</button>`
+    : `<button onclick="removeMember('${mat.id}')">移出</button><select onchange="moveMember('${mat.id}', this.value)"><option value="">移到…</option>${groups}<option value="__new__">＋ 新组</option></select><button onclick="alternatives('${mat.id}', ${JSON.stringify(g.name)})">找替代</button><button onclick="noteMember('${mat.id}')">备注</button>`;
+  return `<div class="member" data-id="${mat.id}">${thumb}
+    <div class="b">
+      <div class="t">${esc(label(mat))}${m.relevance != null ? `<span class="rel" title="判定相关度 ${m.relevance}/3">${stars(m.relevance)}</span>` : ''} <span class="tiny muted">${esc(m.role || '')}${m.added_by === 'human' ? ' · 你加的' : ''} · 入库 ${fmtTime(mat.created_at, false)}</span></div>
+      ${mat.human.thought ? `<div class="h human">${esc(mat.human.thought)}</div>` : ''}
+      <div class="r">${esc(m.reason || '')}</div>
+      ${m.note ? `<div class="small muted">备注：${esc(m.note)}</div>` : ''}
     </div>
-    <div class="ops">
-      <button onclick="removeMember('${mat.id}')">Remove</button>
-      <select onchange="moveMember('${mat.id}', this.value)"><option value="">Move to…</option>${groups}<option value="__new__">+ new group</option></select>
-      <button onclick="alternatives('${mat.id}', '${esc(g.name)}')">Alternatives</button>
-      <button onclick="noteMember('${mat.id}')">Note</button>
-    </div>
-  </div>`;
-}
-function renderPack() {
-  const t = pack.task;
-  const dir = [t.purpose && `目的: ${t.purpose}`, t.desired_qualities?.length && `想要: ${t.desired_qualities.join('、')}`, t.avoid?.length && `避免: ${t.avoid.join('、')}`, t.constraints?.length && `约束: ${t.constraints.join('、')}`].filter(Boolean);
-  const groups = pack.groups.map(g => `<div class="group" data-group="${esc(g.name)}">
-      <h3>${esc(g.name)} <small class="muted">${esc(g.purpose || '')}</small></h3>
-      ${g.members.map(m => memberHtml(g, m)).join('') || '<small class="muted">empty</small>'}
-      <div id="alts-${cssId(g.name)}"></div>
-    </div>`).join('');
-  $('pack').innerHTML = `<div><b>${esc(pack.name)}</b> <small class="muted">${pack.id} · ${pack.human_edits.length} human edits · candidates ${pack.candidates.length}</small></div>
-    <div class="muted">${dir.map(esc).join(' · ')}</div>${groups}`;
+    <div class="ops">${ops}</div></div>`;
 }
 const cssId = (s) => s.replace(/[^a-z0-9]/gi, '_');
+function renderPack() {
+  if (!pack) return;
+  const t = pack.task; const c = t.facets?.colors; const tm = t.facets?.time || {};
+  const facts = [c && `颜色 ${c.primary.join('/')}`, t.facets?.modality && t.facets.modality !== 'any' && `只看${t.facets.modality === 'image' ? '图片' : '文字'}`, tm.within_days && `最近 ${tm.within_days} 天`, tm.order && `按时间${tm.order === 'newest' ? '倒序' : '正序'}`].filter(Boolean);
+  const dir = [t.purpose && `目的：${t.purpose}`, t.desired_qualities?.length && `想要：${t.desired_qualities.join('、')}`, t.avoid?.length && `避免：${t.avoid.join('、')}`, t.constraints?.length && `约束：${t.constraints.join('、')}`, facts.length && `事实条件：${facts.join('，')}`].filter(Boolean);
+  const trace = (pack.generation?.trace?.steps || []).map(s => `${s.step} ${s.s}s${s.candidates != null ? ` (${s.candidates} 候选)` : ''}${s.kept != null ? ` (${s.kept} 相关)` : ''}${s.fallback ? ' ⚠ 降级' : ''}`).join(' → ');
+  const n = pack.groups.reduce((k, g) => k + g.members.length, 0);
+  $('pack').innerHTML = `
+    <div class="pack-head">
+      <h2><span id="pk_name" title="双击重命名" ondblclick="renamePack()">${esc(pack.name)}</span><span class="grow"></span>
+        <button onclick="exportPack('markdown')">Copy for Agent</button><button class="ghost" onclick="exportPack('json')">JSON</button><button class="ghost" onclick="$('task').focus();$('task').select()">改任务重跑</button></h2>
+      <div class="small muted" style="margin-top:4px">「${esc(t.raw_request)}」 · ${fmtTime(pack.created_at)} · ${n} 条 · ${pack.groups.length} 组${pack.human_edits.length ? ` · 改过 ${pack.human_edits.length} 次` : ''}</div>
+      ${dir.length ? `<div class="small muted" style="margin-top:6px">${dir.map(esc).join(' · ')}</div>` : ''}
+      ${pack.human_direction ? `<div class="dir">${esc(pack.human_direction)}</div>` : ''}
+      ${pack.gaps?.length ? `<div class="gaps"><b>库里缺什么：</b>${pack.gaps.map(esc).join(' ')}</div>` : ''}
+      ${trace ? `<div class="trace">agent · ${esc(trace)}</div>` : ''}
+    </div>
+    ${pack.groups.map(g => `<div class="group" data-group="${esc(g.name)}">
+      <div class="gh"><h3 title="双击重命名" ondblclick="renameGroup(${JSON.stringify(g.name)})">${esc(g.name)}</h3><span class="p">${esc(g.purpose || '')}</span><span class="grow"></span><span class="tiny muted">${g.members.length} 条</span></div>
+      ${g.members.map(m => memberHtml(g, m)).join('') || '<div class="member muted small">空组</div>'}
+      <div id="alts-${cssId(g.name)}"></div></div>`).join('')}
+    ${pack.excluded?.length ? `<details class="excl"><summary>看过但没选的 ${pack.excluded.length} 条</summary>${pack.excluded.map(e => `<div><a onclick="openMaterial('${e.material_id}')" style="cursor:pointer">${esc(materials[e.material_id] ? label(materials[e.material_id]) : e.material_id)}</a> — ${esc(e.reason)}</div>`).join('')}</details>` : ''}`;
+}
+window.renamePack = async () => { const n = prompt('素材包名称', pack.name); if (!n || n === pack.name) return; setPack(await api(`/packs/${pack.id}/rename`, post({ name: n }))); loadPacks(); };
+window.renameGroup = async (old) => { const n = prompt('分组名称', old); if (!n || n === old) return; setPack(await api(`/packs/${pack.id}/rename-group`, post({ old, new: n }))); };
 window.removeMember = async (id) => { setPack(await api(`/packs/${pack.id}/remove`, post({ material_id: id }))); };
 window.moveMember = async (id, to) => {
   if (!to) return;
-  if (to === '__new__') { to = prompt('New group name'); if (!to) return renderPack(); }
+  if (to === '__new__') { to = prompt('新分组名称'); if (!to) return renderPack(); }
   setPack(await api(`/packs/${pack.id}/move`, post({ material_id: id, to_group: to })));
 };
 window.noteMember = async (id) => {
   const cur = pack.groups.flatMap(g => g.members).find(m => m.material_id === id)?.note || '';
-  const n = prompt('Task-specific note for this material', cur); if (n === null) return;
+  const n = prompt('这条素材在这个任务里的备注', cur); if (n === null) return;
   setPack(await api(`/packs/${pack.id}/note`, post({ material_id: id, note: n })));
 };
 window.alternatives = async (id, group) => {
-  status('finding alternatives…');
+  status('找替代素材…', true);
   const res = await api(`/packs/${pack.id}/alternatives`, post({ material_id: id, group }));
   Object.assign(materials, res.materials || {});
-  const box = $('alts-' + cssId(group));
-  box.innerHTML = `<div class="alts"><b>More like ${esc(id)} for “${esc(group)}”</b> ${res.suggestions.map(s => {
-    const mat = materials[s.material_id];
-    return `<div class="member"><div>${mat.modality === 'image' ? `<img src="/materials/${mat.id}/thumb">` : `<div class="txt">${esc((mat.original.content||'').slice(0,100))}</div>`}</div>
-      <div class="body"><b>${esc(mat.original.filename || mat.source.page_title || mat.id)}</b> <span class="hit-score">${s.score.toFixed(3)}</span>
-      <div class="human">Human: ${esc(mat.human.thought || '—')}</div><div>Reason: ${esc(s.reason || '')}</div></div>
-      <div class="ops"><button onclick="addMember('${mat.id}', '${esc(group)}', ${JSON.stringify(s.reason || '')})">Add</button></div></div>`;
-  }).join('') || '<small class="muted">nothing else useful</small>'}</div>`;
-  status(`${res.suggestions.length} alternatives`);
+  const g = { name: group };
+  $('alts-' + cssId(group)).innerHTML = `<div class="alts"><b>「${esc(group)}」里还可以放：</b>${res.suggestions.map(s => memberHtml(g, { material_id: s.material_id, reason: s.reason, score: s.score }, true)).join('') || '<div class="muted">没有更合适的了</div>'}</div>`;
+  status(`${res.suggestions.length} 个替代`);
 };
 window.addMember = async (id, group, reason) => { setPack(await api(`/packs/${pack.id}/add`, post({ material_id: id, group, reason }))); };
-const post = (body) => ({ method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(body) });
-
-$('copy').onclick = async () => {
-  const md = await api(`/packs/${pack.id}/export?format=markdown`);
-  $('export').textContent = md; $('export').style.display = 'block';
-  try { await navigator.clipboard.writeText(md); $('copy_msg').textContent = 'copied Markdown to clipboard — paste into ChatGPT / Claude / Cursor (preview below the pack)'; }
-  catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
+window.exportPack = async (format) => {
+  const data = await api(`/packs/${pack.id}/export?format=${format}`);
+  const txt = format === 'json' ? JSON.stringify(data, null, 2) : data;
+  $('ex_title').textContent = format === 'json' ? 'Pack JSON' : 'Copy for Agent — 粘贴到 ChatGPT / Claude / Cursor';
+  $('ex_pre').textContent = txt; $('export').classList.add('on'); $('ex_msg').textContent = '';
+  $('ex_copy').onclick = async () => { try { await navigator.clipboard.writeText(txt); $('ex_msg').textContent = '已复制到剪贴板'; } catch { $('ex_msg').textContent = '剪贴板不可用，请手动复制'; } };
+  $('ex_copy').click();
 };
-$('copy_json').onclick = async () => {
-  const js = await api(`/packs/${pack.id}/export?format=json`);
-  const txt = JSON.stringify(js, null, 2); $('export').textContent = txt; $('export').style.display = 'block';
-  try { await navigator.clipboard.writeText(txt); $('copy_msg').textContent = 'copied JSON (preview below the pack)'; } catch { $('copy_msg').textContent = 'clipboard blocked; copy from the preview below the pack'; }
-};
+$('ex_close').onclick = () => $('export').classList.remove('on');
 
-loadHealth(); loadLibrary(); loadPacks();
+// ======================================================================= boot
+renderRecentQueries(); loadHealth(); route(); loadLibrary();
 </script>
 </body>
 </html>

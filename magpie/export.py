@@ -73,6 +73,8 @@ def pack_to_markdown(pack: MaterialPack, db: Database) -> str:
         lines.append("- Avoid: " + "、".join(t.avoid))
     if t.constraints:
         lines.append("- Constraints: " + "、".join(t.constraints))
+    if pack.gaps:
+        lines.append("- Not in the library (gaps): " + " ".join(pack.gaps))
     lines.append("")
     idx = 0
     for g in pack.groups:
@@ -130,12 +132,13 @@ def pack_to_json(pack: MaterialPack, db: Database) -> dict:
             "updated_at": pack.updated_at,
             "task": pack.task.model_dump(),
             "human_direction": pack.human_direction,
+            "gaps": pack.gaps,
             "groups": [
                 {
                     "name": g.name,
                     "purpose": g.purpose,
                     "members": [
-                        {"role": mem.role, "reason": mem.reason, "note": mem.note, "added_by": mem.added_by, "material": mat(mats[mem.material_id])}
+                        {"role": mem.role, "reason": mem.reason, "relevance": mem.relevance, "note": mem.note, "added_by": mem.added_by, "material": mat(mats[mem.material_id])}
                         for mem in g.members
                         if mem.material_id in mats
                     ],

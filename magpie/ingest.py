@@ -122,8 +122,12 @@ class Ingestor:
                 + (["analysis.ocr"] if analysis.ocr else []),
             )
             m.analysis, m.objective_metadata, m.provenance = analysis, objective, prov
+            if self.db.get_material(m.id) is None:  # deleted while we were analyzing: don't resurrect vectors
+                log.info("material %s deleted during analysis; skipping embed", m.id)
+                return m
             self._embed(m)
             self.db.update_analysis(m.id, analysis, objective, prov, Processing(status="ready", updated_at=now_iso()))
+            self.db.prune_orphan_embeddings()
         except Exception as e:  # noqa: BLE001 - persist the failure, never lose the material
             log.exception("analysis failed for %s", material_id)
             self.db.update_processing(m.id, Processing(status="failed", error=str(e)[:500], updated_at=now_iso()))
