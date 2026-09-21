@@ -276,5 +276,20 @@ GET /packs/{id}/export?format=markdown|json   # Copy for Agent，含 gaps 与 re
 | `W_COLOR_MUST / W_COLOR_PREFER` | 0.45 / 0.2 | 颜色事实分的融合权重 |
 | `COLOR_MUST_PENALTY` | 0.25 | 请求就是某个颜色时，完全没有该颜色的图片的减分 |
 | `W_JUDGE` | 0.7 | 最终排序里判定分的权重（其余给召回分） |
+| `TOP_SHARE / TOP_MIN` | 0.25 / 3 | 判定后最多只保留候选数 × 25%（至少 3 条）的 3 分，多出的按融合分降为 2 |
+| `PACK_MAX_MEMBERS` | 12 | 一个生成的素材包最多几条（人工可以再加） |
+| `STRAGGLER_MAX` | 4 | 判定 ≥2 却没被组合进组的素材，最多几条进「其他相关」，其余进 excluded 并说明 |
+
+## 6. 精选纪律（2026-09-21 集成验收 P1-a / P1-b）
+
+验收里两个真实失败：模糊请求「我要做一个网页，帮我找一些有用的参考」的 direction 被写成「克制、有质感…避免霓虹渐变」——这些都来自素材的 Human Thought，用户根本没说；宽泛请求「找克制、有物质感、不要典型 AI 科技感的参考」37 个候选被判出 20 个 3 分，加上兜底组，素材包变成整库重分类。现在的处理都在 `agent.py` 的 verify 一侧，**不信任提示词能守住**：
+
+- **模糊请求**（`is_vague`：brief 里 desired / avoid / constraints 全空）：compose 的提示词加一段「只准复述请求」；无论模型写了什么，`human_direction` 一律替换为「{purpose}。用户没有给出具体偏好；以下素材按库里的整体方向挑选，不代表用户本次的要求。」模型原文保留在 `generation.trace` 的 `model_direction` 里供排查，不进导出。理由里仍可引用 Human Thought 解释"为什么有用"，但不会再出现"用户想要 / 要避免 X"。
+- **判定分上限**（`cap_top_relevance`）：提示词明确"3 分稀缺，最多约四分之一"，再由代码按融合分保留前 25%（至少 3 条）的 3 分，其余降为 2；trace 里记 `capped`。
+- **素材包上限**（`trim_to_cap`）：compose 被要求最多 `PACK_MAX_MEMBERS` 条；超出的从最不核心的组末尾开始剔除，进 excluded 并写明「精选上限 N 条，未入包」。
+- **兜底组**：判定 ≥2 却没被分组的素材最多 `STRAGGLER_MAX` 条进「其他相关」（且不能突破总上限），其余进 excluded 并写明「超出精选上限」。
+- trace 的 `kept` 现在只数 ≥2（用户看到的"相关"），1 分另计 `weak`。
+
+被剔除的素材没有消失：它们都在 `pack.excluded` 里带着原因，UI 的「找替代」仍能把它们捞回来。
 
 下一步可以加的 facet：素材类型（海报 / 材质 / 界面 / 文字）、来源站点——都遵循同一模式：步骤 1 抽出、步骤 2 用事实过滤或加权、步骤 3 作为证据写进候选卡（时间已按这个模式加了）。

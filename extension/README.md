@@ -20,6 +20,11 @@ Manifest V3，纯 JS，没有构建步骤。
 2. 「加载已解压的扩展程序」→ 选择这个 `extension/` 目录
 3. 点工具栏图标，popup 里应显示「Core 已连接」；没连上就先起 Core（见下）
 
+> **Chrome ≥ 137 的限制**：Google Chrome 正式版从 137 起忽略命令行的 `--load-extension` /
+> `--disable-extensions-except`，所以**不能用命令行参数自动加载**这个扩展，只能像上面一样手工
+> 「加载已解压的扩展程序」。需要自动化（E2E、脚本演示）时用 Chromium、Brave、Edge 或
+> Chrome for Testing，它们仍然接受这两个参数，见 [`e2e/README.md`](e2e/README.md)。
+
 改了代码后在 `chrome://extensions` 点刷新；已打开的页面里旧的 content script 会提示「扩展已重新加载，请刷新页面」。
 
 ## 用法
@@ -72,11 +77,22 @@ Core 不会自己下载 `resource_url`，扩展按顺序尝试：
 2. **页面内 fetch**：覆盖 `blob:` URL 和只有页面上下文能拿的图
 3. **canvas 渲染版本**：前两步都失败时不会静默保存，浮层明确询问，确认后保存 PNG 并标注「非原始文件」；跨域图 canvas 会被污染，此时提示无法读取像素
 
-## 已验证
+## E2E
 
-- 无头 Chrome for Testing 对本地 Core 的端到端：61 项检查，覆盖文字/textarea 选区、字段逐项比对、重复与补 Thought、srcset 最大候选、懒加载占位、`blob:`、防盗链跨域图的 canvas 询问、撤销、保存后表单锁定、Core 未启动 → 重试、chrome:// 页面报错
-- 真实站点：Wikipedia（文字 + CDN 图）、微信公众号文章（文字 + `mmbiz` 图，字节与原图一致）
-- 悬停收集（Chrome for Testing + 真实 Core，21 项）：小图不出圆点、圆点定位在图片右上角、悬停展开 / 标签、一键保存 → 提示 → 补 Thought 落库、重复保存提示、加批注保存打开浮层、选区保存条 → 一键保存、撤销、popup 开关关闭后不再出现
+仓库内可复现的端到端测试在 [`e2e/`](e2e/)：`e2e.py` 在真实 Chromium（Brave / Chromium / Chrome for
+Testing）里加载本目录、用真实鼠标事件驱动悬停圆点 / 选区小条 / 浮层 / toast，并逐条到 Core 的
+HTTP API 和数据库核对。覆盖：一键保存与 toast 补 Thought、加批注保存、选区保存、重复、撤销、
+快捷键路径（选区 → 浮层；无选区 → 点选模式）、popup、Core 未启动 → 重试、Wikipedia 与真实微信
+公众号文章（文字 + `mmbiz` 原图字节）。2026-09-21 集成验收时全部通过，见
+`docs/INTEGRATION_ACCEPTANCE.md` §5.2。
+
+```bash
+.venv/bin/python extension/e2e/e2e.py --reset --cleanup
+```
+
+开发期间在真实站点上手工确认过的还有：textarea 内选区、srcset 最大候选、懒加载占位、`blob:`
+图、防盗链跨域图的 canvas 询问、chrome:// 页面报错、popup 关闭悬停收集后不再出现圆点——这些
+尚未收进 `e2e.py`。
 
 ## 已知限制
 
